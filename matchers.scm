@@ -125,9 +125,17 @@
        kf))
     ((ppat v lit kt kf) (if (equal? v (quote lit)) kt kf))))
 
-;; Shorthand for functions that immediately pattern-match their
-;; parameters.
+;;; Shorthands for functions that immediately pattern-match their
+;;; parameter(s).
+
+;; One-argument form.
 (define-syntax pmatch-lambda
   (syntax-rules ()
     ((pmatch-lambda cs ...)
+     (lambda (arg) (pmatch arg cs ...)))))
+
+;; Multi-argument form.
+(define-syntax pmatch-lambda*
+  (syntax-rules ()
+    ((pmatch-lambda* cs ...)
      (lambda args (pmatch args cs ...)))))
