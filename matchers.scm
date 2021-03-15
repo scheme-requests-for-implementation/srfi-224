@@ -124,3 +124,10 @@
 	 (ppat vx x (ppat vy y kt kf) kf))
        kf))
     ((ppat v lit kt kf) (if (equal? v (quote lit)) kt kf))))
+
+;; Shorthand for functions that immediately pattern-match their
+;; parameters.
+(define-syntax pmatch-lambda
+  (syntax-rules ()
+    ((pmatch-lambda cs ...)
+     (lambda args (pmatch args cs ...)))))
