@@ -87,28 +87,29 @@
 ;        (<pattern1> . <pattern2>)  -- ditto
 ;        ()    -- matches the empty list
 
+;; We've removed the name parameter for now, since it seems to cause
+;; problems for the expander in many Schemes.
+
+;; (define-syntax pmatch
+;;   (syntax-rules (else guard)
+;;     ((pmatch v (e ...) ...)
+;;      (pmatch-aux #f v (e ...) ...))
+;;     ((pmatch v name (e ...) ...)
+;;      (pmatch-aux name v (e ...) ...))))
+
 (define-syntax pmatch
   (syntax-rules (else guard)
-    ((pmatch v (e ...) ...)
-     (pmatch-aux #f v (e ...) ...))
-    ((pmatch v name (e ...) ...)
-     (pmatch-aux name v (e ...) ...))))
-
-(define-syntax pmatch-aux
-  (syntax-rules (else guard)
-    ((pmatch-aux name (rator rand ...) cs ...)
+    ((pmatch (rator rand ...) cs ...)
      (let ((v (rator rand ...)))     ; avoid multiple evals
-       (pmatch-aux name v cs ...)))
-    ((pmatch-aux name v)  ; no more clauses
-     (if 'name
-         (error "pmatch failed" 'name v)
-         (error "pmatch failed" v)))
-    ((pmatch-aux _ _ (else e0 e ...)) (begin e0 e ...))
-    ((pmatch-aux name v (pat (guard g ...) e0 e ...) cs ...)
-     (let ((fk (lambda () (pmatch-aux name v cs ...))))
+       (pmatch v cs ...)))
+    ((pmatch v)  ; no more clauses
+     (error "pmatch failed" v))
+    ((pmatch _ (else e0 e ...)) (begin e0 e ...))
+    ((pmatch v (pat (guard g ...) e0 e ...) cs ...)
+     (let ((fk (lambda () (pmatch v cs ...))))
        (ppat v pat (if (and g ...) (begin e0 e ...) (fk)) (fk))))
-    ((pmatch-aux name v (pat e0 e ...) cs ...)
-     (let ((fk (lambda () (pmatch-aux name v cs ...))))
+    ((pmatch v (pat e0 e ...) cs ...)
+     (let ((fk (lambda () (pmatch v cs ...))))
        (ppat v pat (begin e0 e ...) (fk))))))
 
 (define-syntax ppat
