@@ -7,8 +7,9 @@
 ;;;
 ;;; (tmatch exp <clause> ... [<else-clause>])
 ;;;
-;;; <clause>      ::= (<pattern> exp ...)
+;;; <clause>      ::= (<pattern> [<guard>] exp ...)
 ;;; <else-clause> ::= (else exp ...)
+;;; <guard>       ::= (guard boolean-exp ...)
 ;;; <pattern>     ::= empty
 ;;;                 | leaf <pattern> <pattern>
 ;;;                 | branch <pattern> <pattern> <pattern> <pattern>
@@ -21,13 +22,16 @@
 ;;      (tmatch-aux name exp (e ...) ...))))
 
 (define-syntax tmatch
-  (syntax-rules (else)
+  (syntax-rules (else guard)
     ((tmatch (f x ...) cs ...)
      (let ((v (f x ...)))
        (tmatch v cs ...)))
     ((tmatch v)
      (error "tmatch: no clause matched" v))
     ((tmatch _ (else e0 e1 ...)) (begin e0 e1 ...))
+    ((tmatch v (pat (guard g ...) e0 e1 ...) cs ...)
+     (let ((fk (lambda () (tmatch v cs ...))))
+       (tpat v pat (if (and g ...) (begin e0 e1 ...) (fk)) (fk))))
     ((tmatch v (pat e0 e1 ...) cs ...)
      (let ((fk (lambda () (tmatch v cs ...))))
        (tpat v pat (begin e0 e1 ...) (fk))))))
@@ -52,6 +56,13 @@
                  (ppat bit pm (ppat left pl (ppat right pr kt kf) kf) kf)
                  kf))
          kf))))
+
+;; Shorthands for a unary function that immediately pattern-matches
+;; its trie parameter.
+(define-syntax tmatch-lambda
+  (syntax-rules ()
+    ((pmatch-lambda cs ...)
+     (lambda (arg) (tmatch arg cs ...)))))
 
 ;;; pmatch, by Oleg Kiselyov, rev. Will Byrd.
 
