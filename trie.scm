@@ -579,8 +579,8 @@
   (letrec
     ((merge
       (lambda (s t)
-        (cond ((not s) t)
-              ((not t) s)
+        (cond ((trie-empty? s) t)
+              ((trie-empty? t) s)
               ((leaf? s)
                (%trie-insert-xor t (leaf-key s) (leaf-value s)))
               ((leaf? t)
@@ -588,20 +588,22 @@
               (else (merge-branches s t)))))
      (merge-branches
       (lambda (s t)
-        (let*-branch (((p m s1 s2) s)
-                      ((q n t1 t2) t))
-          (cond ((and (fx=? m n) (fx=? p q))
-                 (branch p m (merge s1 t1) (merge s2 t2)))
-                ((and (branching-bit-higher? m n) (match-prefix? q p m))
-                 (if (zero-bit? q m)
-                     (branch p m (merge s1 t) s2)
-                     (branch p m s1 (merge s2 t))))
-                ((and (branching-bit-higher? n m) (match-prefix? p q n))
-                 (if (zero-bit? p n)
-                     (branch q n (merge s t1) t2)
-                     (branch q n t1 (merge s t2))))
-                (else
-                 (trie-join p m s q n t)))))))
+        (tmatch s
+          ((branch ,p ,m ,s1 ,s2)
+           (tmatch t
+             ((branch ,q ,n ,t1 ,t2)
+              (cond ((and (fx=? m n) (fx=? p q))
+                     (branch p m (merge s1 t1) (merge s2 t2)))
+                    ((and (branching-bit-higher? m n) (match-prefix? q p m))
+                     (if (zero-bit? q m)
+                         (branch p m (merge s1 t) s2)
+                         (branch p m s1 (merge s2 t))))
+                    ((and (branching-bit-higher? n m) (match-prefix? p q n))
+                     (if (zero-bit? p n)
+                         (branch q n (merge s t1) t2)
+                         (branch q n t1 (merge s t2))))
+                    (else
+                     (trie-join p m s q n t))))))))))
     (merge trie1 trie2)))
 
 ;; Return a trie containing all the elements of `trie' which are
@@ -611,19 +613,18 @@
   (letrec
     ((split
       (lambda (t)
-        (cond ((not t) #f)
-              ((leaf? t)
-               (let ((tk (leaf-key t)))
-                 (cond ((fx<? tk k) t)
-                       ((and (fx=? tk k) inclusive) t)
-                       (else #f))))
-              (else
-               (let*-branch (((p m l r) t))
-                 (if (match-prefix? k p m)
-                     (if (zero-bit? k m)
-                         (split l)
-                         (trie-union l (split r)))
-                     (and (fx<? p k) t))))))))
+        (tmatch t
+          (empty the-empty-trie)
+          ((leaf ,tk ?)
+           (cond ((fx<? tk k) t)
+                 ((and (fx=? tk k) inclusive) t)
+                 (else the-empty-trie)))
+          ((branch ,p ,m ,l ,r)
+           (if (match-prefix? k p m)
+               (if (zero-bit? k m)
+                   (split l)
+                   (trie-union l (split r)))
+               (fx<? p k) t))))))
     (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
         (if (fxnegative? k)
             (split (branch-right trie))
@@ -637,19 +638,18 @@
   (letrec
    ((split
      (lambda (t)
-       (cond ((not t) #f)
-             ((leaf? t)
-              (let ((tk (leaf-key t)))
-                (cond ((fx>? tk k) t)
-                      ((and (fx=? tk k) inclusive) t)
-                      (else #f))))
-             (else
-              (let*-branch (((p m l r) t))
-                (if (match-prefix? k p m)
-                    (if (zero-bit? k m)
-                        (trie-union (split l) r)
-                        (split r))
-                    (and (fx>? p k) t))))))))
+       (tmatch t
+         (empty the-empty-trie)
+         ((leaf ,tk ?)
+          (cond ((fx>? tk k) t)
+                ((and (fx=? tk k) inclusive) t)
+                (else the-empty-trie)))
+         ((branch ,p ,m ,l ,r) t))
+          (if (match-prefix? k p m)
+              (if (zero-bit? k m)
+                  (trie-union (split l) r)
+                  (split r))
+              (and (fx>? p k) t)))))
     (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
         (if (fxnegative? k)
             (trie-union (split (branch-right trie)) (branch-left trie))
@@ -664,29 +664,30 @@
   (letrec
    ((interval
      (lambda (t)
-       (cond ((not t) #f)
-             ((leaf? t)
-              (let ((tk (leaf-key t)))
-                (and ((if low-inclusive fx>=? fx>?) tk a)
-                     ((if high-inclusive fx<=? fx<?) tk b)
-                     t)))
-             (else (branch-interval t)))))
+       (tmatch t
+         (empty the-empty-trie)
+         ((leaf ,tk ?)
+          (and ((if low-inclusive fx>=? fx>?) tk a)
+               ((if high-inclusive fx<=? fx<?) tk b)
+               t)))
+         (else (branch-interval t))))
     (branch-interval
      (lambda (t)
-       (let*-branch (((p m l r) t))
-         (if (match-prefix? a p m)
-             (if (zero-bit? a m)
-                 (if (match-prefix? b p m)
-                     (if (zero-bit? b m)
-                         (interval l)  ; all x < b is in l
-                         (trie-union (subtrie> l a low-inclusive)
-                                     (subtrie< r b high-inclusive)))
-                     ;; everything or nothing is less than b
-                     (and (fx<? b p)
-                          (trie-union (subtrie> l a low-inclusive) r)))
-                 (interval r)) ; all x > b is in r
-             ;; everything or nothing is greater than a
-             (and (fx>? p a) (subtrie< t b high-inclusive)))))))
+       (tmatch t
+         ((branch ,p ,m ,l ,r)
+          (if (match-prefix? a p m)
+              (if (zero-bit? a m)
+                  (if (match-prefix? b p m)
+                      (if (zero-bit? b m)
+                          (interval l)  ; all x < b is in l
+                          (trie-union (subtrie> l a low-inclusive)
+                                      (subtrie< r b high-inclusive)))
+                      ;; everything or nothing is less than b
+                      (and (fx<? b p)
+                           (trie-union (subtrie> l a low-inclusive) r)))
+                  (interval r)) ; all x > b is in r
+              ;; everything or nothing is greater than a
+              (and (fx>? p a) (subtrie< t b high-inclusive))))))))
     (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
         (cond ((and (fxnegative? a) (fxnegative? b))
                (interval (branch-right trie)))
