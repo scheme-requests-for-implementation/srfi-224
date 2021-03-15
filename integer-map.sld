@@ -55,5 +55,6 @@
    isubmapping>
    )
 
+  (include "matchers.scm")
   (include "trie.scm")
   (include "integer-map-impl.scm"))
