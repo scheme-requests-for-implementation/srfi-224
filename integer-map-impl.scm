@@ -23,10 +23,11 @@
 
 (define (plist-fold proc nil ps)
   (let loop ((b nil) (ps ps))
-    (match ps
+    (pmatch ps
       (() b)
-      ((k v . ps*)
-       (loop (proc k v b) ps*)))))
+      ((,k ,v . ,ps*)
+       (loop (proc k v b) ps*))
+      (else (error "plist-fold: invalid plist")))))
 
 (define (first x _) x)
 (define (second _ y) y)
@@ -55,9 +56,9 @@
 
 (define (alist->imapping as)
   (assume (pair-or-null? as))
-  (imapping-unfold-maybe (match-lambda
+  (imapping-unfold-maybe (pmatch-lambda
                            (() (nothing))
-                           (((k . v) . as*) (just k v as*)))
+                           (((,k . ,v) . ,as*) (just k v as*)))
                          as))
 
 (define (imapping-unfold stop? mapper successor seed)
@@ -433,9 +434,9 @@
            (t2 (imapping-trie imap2))
            (imaps imaps))
     (and (trie-proper-subset? comp t1 t2)
-         (match imaps
+         (pmatch imaps
            (() #t)
-           ((m . imaps*) (lp t2 (imapping-trie m) imaps*))))))
+           ((,m . ,imaps*) (lp t2 (imapping-trie m) imaps*))))))
 
 (define (imapping>? comp imap1 imap2 . imaps)
   (assume (comparator? comp))
@@ -445,9 +446,9 @@
            (t2 (imapping-trie imap2))
            (imaps imaps))
     (and (trie-proper-subset? comp t2 t1)
-         (match imaps
+         (pmatch imaps
            (() #t)
-           ((m . imaps*) (lp t2 (imapping-trie m) imaps*))))))
+           ((,m . ,imaps*) (lp t2 (imapping-trie m) imaps*))))))
 
 (define (imapping<=? comp imap1 imap2 . imaps)
   (assume (comparator? comp))
@@ -457,9 +458,9 @@
            (t2 (imapping-trie imap2))
            (imaps imaps))
     (and (memv (trie-subset-compare comp t1 t2) '(less equal))
-         (match imaps
+         (pmatch imaps
            (() #t)
-           ((m . imaps*) (lp t2 (imapping-trie m) imaps*))))))
+           ((,m . ,imaps*) (lp t2 (imapping-trie m) imaps*))))))
 
 (define (imapping>=? comp imap1 imap2 . imaps)
   (assume (comparator? comp))
@@ -469,9 +470,9 @@
            (t2 (imapping-trie imap2))
            (imaps imaps))
     (and (memv (trie-subset-compare comp t1 t2) '(greater equal))
-         (match imaps
+         (pmatch imaps
            (() #t)
-           ((m . imaps*) (lp t2 (imapping-trie m) imaps*))))))
+           ((,m . ,imaps*) (lp t2 (imapping-trie m) imaps*))))))
 
 ;;;; Set theory operations
 
@@ -501,9 +502,9 @@
   (raw-imapping
    (trie-difference (imapping-trie imap)
                     (imapping-trie
-                     (match rest
-                       ((imap2) imap2)
-                       ((imap2 . imaps)
+                     (pmatch rest
+                       ((,imap2) imap2)
+                       ((,imap2 . ,imaps)
                         (apply imapping-union imap2 imaps)))))))
 
 (define (imapping-xor imap1 imap2)
