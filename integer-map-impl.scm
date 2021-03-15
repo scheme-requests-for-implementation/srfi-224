@@ -56,10 +56,12 @@
 
 (define (alist->imapping as)
   (assume (pair-or-null? as))
-  (imapping-unfold-maybe (pmatch-lambda
-                           (() (nothing))
-                           (((,k . ,v) . ,as*) (just k v as*)))
-                         as))
+  (raw-imapping
+    (fold (lambda (p trie)
+            (assume (pair? p) "alist->imapping: not a pair")
+            (trie-insert/combine trie (car p) (cdr p) second))
+          #f
+          as)))
 
 (define (imapping-unfold stop? mapper successor seed)
   (assume (procedure? stop?))
