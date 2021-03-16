@@ -283,7 +283,7 @@
   (letrec
    ((cata
      (lambda (b t)
-       (match t
+       (tmatch t
          (empty b)
          ((leaf ,k ,v) (proc k v b))
          ((branch ? ? ,l ,r) (cata (cata b r) l))))))
