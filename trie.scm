@@ -172,16 +172,15 @@
 
 ;; Return the value associated with key in trie; if there is
 ;; none, return #f.
-;; TODO: Close over key.
 (define (trie-assoc trie key)
-  (tmatch trie
-    (empty the-empty-trie)
-    ((leaf ,k ,v) (and (fx=? k key) v))
-    ((branch ,p ,m ,l ,r)
-     (and (match-prefix? key p m)
-          (if (zero-bit? key m)
-              (trie-assoc l key)
-              (trie-assoc r key))))))
+  (letrec
+   ((search
+     (tmatch-lambda
+       ((leaf ,k ,v) (and (fx=? k key) v))
+       ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
+        (if (zero-bit? key m) (search l) (search r)))
+       (else #f))))
+    (search trie)))
 
 (define (branching-bit-higher? mask1 mask2)
   (if (negative? (fxxor mask1 mask2))  ; signs differ
@@ -380,7 +379,7 @@
 
 (define (trie=? comp trie1 trie2)
   (let loop ((s trie1) (t trie2))
-    (cond ((not (or s t)) #t)
+    (cond ((and (trie-empty? s) (trie-empty? t)) #t)
           ((leaf? s)
            (and (leaf? t)
                 (fx=? (leaf-key s) (leaf-key t))
@@ -490,12 +489,11 @@
        (tmatch t
          (empty the-empty-trie)
          ((leaf ,k ?) (if (fx=? k key) the-empty-trie t))
-         ((branch ,p ,m ,l ,r)
-          (if (match-prefix? key p m)
-              (if (zero-bit? key m)
-                  (branch p m (update l) r)
-                  (branch p m l (update r)))
-              t))))))  ; key doesn't occur in t
+         ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
+          (if (zero-bit? key m)
+               (branch p m (update l) r)
+               (branch p m l (update r))))
+         (else t)))))  ; key doesn't occur in t
     (update trie)))
 
 ;; Left-biased intersection: Preserve associations in trie1 in case
@@ -633,11 +631,10 @@
                    (split l)
                    (trie-union l (split r)))
                (and (fx<? p k) t)))))))
-    (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
-        (if (fxnegative? k)
-            (split (branch-right trie))
-            (trie-union (split (branch-left trie)) (branch-right trie)))
-        (split trie))))
+    (tmatch trie
+      ((branch ? ,m ,l ,r) (guard (fxnegative? m))
+       (if (fxnegative? k) (split r) (trie-union (split l) r)))
+      (else (split trie)))))
 
 ;; Return a trie containing all the elements of `trie' which are
 ;; greater than k, if `inclusive' is false, or greater than or equal
@@ -658,11 +655,10 @@
                   (trie-union (split l) r)
                   (split r))
               (and (fx>? p k) t)))))))
-    (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
-        (if (fxnegative? k)
-            (trie-union (split (branch-right trie)) (branch-left trie))
-            (split (branch-left trie)))
-        (split trie))))
+    (tmatch trie
+      ((branch ? ,m ,l ,r) (guard (fxnegative? m))
+       (if (fxnegative? k) (trie-union (split r) l) (split l)))
+      (else (split trie)))))
 
 ;; Return a trie containing all the elements of `trie' which are
 ;; greater than/greater than or equal to a and less than/less than
@@ -696,12 +692,11 @@
                   (interval r)) ; all x > b is in r
               ;; everything or nothing is greater than a
               (and (fx>? p a) (subtrie< t b high-inclusive))))))))
-    (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
-        (cond ((and (fxnegative? a) (fxnegative? b))
-               (interval (branch-right trie)))
-              ((and (fxpositive? a) (fxpositive? b))
-               (interval (branch-left trie)))
+    (tmatch trie
+      ((branch ? ,m ,l ,r) (guard (fxnegative? m))
+       (cond ((and (fxnegative? a) (fxnegative? b)) (interval r))
+             ((and (fxpositive? a) (fxpositive? b)) (interval l))
               ;; (a, 0) U (0, b)
-              (else (trie-union (subtrie> (branch-right trie) a low-inclusive)
-                                (subtrie< (branch-left trie) b high-inclusive))))
-        (interval trie))))
+              (else (trie-union (subtrie> r a low-inclusive)
+                                (subtrie< l b high-inclusive)))))
+      (else (interval trie)))))
