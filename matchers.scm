@@ -64,6 +64,16 @@
     ((tmatch-lambda cs ...)
      (lambda (arg) (tmatch arg cs ...)))))
 
+;; Matcher-like form for Maybe values.  Really just a wrapper around
+;; maybe-ref.  This could be much fancier, but this is currently all
+;; I really want.
+(define-syntax mmatch
+  (syntax-rules (nothing just)
+    ((mmatch mexp (nothing en0 en1 ...) (just args ej0 ej1 ...))
+     (maybe-ref mexp
+                (lambda () en0 en1 ...)
+                (lambda args ej0 ej1 ...)))))
+
 ;;; pmatch, by Oleg Kiselyov, rev. Will Byrd.
 
 ;; This is a new version of pmatch (August 8, 2012).

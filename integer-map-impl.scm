@@ -77,11 +77,9 @@
 (define (imapping-unfold-maybe proc seed)
   (assume (procedure? proc))
   (let lp ((trie #f) (seed seed))
-    (maybe-ref
-     (proc seed)
-     (lambda () (raw-imapping trie))
-     (lambda (k v seed*)
-       (lp (trie-insert trie k v) seed*)))))
+    (mmatch (proc seed)
+      (nothing (raw-imapping trie))
+      (just (k v seed*) (lp (trie-insert trie k v) seed*)))))
 
 ;;;; Predicates
 
