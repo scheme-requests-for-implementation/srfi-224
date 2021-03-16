@@ -16,11 +16,6 @@
           ((_ expr . _)
            (or expr (car 0))))))))
 
-  (cond-expand
-    (chibi (import (chibi match)))
-    (chicken (import (matchable)))
-    (else (import (srfi 204))))
-
   (export
    imapping
    imapping-unfold imapping-unfold-maybe
