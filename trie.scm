@@ -123,7 +123,7 @@
    ((update
      (lambda (t)
        (tmatch t
-         (#f t)
+         (empty t)
          ((leaf ,k ,v)
           (if (fx=? key k)
               (maybe-ref
@@ -172,6 +172,7 @@
 
 ;; Return the value associated with key in trie; if there is
 ;; none, return #f.
+;; TODO: Close over key.
 (define (trie-assoc trie key)
   (tmatch trie
     (empty the-empty-trie)
@@ -403,13 +404,13 @@
    ((compare
      (lambda (s t)
        (cond ((eqv? s t) 'equal)
-             ((not s) 'less)
-             ((not t) 'greater)  ; disjoint
+             ((trie-empty? s) 'less)
+             ((trie-empty? t) 'greater)  ; disjoint
              ((and (leaf? s) (leaf? t))
-              (let*-leaf (((sk sv) s) ((tk tv) t))
-                (if (and (fx=? sk tk) (=? comp sv tv))
-                    'equal
-                    'greater)))
+              (if (and (fx=? (leaf-key s) (leaf-key t))
+                       (=? comp (leaf-value s) (leaf-value t)))
+                  'equal
+                  'greater))
              ((leaf? s)             ; leaf / branch
               (tmatch t
                 ((branch ,p ,m ,l ,r)
@@ -631,7 +632,7 @@
                (if (zero-bit? k m)
                    (split l)
                    (trie-union l (split r)))
-               (fx<? p k) t))))))
+               (and (fx<? p k) t)))))))
     (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
         (if (fxnegative? k)
             (split (branch-right trie))
@@ -651,12 +652,12 @@
           (cond ((fx>? tk k) t)
                 ((and (fx=? tk k) inclusive) t)
                 (else the-empty-trie)))
-         ((branch ,p ,m ,l ,r) t))
+         ((branch ,p ,m ,l ,r)
           (if (match-prefix? k p m)
               (if (zero-bit? k m)
                   (trie-union (split l) r)
                   (split r))
-              (and (fx>? p k) t)))))
+              (and (fx>? p k) t)))))))
     (if (and (branch? trie) (fxnegative? (branch-branching-bit trie)))
         (if (fxnegative? k)
             (trie-union (split (branch-right trie)) (branch-left trie))
@@ -676,8 +677,8 @@
          ((leaf ,tk ?)
           (and ((if low-inclusive fx>=? fx>?) tk a)
                ((if high-inclusive fx<=? fx<?) tk b)
-               t)))
-         (else (branch-interval t))))
+               t))
+         (else (branch-interval t)))))
     (branch-interval
      (lambda (t)
        (tmatch t
