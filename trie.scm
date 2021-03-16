@@ -290,19 +290,26 @@
 
 ;; TODO: Close over pred.
 (define (trie-filter pred trie)
-  (tmatch trie
-    (empty the-empty-trie)
-    ((leaf ? ,v) (if (pred v) trie #f))
-    ((branch ,p ,m ,l ,r)
-     (branch p m (trie-filter pred l) (trie-filter pred r)))))
+  (letrec ((filter
+            (lambda (t)
+              (tmatch t
+                (empty the-empty-trie)
+                ((leaf ? ,v) (guard (pred v)) t)
+                ((leaf ? ?) the-empty-trie)
+                ((branch ,p ,m ,l ,r)
+                 (branch p m (filter l) (filter r)))))))
+    (filter trie)))
 
-;; TODO: Close over pred.
 (define (trie-filter/key pred trie)
-  (tmatch trie
-    (empty the-empty-trie)
-    ((leaf ,k ,v) (if (pred k v) trie #f))
-    ((branch ,p ,m ,l ,r)
-     (branch p m (trie-filter/key pred l) (trie-filter/key pred r)))))
+  (letrec ((filter
+            (lambda (t)
+              (tmatch t
+                (empty the-empty-trie)
+                ((leaf ,k ,v) (guard (pred k v)) t)
+                ((leaf ? ?) the-empty-trie)
+                ((branch ,p ,m ,l ,r)
+                 (branch p m (filter l) (filter r)))))))
+    (filter trie)))
 
 ;; Return a Just containing the least key and value of trie,
 ;; or Nothing if trie is empty.
