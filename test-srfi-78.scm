@@ -46,4 +46,15 @@
     ((_ expected expr)
      (check expr => expected))))
 
+(define-syntax test-group
+  (syntax-rules ()
+    ((test-group name t ...)
+     (begin
+      (newline)
+      (display ";;; Test group: ")
+      (display name)
+      (newline)
+      (newline)
+      t ...))))
+
 (include "test-generic.scm")
