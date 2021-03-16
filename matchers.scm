@@ -11,8 +11,8 @@
 ;;; <else-clause> ::= (else exp ...)
 ;;; <guard>       ::= (guard boolean-exp ...)
 ;;; <pattern>     ::= empty
-;;;                 | leaf <pattern> <pattern>
-;;;                 | branch <pattern> <pattern> <pattern> <pattern>
+;;;                 | (leaf <pattern> <pattern>)
+;;;                 | (branch <pattern> <pattern> <pattern> <pattern>)
 
 ;; (define-syntax tmatch
 ;;   (syntax-rules (else)
@@ -61,7 +61,7 @@
 ;; its trie parameter.
 (define-syntax tmatch-lambda
   (syntax-rules ()
-    ((pmatch-lambda cs ...)
+    ((tmatch-lambda cs ...)
      (lambda (arg) (tmatch arg cs ...)))))
 
 ;;; pmatch, by Oleg Kiselyov, rev. Will Byrd.
