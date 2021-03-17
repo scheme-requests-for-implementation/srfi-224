@@ -760,3 +760,17 @@
   (test (list->dup-alist '(53248 57344 61440 65536))
         (imapping->alist (isubmapping>= sparse-imap 53248)))
   )
+
+(test-group "Relation map"
+  (test #t (imapping=? default-comp
+                       (imapping 0 #t)
+                       (imapping-relation-map (lambda (_k _v) (values 0 #t))
+                                              letter-imap)))
+  (test #t (imapping=? default-comp
+                       letter-imap
+                       (imapping-relation-map values letter-imap)))
+  (test '((0 . a) (1 . b) (2 . c))
+        (imapping->alist
+         (imapping-relation-map (lambda (k v) (values (- k) v))
+                                (imapping 0 'a -1 'b -2 'c))))
+  )

@@ -48,6 +48,7 @@
    imapping-open-closed-interval imapping-closed-open-interval
    isubmapping= isubmapping< isubmapping<= isubmapping>=
    isubmapping>
+   imapping-relation-map
    )
 
   (include "matchers.scm")

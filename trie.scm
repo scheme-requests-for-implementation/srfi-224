@@ -696,3 +696,13 @@
               (else (trie-union (subtrie> r a low-inclusive)
                                 (subtrie< l b high-inclusive)))))
       (else (interval trie)))))
+
+;;;; Tries as (Integer, *) relations
+
+(define (trie-relation-map proc trie)
+  (trie-fold-left/key (lambda (k v t)
+                        (let-values (((k* v*) (proc k v)))
+                          (assume (valid-integer? k*))
+                          (trie-insert t k* v*)))
+                      the-empty-trie
+                      trie))

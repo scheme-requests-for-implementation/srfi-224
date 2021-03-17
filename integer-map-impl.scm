@@ -572,3 +572,10 @@
   (assume (imapping? imap))
   (assume (valid-integer? key))
   (raw-imapping (subtrie> (imapping-trie imap) key #t)))
+
+;;;; imappings as relations
+
+(define (imapping-relation-map proc imap)
+  (assume (procedure? proc))
+  (assume (imapping? imap))
+  (raw-imapping (trie-relation-map proc (imapping-trie imap))))
