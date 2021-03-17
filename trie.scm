@@ -244,6 +244,19 @@
             (values (branch p m il ir) (branch p m ol or))))))))
     (part trie)))
 
+;;;; Map and fold
+
+(define (trie-map proc trie with-key)
+  (letrec
+   ((tmap
+     (tmatch-lambda
+       (empty the-empty-trie)
+       ((leaf ,k ,v)
+        (leaf k (if with-key (proc k v) (proc v))))
+       ((branch ,p ,m ,l ,r)
+        (branch p m (tmap l) (tmap r))))))
+    (tmap trie)))
+
 (define (trie-fold-left proc nil trie)
   (letrec
    ((cata
@@ -284,7 +297,6 @@
          ((branch ? ? ,l ,r) (cata (cata b r) l))))))
     (cata nil trie)))
 
-;; TODO: Close over pred.
 (define (trie-filter pred trie)
   (letrec ((filter
             (lambda (t)

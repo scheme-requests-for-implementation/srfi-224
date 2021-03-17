@@ -277,19 +277,13 @@
 ;; This is *not* the same as SRFI 146's mapping-map.
 (define (imapping-map proc imap)
   (assume (procedure? proc))
-  (raw-imapping
-   (imapping-fold-left/key (lambda (k v t)
-                             (trie-insert t k (proc v)))
-                           #f
-                           imap)))
+  (assume (imapping? imap))
+  (raw-imapping (trie-map proc (imapping-trie imap) #f)))
 
 (define (imapping-map/key proc imap)
   (assume (procedure? proc))
-  (raw-imapping
-   (imapping-fold-left/key (lambda (k v t)
-                             (trie-insert t k (proc k v)))
-                           #f
-                           imap)))
+  (assume (imapping? imap))
+  (raw-imapping (trie-map proc (imapping-trie imap) #t)))
 
 (define (unspecified)
   (if #f #f))
