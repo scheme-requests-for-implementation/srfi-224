@@ -1,0 +1,473 @@
+<h1>Integer Mappings</h1>
+
+<h1>Author</h1>
+
+<p>Wolfgang Corcoran-Mathe</p>
+
+<h1>Abstract</h1>
+
+<h1>Rationale</h1>
+
+<h1>Specification</h1>
+
+<h2>Notation</h2>
+
+<p>The naming conventions of this document are consistent with those used
+in the R7RS Scheme standard.</p>
+
+<p>The following names are used for the parameters of procedures:</p>
+
+<table>
+<tr><td><em>obj</em></td><td>Any Scheme object.</td></tr>
+<tr><td><em>boolean</em></td><td>A boolean.</td></tr>
+<tr><td><em>imap</em></td><td>An integer map (imapping).</td></tr>
+<tr><td><em>k</em></td><td>An exact integer.</td></tr>
+<tr><td><em>list</em></td><td>A proper list.</td></tr>
+<tr><td><em>alist</em></td><td>An association list.</td></tr>
+<tr><td><em>proc</em></td><td>A procedure.</td></tr>
+<tr><td><em>mproc</em></td><td>A procedure returning a Maybe object.</td></tr>
+<tr><td><em>pred</em></td><td>A predicate.</td></tr>
+<tr><td><em>comp</em></td><td>A [SRFI 128](https://srfi.schemers.org/srfi-128/srfi-128.html) comparator object.</td></tr>
+</table>
+
+
+<p>It is an error (unless otherwise noted) if the procedures are passed arguments
+that do not have the type implied by the argument names.</p>
+
+<p>Each procedure is written in the form</p>
+
+<p><code>(</code><em>proc arg₁ arg₂</em> …<code>)</code> → <em>type</em>₁ <em>type</em>₂ …</procedure></p>
+
+<p>where <em>proc</em> is the name of the procedure, the <em>args</em> are its
+parameters, and the <em>types</em> are the types of the objects it returns.
+The latter refer (informally) to Scheme types, e.g. boolean, integer,
+etc.  An exception is the notation &lsquo;*&rsquo;, which indicates that the type
+of the value depends on the context of the procedure call.
+For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
+
+<p><code>(</code><em>list-ref list k</em><code>) → *</code></p>
+
+<p>since the type of the return value depends on <em>list</em>.</p>
+
+<h2>Constructors</h2>
+
+<p><code>(imapping</code> <em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+
+<p>Returns a new imapping.  The arguments alternate between keys (which
+must be exact integers) and values (which may be anything); the
+resulting imapping contains these (<em>k</em>, <em>obj</em>) associations.
+The number of arguments must be even.  If duplicate keys occur in
+the arguments, earlier associations take priority.</p>
+
+<p><code>(imapping-unfold</code> <em>stop? mapper successor seed</em><code>) → imapping</code></p>
+
+<p>Unfold a new imapping from the initial seed value <em>seed</em>.
+<em>mapper</em> is applied to each seed and returns two values, a key
+(which must be an exact integer) and an associated value (which may be
+anything); <em>successor</em> maps each seed to a new seed;
+unfolding terminates when the predicate <em>stop?</em> returns a true
+value when applied to the current seed.</p>
+
+<p><code>(imapping-unfold-maybe</code> <em>mproc seed</em><code>) → imapping</code></p>
+
+<p>Unfold a new imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
+a Maybe value.  If this value is Nothing, then unfolding terminates.
+If it is a Just of three values <em>k, v, seed′</em>, then a new association
+<em>(k, v)</em> is added to the resulting imapping and unfolding continues
+with <em>seed′</em>.</p>
+
+<p>The following equivalence between the two imapping-unfold procedures
+may clarify things:</p>
+
+<pre><code>(imapping-unfold p f g x)
+  ≡
+(imapping-unfold-maybe (lambda (s)
+                         (if (p s)
+                             (nothing)
+                             (let-values (((k v) (f s)))
+                               (just k v (g s)))))
+                       x)
+</code></pre>
+
+<p><code>(alist-&gt;imapping</code> <em>alist</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping containing the associations of <em>alist</em>.
+It is an error if the car of any pair in <em>alist</em> is not an
+exact integer.</p>
+
+<h2>Predicates</h2>
+
+<p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if <em>obj</em> is an imapping.</p>
+
+<p><code>(imapping-contains? imap k) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if <em>imap</em> contains an association for key <em>k</em>.</p>
+
+<p><code>(imapping-empty?</code> <em>imap</em><code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if <em>imap</em> contains no associations.</p>
+
+<p><code>(imapping-disjoint?</code> <em>imap</em>₁ <em>imap</em>₂<code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if <em>imap</em>₁ and <em>imap</em>₂ have no keys in common.</p>
+
+<h2>Accessors</h2>
+
+<p><code>(imapping-lookup</code> <em>imap k</em><code>) → *-or-false</code></p>
+
+<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
+Otherwise, returns <code>#f</code>.</p>
+
+<p><code>(imapping-lookup-default</code> <em>imap k obj</em><code>) → *</code></p>
+
+<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
+Otherwise, returns <em>obj</em>.</p>
+
+<p><code>(imapping-min</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+
+<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>imap</em>.
+If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
+Nothing.</p>
+
+<p><code>(imapping-max</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+
+<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>imap</em>.
+If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
+Nothing.</p>
+
+<h2>Updaters</h2>
+
+<p><code>(imapping-adjoin</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+
+<p>Returns a new imapping containing all of the associations of
+<em>imap</em> as well as the associations (<em>k</em>₁, <em>v</em>₁), (<em>k</em>₂, <em>k</em>₂), …
+The number of key/value arguments must be even.</p>
+
+<p>If any of the keys already have associations in <em>imap</em>, the old
+associations are replaced.</p>
+
+<p><code>(imapping-adjoin/combine</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
+
+<p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
+are combined with <em>proc</em>, which is a procedure of type <code>* * → *</code>.
+<em>proc</em> is called on the new and old values (in that order) associated
+with a duplicated key and is expected to return a value for the key.</p>
+
+<p><code>(imapping-adjust imap k proc) → imapping</code>
+<code>(imapping-adjust/key imap k proc) → imapping</code></p>
+
+<p>Returns a new imapping in which the association <em>(n, v)</em> in <em>imap</em>
+is replaced by <em>(n, (proc v))</em>, or by <em>(n, (proc n v))</em> in the
+case of <code>imapping-adjust/key</code>.  If <em>n</em> has no association in <em>imap</em>,
+then (a copy of) <em>imap</em> is returned.</p>
+
+<p><code>(imapping-delete imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
+association in <em>imap</em>, it is ignored.</p>
+
+<p><code>(imapping-delete-all</code> <em>imap list</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+those for keys equal to an element of <em>list</em>.</p>
+
+<p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code>
+<code>(imapping-update/key</code> <em>imap k mproc</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
+applied to the value associated with <em>k</em>.
+If it returns Nothing, the association is deleted;
+if it returns Just <em>v</em>, then <em>(k, v)</em> is added to the new imapping.</p>
+
+<p><code>imapping-update/key</code> is the same as <code>imapping-update</code>, except that
+<em>mproc</em> is called on <em>n</em> and its associated value, in that order.</p>
+
+<p>Simple versions of several other update operations may be defined
+in terms of <code>imapping-update</code>, e.g.:</p>
+
+<pre><code>  (imapping-delete imap k)
+≡
+  (imapping-update imap k (lambda (_) (nothing)))
+
+  (imapping-adjoin imap k v)
+≡
+  (imapping-update imap k (lambda (_) (just v)))
+</code></pre>
+
+<p><code>(imapping-alter</code> <em>imap k proc</em><code>) → imapping</code></p>
+
+<p><em>proc</em> is a procedure of type <code>maybe[*] → maybe[*]</code>.</p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+that the association, or lack thereof, for <em>k</em> is updated as follows.
+If the association <em>(k, v)</em> exists in <em>imap</em>, then <em>proc</em> is called on
+Just <em>v</em>; if no such association exists, then <em>proc</em> is called on
+Nothing.  If the result of this application is Nothing, the
+association is deleted (or no new association is added); if the result
+is Just <em>v′</em>, a new association <em>(k, v′)</em> is added to the new
+imapping, replacing any old association for <em>k</em>.</p>
+
+<p><code>imapping-alter</code> is a very general operator on imappings, and most
+of the other update operations may be defined in terms of it.  For
+example:</p>
+
+<pre><code>  (imapping-update imap k f)
+≡
+  (imapping-alter imap k (lambda (m)
+                           (maybe-ref m
+                                      nothing
+                                      (lambda (v) (f v)))))
+</code></pre>
+
+<p><code>(imapping-delete-min</code> <em>imap</em><code>) → imapping</code>
+<code>(imapping-delete-max</code> <em>imap</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+for the association with the least/greatest key.  If <em>imap</em> is empty,
+returns an empty imapping.</p>
+
+<p><code>(imapping-update-min</code> <em>imap mproc</em><code>) → imapping</code>
+<code>(imapping-update-max</code> <em>imap mproc</em><code>) → imapping</code>
+<code>(imapping-update-min/key</code> <em>imap mproc</em><code>) → imapping</code>
+<code>(imapping-update-max/key</code> <em>imap mproc</em><code>) → imapping</code></p>
+
+<p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
+type <code>* → maybe[*]</code>; that of <code>imapping-update-min/key</code> and of
+<code>-max/key</code> is of type <code>exact-integer * → maybe[*]</code>.</p>
+
+<p>Returns a new imapping with the same associations as <em>imap</em>, except
+that the association for the least/greatest key <em>k</em> is updated as
+follows.  <em>mproc</em> is applied to the value associated with <em>k</em> and is
+expected to return a Maybe value.  If it returns Nothing, the
+association is deleted; if it returns Just <em>v</em>, then <em>(k, v)</em> is added
+to the new imapping.</p>
+
+<p><code>imapping-update-min/key</code> and <code>imapping-update-max/key</code> are the same
+as <code>imapping-update-min</code> and <code>imapping-update-max</code>, respectively,
+except that <em>mproc</em> is called on <em>k</em> and its associated value, in that
+order.</p>
+
+<h2>Size</h2>
+
+<p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>
+
+<p>Returns the number of associations in <em>imap</em>.</p>
+
+<h2>Traversal</h2>
+
+<p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code>
+<code>(imapping-count/key</code> <em>pred imap</em><code>) → exact-integer</code></p>
+
+<p>Returns the number of associations in <em>imap</em> whose values satisfy
+<em>pred</em>.</p>
+
+<p><code>imapping-count/key</code> is the same, except that <em>pred</em> is called on
+the key and value of each association.</p>
+
+<p><code>(imapping-any?</code> <em>pred imap</em><code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if there exists an association in <em>imap</em> whose value
+satisfies <em>pred</em>.  <em>imap</em> is traversed in ascending numerical order
+of keys.</p>
+
+<p><code>(imapping-every?</code> <em>pred imap</em><code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if the value of every association in <em>imap</em> satisfies
+<em>pred</em>, or if <em>imap</em> is empty.  <em>imap</em> is traversed in ascending
+numerical order of keys.</p>
+
+<p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code>
+<code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
+
+<p>The <em>proc</em> argument of <code>imapping-map</code> is of type <code>* → *</code>;
+that of <code>imapping-map/key</code> is of type <code>exact-integer * → *</code>.</p>
+
+<p>Returns a new imapping.  For each association <em>(n, v)</em> in <em>imap</em>,
+the association <em>(n, (proc v))</em> is added to the new imapping.
+Associations are traversed in an arbitrary order.  The dynamic order
+of the applications of <em>proc</em> to the elements of <em>imap</em> is
+unspecified.</p>
+
+<p><code>imapping-map/key</code> is the same, except that <em>proc</em> is called on
+the key and value of each association.</p>
+
+<p>Note that, in contrast to SRFI 146&rsquo;s map procedures, these procedures
+transform the values of <em>imap</em> only; that is, the set of keys of the
+resulting imapping is the same as that of <em>imap</em>.</p>
+
+<p><code>(imapping-for-each</code> <em>proc imap</em><code>) → unspecified</code>
+<code>(imapping-for-each/key</code> <em>proc imap</em><code>) → unspecified</code></p>
+
+<p>Calls <em>proc</em> on the value of each association in <em>imap</em> and returns
+an unspecified value.  <em>imap</em> in traversed in ascending numerical
+order of keys.</p>
+
+<p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
+the key and value of each association.</p>
+
+<p><code>(imapping-fold-left</code> <em>kons knil imap</em><code>) → *</code>
+<code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code>
+<code>(imapping-fold-left/key</code> <em>kons knil imap</em><code>)</code> → <em><code>
+</code>(imapping-fold-right/key<code>*kons knil imap*</code>) → </em>`</p>
+
+<p>The <em>kons</em> argument of <code>imapping-fold-left</code> and <code>-right</code> is a
+procedure of type <code>* * → *</code>; that of <code>imapping-fold-left/key</code>
+and of <code>-right/key</code> is of type <code>exact-integer * * → *</code>.
+<em>knil</em> can be any object.</p>
+
+<p>Folds <em>kons</em> over <em>imap</em>, using <em>knil</em> as the base value.  At
+each step, <em>kons</em> is applied to the value of an association and to
+the result of the last application.
+<code>imapping-fold-left</code> folds in ascending numerical order of keys;
+<code>imapping-fold-right</code> folds in descending order.</p>
+
+<p><code>imapping-fold-left/key</code> and <code>imapping-fold-right/key</code> are the same
+as <code>imapping-fold-left</code> and <code>imapping-fold-right</code>, respectively,
+except that <em>kons</em> is also passed the key of each association.</p>
+
+<p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code>
+<code>(imapping-map/key-&gt;list</code> <em>proc imap</em><code>) → list</code></p>
+
+<p>Efficient fusion of <code>(imapping-values (imapping-map proc imap))</code>.</p>
+
+<p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
+the key and value of each association.</p>
+
+<h2>Filter</h2>
+
+<p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code>
+<code>(imapping-filter/key</code> <em>pred imap</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping containing all of the associations of <em>imap</em>
+whose values satisfy <em>pred</em>.</p>
+
+<p><code>imapping-filter/key</code> is the same, except that <em>pred</em> is applied to
+the key and value of each association.</p>
+
+<p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code>
+<code>(imapping-remove/key</code> <em>pred imap</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping containing all of the associations of <em>imap</em>
+whose values do not satisfy <em>pred</em>.</p>
+
+<p><code>imapping-remove/key</code> is the same, except that <em>pred</em> is applied to
+the key and value of each association.</p>
+
+<p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code>
+<code>(imapping-partition/key</code> <em>pred imap</em><code>) → imapping imapping</code></p>
+
+<p>Returns two new imappings: the first contains all associations of
+<em>imap</em> whose values satisfy <em>pred</em>, and the second contains those
+whose values do not.</p>
+
+<p><code>imapping-partition/key</code> is the same, except that <em>pred</em> is applied to
+the key and value of each association.</p>
+
+<h2>Conversion</h2>
+
+<p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
+
+<p>Returns a car/cdr alist containing the associations of <em>imap</em> in
+ascending numerical order of keys.  Example:</p>
+
+<pre><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
+</code></pre>
+
+<p><code>(imapping-keys</code> <em>imap</em><code>) → list[exact-integer]</code></p>
+
+<p>Returns the keys of <em>imap</em> as a list in ascending numerical order.</p>
+
+<p><code>(imapping-values</code> <em>imap</em><code>) → list[*]</code></p>
+
+<p>Returns the elements of <em>imap</em> as a list in ascending numerical
+order of key.</p>
+
+<h2>Comparison</h2>
+
+<p><code>(imapping=?</code> <em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if all of the <em>imaps</em> contain equal
+associations.  Two associations are equal exactly when their keys are
+equal (in the sense of <code>=</code>) and if their values are equal in the sense
+of the equality predicate of <em>comp</em> (see
+<a href="https://srfi.schemers.org/srfi-128/srfi-128.html">SRFI 128</a>).</p>
+
+<p><code>(imapping&lt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
+<code>(imapping&lt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
+<code>(imapping&gt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
+<code>(imapping&gt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only if each <em>imap</em> other than the last is a proper
+subset/subset/proper superset/superset of the last.  Values are
+compared using the equality predicate of <em>comp</em>.</p>
+
+<h2>Set theory operations</h2>
+
+<p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
+<code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
+<code>(imapping-difference</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
+<code>(imapping-xor</code> <em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
+
+<p>Return a newly allocated imapping whose set of associations is the
+union, intersection, asymmetric difference, or symmetric difference of
+the sets of associations of the <em>imaps</em>.  Asymmetric difference is
+extended to more than two imappings by taking the difference between
+the first imapping and the union of the others.  Symmetric difference
+is not extended beyond two imappings.  When comparing associations,
+only the keys are compared.  In case of duplicate keys, associations
+in the result imapping are drawn from the first imapping in which they
+appear.</p>
+
+<h2>Submappings</h2>
+
+<p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code>
+<code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code>
+<code>(imapping-open-closed-interval</code> <em>imap low high</em><code>) → imapping</code>
+<code>(imapping-closed-open-interval</code> <em>imap low high</em><code>) → imapping</code></p>
+
+<p><em>low</em> and <em>high</em> are both exact integers.</p>
+
+<p>Procedures that return a subset of <em>imap</em> containing the associations
+whose keys are contained in the interval from <em>low</em> to <em>high</em>.  The
+interval may be open, closed, open below and closed above, or open
+above and closed below.</p>
+
+<p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code>
+<code>(isubmapping&lt;</code> <em>imap k</em><code>) → imapping</code>
+<code>(isubmapping&lt;=</code> <em>imap k</em><code>) → imapping</code>
+<code>(isubmapping&gt;</code> <em>imap k</em><code>) → imapping</code>
+<code>(isubmapping&gt;=</code> <em>imap k</em><code>) → imapping</code></p>
+
+<p>Procedures that return an imapping containing the associations of
+<em>imap</em> whose keys are equal to, less than/less than or equal
+to/greater than/greater than or equal to <em>k</em>.  Note that the result of
+<code>isubmapping=</code> contains at most one element.</p>
+
+<p>Contact: <code>&lt;wcm at sigwinch dot xyzzy minus the zy&gt;</code></p>
+
+<h1>License</h1>
+
+<p>Copyright &copy; Wolfgang Corcoran-Mathe (2020). All rights reserved.</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&ldquo;Software&rdquo;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED &ldquo;AS IS&rdquo;, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
