@@ -68,33 +68,66 @@ the arguments, earlier associations take priority.</p>
 
 <p><code>(imapping-unfold</code> <em>stop? mapper successor seed</em><code>) → imapping</code></p>
 
+The arguments have the following types:
+<ul>
+<li><em>stop?</em> : <code>* → boolean</code></li>
+<li><em>mapper</em> : <code>* → exact-integer *</code></li>
+<li><em>successor</em> : <code>* → *</code></li>
+<li><em>seed</em> : <code>*</code></li>
+</ul>
+
 <p>Unfold a new imapping from the initial seed value <em>seed</em>.
 <em>mapper</em> is applied to each seed and returns two values, a key
-(which must be an exact integer) and an associated value (which may be
-anything); <em>successor</em> maps each seed to a new seed;
-unfolding terminates when the predicate <em>stop?</em> returns a true
+and an associated value, which are adjoined to the new imapping.
+<em>successor</em> maps each seed to a new seed.
+Unfolding terminates when the predicate <em>stop?</em> returns a true
 value when applied to the current seed.</p>
 
 <p><code>(imapping-unfold-maybe</code> <em>mproc seed</em><code>) → imapping</code></p>
 
+The arguments have the following types:
+<ul>
+<li><em>mproc</em> : <code>* → maybe[exact-integer, *, *]</code></li>
+<li><em>seed</em> : <code>*</code></li>
+</ul>
+
 <p>Unfold a new imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
 a Maybe value.  If this value is Nothing, then unfolding terminates.
-If it is a Just of three values <em>k, v, seed′</em>, then a new association
+If it is Just <em>k v seed′</em>, then a new association
 <em>(k, v)</em> is added to the resulting imapping and unfolding continues
 with <em>seed′</em>.</p>
 
-<p>The following equivalence between the two imapping-unfold procedures
-may clarify things:</p>
+<strong>Rationale:</strong> As well as sometimes leading to more compact
+expressions than the
+traditional "three procedure" unfold, <code>imapping-unfold-maybe</code>
+is also more efficient when the programmer wants the value of each new seed
+to depend on the computed key and value.  For example,
+assume that we apply some procedure <em>f</em> to a seed <em>s</em> to get a
+key <em>k</em> and a value <em>v</em>, and that we also want to compute a new
+seed from <em>k</em> and <em>v</em>.  Using <em>imapping-unfold</em>, we'd
+have no choice other than to compute <em>k</em> and <em>v</em> twice:
 
-<pre><code>(imapping-unfold p f g x)
-  ≡
-(imapping-unfold-maybe (lambda (s)
-                         (if (p s)
+<pre class="example"><code>(imapping-unfold stop?
+                 f
+                 (lambda (s)
+                   (let-values (((k v) (f s)))
+                     (let ((s* …))
+                       s*)))
+                 seed)</code></pre>
+
+Using <code>imapping-unfold-maybe</code>, however, it's easy to write an
+equivalent unfold which computes <em>k</em> and <em>v</em> only once for
+each step:
+
+<pre class="example"><code>(imapping-unfold-maybe (lambda (s)
+                         (if (stop? s)
                              (nothing)
                              (let-values (((k v) (f s)))
-                               (just k v (g s)))))
-                       x)
-</code></pre>
+                               (let ((s* …))
+                                 (just k v s*)))))
+                       seed)</code></pre>
+
+This may be preferable when <em>f</em> is expensive to apply.
 
 <p><code>(alist-&gt;imapping</code> <em>alist</em><code>) → imapping</code></p>
 
