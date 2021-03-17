@@ -1,3 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Integer Mappings</title>
+</head>
+<body>
 <h1>Integer Mappings</h1>
 
 <h1>Author</h1>
@@ -36,7 +43,7 @@ that do not have the type implied by the argument names.</p>
 
 <p>Each procedure is written in the form</p>
 
-<p><code>(</code><em>proc arg₁ arg₂</em> …<code>)</code> → <em>type</em>₁ <em>type</em>₂ …</procedure></p>
+<p><code>(</code><em>proc arg₁ arg₂</em> …<code>)</code> → <em>type</em>₁ <em>type</em>₂ …</p>
 
 <p>where <em>proc</em> is the name of the procedure, the <em>args</em> are its
 parameters, and the <em>types</em> are the types of the objects it returns.
@@ -45,7 +52,7 @@ etc.  An exception is the notation &lsquo;*&rsquo;, which indicates that the typ
 of the value depends on the context of the procedure call.
 For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
 
-<p><code>(</code><em>list-ref list k</em><code>) → *</code></p>
+<p><code>(</code>list-ref <em>list k</em><code>) → *</code></p>
 
 <p>since the type of the return value depends on <em>list</em>.</p>
 
@@ -230,9 +237,9 @@ example:</p>
 for the association with the least/greatest key.  If <em>imap</em> is empty,
 returns an empty imapping.</p>
 
-<p><code>(imapping-update-min</code> <em>imap mproc</em><code>) → imapping</code>
-<code>(imapping-update-max</code> <em>imap mproc</em><code>) → imapping</code>
-<code>(imapping-update-min/key</code> <em>imap mproc</em><code>) → imapping</code>
+<p><code>(imapping-update-min</code> <em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-max</code> <em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-min/key</code> <em>imap mproc</em><code>) → imapping</code><br>
 <code>(imapping-update-max/key</code> <em>imap mproc</em><code>) → imapping</code></p>
 
 <p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
@@ -309,10 +316,10 @@ order of keys.</p>
 <p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
 
-<p><code>(imapping-fold-left</code> <em>kons knil imap</em><code>) → *</code>
-<code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code>
-<code>(imapping-fold-left/key</code> <em>kons knil imap</em><code>)</code> → <em><code>
-</code>(imapping-fold-right/key<code>*kons knil imap*</code>) → </em>`</p>
+<p><code>(imapping-fold-left</code> <em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold-left/key</code> <em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold-right/key</code> <em>kons knil imap</em><code>) → *</code></p>
 
 <p>The <em>kons</em> argument of <code>imapping-fold-left</code> and <code>-right</code> is a
 procedure of type <code>* * → *</code>; that of <code>imapping-fold-left/key</code>
@@ -329,10 +336,10 @@ the result of the last application.
 as <code>imapping-fold-left</code> and <code>imapping-fold-right</code>, respectively,
 except that <em>kons</em> is also passed the key of each association.</p>
 
-<p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code>
+<p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code><br>
 <code>(imapping-map/key-&gt;list</code> <em>proc imap</em><code>) → list</code></p>
 
-<p>Efficient fusion of <code>(imapping-values (imapping-map proc imap))</code>.</p>
+<p>Efficient fusion of <code>(imapping-values (imapping-map</code> <em>proc imap</em><code>))</code>.</p>
 
 <p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
@@ -396,9 +403,9 @@ equal (in the sense of <code>=</code>) and if their values are equal in the sens
 of the equality predicate of <em>comp</em> (see
 <a href="https://srfi.schemers.org/srfi-128/srfi-128.html">SRFI 128</a>).</p>
 
-<p><code>(imapping&lt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
-<code>(imapping&lt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
-<code>(imapping&gt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code>
+<p><code>(imapping&lt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
+<code>(imapping&lt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
+<code>(imapping&gt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
 <code>(imapping&gt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if each <em>imap</em> other than the last is a proper
@@ -407,9 +414,9 @@ compared using the equality predicate of <em>comp</em>.</p>
 
 <h2>Set theory operations</h2>
 
-<p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
-<code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
-<code>(imapping-difference</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code>
+<p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-difference</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-xor</code> <em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
 
 <p>Return a newly allocated imapping whose set of associations is the
@@ -424,9 +431,9 @@ appear.</p>
 
 <h2>Submappings</h2>
 
-<p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code>
-<code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code>
-<code>(imapping-open-closed-interval</code> <em>imap low high</em><code>) → imapping</code>
+<p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-open-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
 <code>(imapping-closed-open-interval</code> <em>imap low high</em><code>) → imapping</code></p>
 
 <p><em>low</em> and <em>high</em> are both exact integers.</p>
@@ -436,10 +443,10 @@ whose keys are contained in the interval from <em>low</em> to <em>high</em>.  Th
 interval may be open, closed, open below and closed above, or open
 above and closed below.</p>
 
-<p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code>
-<code>(isubmapping&lt;</code> <em>imap k</em><code>) → imapping</code>
-<code>(isubmapping&lt;=</code> <em>imap k</em><code>) → imapping</code>
-<code>(isubmapping&gt;</code> <em>imap k</em><code>) → imapping</code>
+<p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;</code> <em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;=</code> <em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&gt;</code> <em>imap k</em><code>) → imapping</code><br>
 <code>(isubmapping&gt;=</code> <em>imap k</em><code>) → imapping</code></p>
 
 <p>Procedures that return an imapping containing the associations of
@@ -469,3 +476,5 @@ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</body>
+</html>
