@@ -102,10 +102,18 @@
 (define (imapping-lookup imap key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
-  (trie-assoc (imapping-trie imap) key))
+  (truth->maybe (trie-assoc (imapping-trie imap) key)))
 
-(define (imapping-lookup/default imap key default)
-  (or (imapping-lookup imap key) default))
+(define (imapping-ref imap key)
+  (assume (imapping? imap))
+  (assume (valid-integer? key))
+  (or (trie-assoc (imapping-trie imap) key)
+      (error "imapping-ref: key not found" imap key)))
+
+(define (imapping-ref/default imap key default)
+  (assume (imapping? imap))
+  (assume (valid-integer? key))
+  (or (trie-assoc (imapping-trie imap) key) default))
 
 (define (imapping-min imap)
   (assume (imapping? imap))
@@ -512,8 +520,9 @@
 (define (isubmapping= imap key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
-  (cond ((imapping-lookup imap key) => (lambda (v) (imapping key v)))
-        (else (imapping))))
+  (mmatch (imapping-lookup imap key)
+          (nothing (imapping))
+          (just (v) (imapping key v))))
 
 (define (imapping-open-interval imap low high)
   (assume (imapping? imap))

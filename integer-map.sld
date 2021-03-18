@@ -21,7 +21,7 @@
    imapping-unfold imapping-unfold-maybe
    imapping? imapping-contains? imapping-empty? imapping-disjoint?
    imapping-min imapping-max
-   imapping-lookup imapping-lookup/default imapping-adjoin
+   imapping-lookup imapping-ref imapping-ref/default imapping-adjoin
    imapping-adjoin/combine imapping-adjust imapping-adjust/key
    imapping-delete imapping-delete-all imapping-alter imapping-update
    imapping-update/key

@@ -137,19 +137,22 @@
 (test-group "Accessors"
   ;;; lookups
 
-  (test #f (imapping-lookup empty-imap 1))
-  (test 'a (imapping-lookup letter-imap 0))
-  (test -50 (imapping-lookup mixed-imap -50))
-  (test #f (imapping-lookup mixed-imap -51))
-  (test 36864 (imapping-lookup sparse-imap 36864))
-  (test #f (imapping-lookup sparse-imap 36800))
+  (test #t (nothing? (imapping-lookup empty-imap 1)))
+  (test (just 'a) (imapping-lookup letter-imap 0))
+  (test (just -50) (imapping-lookup mixed-imap -50))
+  (test #t (nothing? (imapping-lookup mixed-imap -51)))
+  (test (just 36864) (imapping-lookup sparse-imap 36864))
+  (test #t (nothing? (imapping-lookup sparse-imap 36800)))
 
-  (test 'z (imapping-lookup/default empty-imap 1 'z))
-  (test 'a (imapping-lookup/default letter-imap 0 #f))
-  (test -50 (imapping-lookup/default mixed-imap -50 #f))
-  (test 'z (imapping-lookup/default mixed-imap -51 'z))
-  (test 36864 (imapping-lookup/default sparse-imap 36864 #f))
-  (test 'z (imapping-lookup/default sparse-imap 36800 'z))
+  (test -50 (imapping-ref mixed-imap -50))
+  (test 36864 (imapping-ref sparse-imap 36864))
+
+  (test 'z (imapping-ref/default empty-imap 1 'z))
+  (test 'a (imapping-ref/default letter-imap 0 #f))
+  (test -50 (imapping-ref/default mixed-imap -50 #f))
+  (test 'z (imapping-ref/default mixed-imap -51 'z))
+  (test 36864 (imapping-ref/default sparse-imap 36864 #f))
+  (test 'z (imapping-ref/default sparse-imap 36800 'z))
 
   ;;; min/max
 
@@ -180,11 +183,11 @@
                        (imapping 0 'a 1 'b 2 'c)
                        (imapping-adjoin empty-imap 0 'a 1 'b 2 'c)))
 
-  (test 'U (imapping-lookup/default
+  (test 'U (imapping-ref/default
             (imapping-adjoin/combine letter-imap first 20 'U)
             20
             #f))
-  (test 'u (imapping-lookup/default
+  (test 'u (imapping-ref/default
             (imapping-adjoin/combine letter-imap second 20 'U)
             20
             #f))
@@ -195,21 +198,21 @@
 
   ;;; adjusts
 
-  (test 'U (imapping-lookup/default
+  (test 'U (imapping-ref/default
             (imapping-adjust letter-imap 20 (constantly 'U))
             20
             #f))
-  (test 'x (imapping-lookup/default
+  (test 'x (imapping-ref/default
             (imapping-adjust sparse-imap 8192 (constantly 'x))
             8192
             #f))
   (test #t (imapping-empty? (imapping-adjust empty-imap 1 (constantly 'x))))
 
-  (test '(20 u) (imapping-lookup/default
+  (test '(20 u) (imapping-ref/default
                  (imapping-adjust/key letter-imap 20 list)
                  20
                  #f))
-  (test 16384 (imapping-lookup/default
+  (test 16384 (imapping-ref/default
                (imapping-adjust/key sparse-imap 8192 (lambda (k v) (+ k v)))
                8192
                #f))
@@ -238,7 +241,7 @@
   (test #t (imapping=? default-comp
                  (imapping 0 'b)
                  (imapping-update (imapping 0 'a) 0 (constantly (just 'b)))))
-  (test 'U (imapping-lookup/default
+  (test 'U (imapping-ref/default
             (imapping-update letter-imap 20 (constantly (just 'U)))
             20
             #f))
@@ -255,7 +258,7 @@
             (imapping-update/key (imapping 0 'a)
                                  0
                                  (lambda (k v) (just (list k v))))))
-  (test 'U (imapping-lookup/default
+  (test 'U (imapping-ref/default
             (imapping-update/key letter-imap 20 (constantly (just 'U)))
             20
             #f))
@@ -278,32 +281,32 @@
                        (imapping-alter (imapping 0 'a)
                                        1
                                        (constantly (just 'b)))))
-  (test 101 (imapping-lookup/default
+  (test 101 (imapping-ref/default
              (imapping-alter mixed-imap
                              101
                              (constantly (just 101)))
              101
              #f))
-  (test 101 (imapping-lookup/default
+  (test 101 (imapping-ref/default
              (imapping-alter mixed-imap
                              100
                              (lambda (m) (maybe-map (lambda (n) (+ n 1)) m)))
              100
              #f))
-  (test 'z (imapping-lookup/default
+  (test 'z (imapping-ref/default
             (imapping-alter mixed-imap
                             100
                             (constantly (nothing)))
             100
             'z))
-  (test -16383 (imapping-lookup/default
+  (test -16383 (imapping-ref/default
                 (imapping-alter sparse-imap
                                 -16384
                                 (lambda (m)
                                   (maybe-map (lambda (n) (+ n 1)) m)))
                 -16384
                 #f))
-  (test 'z (imapping-lookup/default
+  (test 'z (imapping-ref/default
             (imapping-alter sparse-imap
                             -16384
                             (constantly (nothing)))
@@ -326,50 +329,50 @@
 
   ;;; min updaters
 
-  (test 'A (imapping-lookup/default
+  (test 'A (imapping-ref/default
             (imapping-update-min letter-imap (constantly (just 'A)))
             0
             #f))
   (test #f (imapping-contains?
             (imapping-update-min letter-imap (constantly (nothing)))
             0))
-  (test -65535 (imapping-lookup/default
+  (test -65535 (imapping-ref/default
                 (imapping-update-min sparse-imap (lambda (v) (just (+ v 1))))
                 -65536
                 #f))
 
-  (test -200 (imapping-lookup/default
+  (test -200 (imapping-ref/default
               (imapping-update-min/key mixed-imap
                                        (lambda (k v) (just (+ k v))))
               -100
               #f))
   (test '(0 a)
-        (imapping-lookup/default
+        (imapping-ref/default
          (imapping-update-min/key letter-imap (lambda (k v) (just (list k v))))
          0
          #f))
 
   ;;; max updaters
 
-  (test 'Z (imapping-lookup/default
+  (test 'Z (imapping-ref/default
             (imapping-update-max letter-imap (constantly (just 'Z)))
             25
             #f))
   (test #f (imapping-contains?
             (imapping-update-max letter-imap (constantly (nothing)))
             25))
-  (test 65537 (imapping-lookup/default
+  (test 65537 (imapping-ref/default
                 (imapping-update-max sparse-imap (lambda (v) (just (+ v 1))))
                 65536
                 #f))
 
-  (test 200 (imapping-lookup/default
+  (test 200 (imapping-ref/default
              (imapping-update-max/key mixed-imap
                                       (lambda (k v) (just (+ k v))))
              100
              #f))
   (test '(25 z)
-        (imapping-lookup/default
+        (imapping-ref/default
          (imapping-update-max/key letter-imap (lambda (k v) (just (list k v))))
          25
          #f))
