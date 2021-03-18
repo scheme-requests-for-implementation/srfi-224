@@ -200,6 +200,40 @@ are combined with <em>proc</em>, which is a procedure of type <code>* * → *</c
 <em>proc</em> is called on the new and old values (in that order) associated
 with a duplicated key and is expected to return a value for the key.</p>
 
+<p><code>(imapping-adjoin-alist</code> <em>imap alist</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping containing all of the associations of
+<em>imap</em> as well as the associations of <em>alist</em>, which must be
+a <code>list[pair(exact-integer, *)]</code> associating keys to values.
+If any key in <em>alist</em> already has an association in <em>imap</em>, the
+original association is preserved.</p>
+
+<p><code>(imapping-adjoin-alist imap key)</code> is equivalent to
+<code>(imapping-insert-alist imap key (lambda (_new old) old))</code>.</p>
+
+<p><code>(imapping-set-alist</code> <em>imap alist</em><code>) → imapping</code></p>
+
+<p>Returns a new imapping containing all of the associations of
+<em>imap</em> as well as the associations of <em>alist</em>, which must be
+a <code>list[pair(exact-integer, *)]</code> associating keys to values.
+If any key in <em>alist</em> already has an association in <em>imap</em>,
+this association is replaced by the one from <em>alist</em>.</p>
+
+<p><code>(imapping-set-alist imap key)</code> is equivalent to
+<code>(imapping-insert-alist imap key (lambda (new _old) new))</code>.</p>
+
+<p><code>(imapping-insert-alist</code> <em>imap alist combine</em><code>) → imapping</code></p>
+
+<em>combine</em> is a procedure of type <code>* * → *</code>.
+
+<p>Returns a new imapping containing all of the associations of
+<em>imap</em> as well as the associations of <em>alist</em>, which must be
+a <code>list[pair(exact-integer, *)]</code> associating keys to values.
+If any key <em>k</em> in <em>alist</em> already has an association in <em>imap</em>,
+then the association <em>(k, v)</em> is added to the resulting imapping, where
+<em>v</em> is the result of applying <em>combine</em> to the new and the old values
+(in that order) associated with <em>k</em>.</p>
+
 <p><code>(imapping-adjust imap k proc) → imapping</code>
 <code>(imapping-adjust/key imap k proc) → imapping</code></p>
 

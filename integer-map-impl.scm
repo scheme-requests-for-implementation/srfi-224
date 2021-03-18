@@ -148,6 +148,26 @@
                   (imapping-trie imap)
                   ps)))))
 
+;; Add the associations of alist to imap, ignoring associations whose
+;; keys are already present.
+(define (imapping-adjoin-alist imap alist)
+  (imapping-insert-alist imap alist second))
+
+;; Add the associations of alist to imap, replacing associations whose
+;; keys are already present.
+(define (imapping-set-alist imap alist)
+  (imapping-insert-alist imap alist first))
+
+(define (imapping-insert-alist imap alist combine)
+  (assume (imapping? imap))
+  (assume (pair-or-null? alist))
+  (assume (procedure? combine))
+  (raw-imapping
+   (fold (pmatch-lambda*
+           (((,k . ,v) ,t) (trie-insert/combine t k v combine)))
+         (imapping-trie imap)
+         alist)))
+
 (define (imapping-adjust imap key proc)
   (assume (imapping? imap))
   (assume (valid-integer? key))

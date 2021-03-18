@@ -23,6 +23,7 @@
    imapping-min imapping-max
    imapping-lookup imapping-ref imapping-ref/default imapping-adjoin
    imapping-adjoin/combine imapping-adjust imapping-adjust/key
+   imapping-adjoin-alist imapping-set-alist imapping-insert-alist
    imapping-delete imapping-delete-all imapping-alter imapping-update
    imapping-update/key
    imapping-delete-min imapping-delete-max
