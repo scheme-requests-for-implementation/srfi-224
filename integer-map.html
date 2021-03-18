@@ -155,12 +155,17 @@ exact integer.</p>
 
 <h2>Accessors</h2>
 
-<p><code>(imapping-lookup</code> <em>imap k</em><code>) → *-or-false</code></p>
+<p><code>(imapping-lookup</code> <em>imap k</em><code>) → maybe[*]</code></p>
+
+<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
+Otherwise, returns Nothing.</p>
+
+<p><code>(imapping-ref</code> <em>imap k</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
-Otherwise, returns <code>#f</code>.</p>
+Otherwise, an error is signaled.</p>
 
-<p><code>(imapping-lookup-default</code> <em>imap k obj</em><code>) → *</code></p>
+<p><code>(imapping-ref-default</code> <em>imap k obj</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, returns <em>obj</em>.</p>
