@@ -78,6 +78,14 @@
                      (imapping-keys-set
                       (alist->imapping (list->dup-alist ks))))))
 
+  (test #t (null? (imapping-keys empty-imap)))
+  (test (map car mixed-seq) (imapping-keys mixed-imap))
+  (test (map car sparse-seq) (imapping-keys sparse-imap))
+
+  (test #t (null? (imapping-values empty-imap)))
+  (test (map cdr mixed-seq) (imapping-values mixed-imap))
+  (test (map cdr sparse-seq) (imapping-values sparse-imap))
+
   (test #t (imapping-empty? (iset->imapping values (iset))))
   (let* ((ks '(-2 -1 0 1 2)) (set (list->iset ks)))
     (test #t (imapping=? default-comp
