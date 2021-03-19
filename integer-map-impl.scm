@@ -248,14 +248,14 @@
 
 (define (imapping-count pred imap)
   (assume (procedure? pred))
-  (imapping-fold-left (lambda (v acc)
-                        (if (pred v) (+ 1 acc) acc))
-                      0
-                      imap))
+  (imapping-fold (lambda (v acc)
+                   (if (pred v) (+ 1 acc) acc))
+                 0
+                 imap))
 
 (define (imapping-count/key pred imap)
   (assume (procedure? pred))
-  (imapping-fold-left/key
+  (imapping-fold/key
    (lambda (k v sum)
      (if (pred k v) (+ 1 sum) sum))
    0
@@ -265,19 +265,19 @@
   (assume (procedure? pred))
   (call-with-current-continuation
    (lambda (return)
-     (imapping-fold-left (lambda (v _)
-                           (and (pred v) (return #t)))
-                         #f
-                         imap))))
+     (imapping-fold (lambda (v _)
+                      (and (pred v) (return #t)))
+                    #f
+                    imap))))
 
 (define (imapping-every? pred imap)
   (assume (procedure? pred))
   (call-with-current-continuation
    (lambda (return)
-     (imapping-fold-left (lambda (v _)
-                           (or (pred v) (return #f)))
-                         #t
-                         imap))))
+     (imapping-fold (lambda (v _)
+                      (or (pred v) (return #f)))
+                    #t
+                    imap))))
 
 ;;;; Mapping and folding
 
@@ -299,21 +299,21 @@
 
 (define (imapping-for-each proc imap)
   (assume (procedure? proc))
-  (imapping-fold-left (lambda (v _)
-                        (proc v)
-                        (unspecified))
-                      (unspecified)
-                      imap))
+  (imapping-fold (lambda (v _)
+                   (proc v)
+                   (unspecified))
+                 (unspecified)
+                 imap))
 
 (define (imapping-for-each/key proc imap)
   (assume (procedure? proc))
-  (imapping-fold-left/key (lambda (k v _)
-                            (proc k v)
-                            (unspecified))
-                          (unspecified)
-                          imap))
+  (imapping-fold/key (lambda (k v _)
+                       (proc k v)
+                       (unspecified))
+                     (unspecified)
+                     imap))
 
-(define (imapping-fold-left proc nil imap)
+(define (imapping-fold proc nil imap)
   (assume (procedure? proc))
   (assume (imapping? imap))
   (let ((trie (imapping-trie imap)))
@@ -324,7 +324,7 @@
        (trie-fold-left proc (trie-fold-left proc nil l) r))
       (else (trie-fold-left proc nil trie)))))
 
-(define (imapping-fold-left/key proc nil imap)
+(define (imapping-fold/key proc nil imap)
   (assume (procedure? proc))
   (assume (imapping? imap))
   (let ((trie (imapping-trie imap)))
@@ -421,9 +421,9 @@
 
 (define (imapping-keys-set imap)
   (assume (imapping? imap))
-  (imapping-fold-left/key (lambda (k _v set) (iset-adjoin set k))
-                          (iset)
-                          imap))
+  (imapping-fold/key (lambda (k _v set) (iset-adjoin set k))
+                     (iset)
+                     imap))
 
 (define (imapping-values imap)
   (imapping-fold-right cons '() imap))

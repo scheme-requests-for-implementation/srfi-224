@@ -365,25 +365,26 @@ order of keys.</p>
 <p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
 
-<p><code>(imapping-fold-left</code> <em>kons knil imap</em><code>) → *</code><br>
+<p><code>(imapping-fold</code> <em>kons knil imap</em><code>) → *</code><br>
 <code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-left/key</code> <em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold/key</code> <em>kons knil imap</em><code>) → *</code><br>
 <code>(imapping-fold-right/key</code> <em>kons knil imap</em><code>) → *</code></p>
 
-<p>The <em>kons</em> argument of <code>imapping-fold-left</code> and <code>-right</code> is a
-procedure of type <code>* * → *</code>; that of <code>imapping-fold-left/key</code>
-and of <code>-right/key</code> is of type <code>exact-integer * * → *</code>.
+<p>The <em>kons</em> argument of <code>imapping-fold</code> and <code>imapping-fold-right</code> is a
+procedure of type <code>* * → *</code>; that of <code>imapping-fold/key</code>
+and of <code>imapping-fold-right/key</code> is of type <code>exact-integer * * → *</code>.
 <em>knil</em> can be any object.</p>
 
 <p>Folds <em>kons</em> over <em>imap</em>, using <em>knil</em> as the base value.  At
 each step, <em>kons</em> is applied to the value of an association and to
 the result of the last application.
-<code>imapping-fold-left</code> folds in ascending numerical order of keys;
+<code>imapping-fold</code> folds in ascending numerical order of keys;
 <code>imapping-fold-right</code> folds in descending order.</p>
 
-<p><code>imapping-fold-left/key</code> and <code>imapping-fold-right/key</code> are the same
-as <code>imapping-fold-left</code> and <code>imapping-fold-right</code>, respectively,
-except that <em>kons</em> is also passed the key of each association.</p>
+<p><code>imapping-fold/key</code> and <code>imapping-fold-right/key</code> are the same
+as <code>imapping-fold</code> and <code>imapping-fold-right</code>, respectively,
+except that <em>kons</em> is also passed the key of each association as its first
+argument.</p>
 
 <p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code><br>
 <code>(imapping-map/key-&gt;list</code> <em>proc imap</em><code>) → list</code></p>

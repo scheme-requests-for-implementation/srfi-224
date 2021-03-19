@@ -474,19 +474,19 @@
                                  (imapping 0 'a 1 'b 2 'c))
           xs))
 
-  ;;; fold-left
+  ;;; fold
 
-  (test 'z (imapping-fold-left (nth 1) 'z empty-imap))
+  (test 'z (imapping-fold (nth 1) 'z empty-imap))
   (test (reverse '(a b c d e f g h i j k l m n o p q r s t u v w x y z))
-        (imapping-fold-left cons '() letter-imap))
-  (test (reverse (iota 9 -100 25)) (imapping-fold-left cons '() mixed-imap))
-  (test (fold + 0 (iota 9 -100 25)) (imapping-fold-left + 0 mixed-imap))
+        (imapping-fold cons '() letter-imap))
+  (test (reverse (iota 9 -100 25)) (imapping-fold cons '() mixed-imap))
+  (test (fold + 0 (iota 9 -100 25)) (imapping-fold + 0 mixed-imap))
 
   (test (reverse '((0 . "") (1 . "b") (2 . "cc")))
-        (imapping-fold-left/key (lambda (k c as)
-                                  (cons (cons k (make-string k c)) as))
-                                '()
-                                (imapping 0 #\a 1 #\b 2 #\c)))
+        (imapping-fold/key (lambda (k c as)
+                             (cons (cons k (make-string k c)) as))
+                           '()
+                           (imapping 0 #\a 1 #\b 2 #\c)))
 
   ;;; fold-right
 
