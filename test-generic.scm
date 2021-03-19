@@ -218,49 +218,6 @@
                #f))
   (test #t (imapping-empty? (imapping-adjust/key empty-imap 1 list)))
 
-  ;;; alist insertion
-
-  (test #t (imapping-empty? (imapping-adjoin-alist empty-imap '())))
-  (test #t (imapping=? default-comparator
-                       (imapping 0 'a)
-                       (imapping-adjoin-alist empty-imap '((0 . a)))))
-  (test 'zap (imapping-ref/default
-              (imapping-adjoin-alist sparse-imap '((-20 . zap)))
-              -20
-              #f))
-  (test -50 (imapping-ref/default
-             (imapping-adjoin-alist mixed-imap '((-50 . zap)))
-             -50
-             #f))
-  (test #t (imapping-empty? (imapping-set-alist empty-imap '())))
-  (test #t (imapping=? default-comparator
-                       (imapping 0 'a)
-                       (imapping-set-alist empty-imap '((0 . a)))))
-  (test 'zap (imapping-ref/default
-              (imapping-set-alist sparse-imap '((-20 . zap)))
-              -20
-              #f))
-  (test 'zap (imapping-ref/default
-              (imapping-set-alist mixed-imap '((-50 . zap)))
-              -50
-              #f))
-  (test #t (imapping-empty? (imapping-insert-alist empty-imap '() first)))
-  (test #t (imapping=? default-comparator
-                       (imapping 0 'a)
-                       (imapping-insert-alist empty-imap '((0 . a)) first)))
-  (test 'zap (imapping-ref/default
-              (imapping-insert-alist sparse-imap '((-20 . zap)) first)
-              -20
-              #f))
-  (test 'zap (imapping-ref/default
-              (imapping-insert-alist mixed-imap '((-50 . zap)) first)
-              -50
-              #f))
-  (test -50 (imapping-ref/default
-             (imapping-insert-alist mixed-imap '((-50 . zap)) second)
-             -50
-             #f))
-
   ;;; delete & delete-all
 
   (test #f (imapping-contains? (imapping-delete letter-imap 10) 10))
