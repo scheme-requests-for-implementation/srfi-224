@@ -544,6 +544,75 @@
               (imapping-map/key->list (lambda (k c) (cons k (make-string k c)))
                                       (imapping 0 #\a 1 #\b 2 #\c)))
 
+  ;;; filter-map
+
+  ;; filter-map is equivalent to map if the mapped proc always returns
+  ;; a truthy value.  (Ignoring side-effects.)
+  (test-eqv #t (imapping=? default-comp
+                           empty-imap
+                           (imapping-filter-map (constantly #t) empty-imap)))
+  (test-eqv #t (imapping=? default-comp
+                           mixed-imap
+                           (imapping-filter-map values mixed-imap)))
+  (test-eqv #t (imapping=? default-comp
+                           (imapping 0 "" 1 "a" 2 "aa")
+                           (imapping-filter-map
+                            (lambda (m) (make-string m #\a))
+                            (imapping 0 0 1 1 2 2))))
+  (test-eqv #f (imapping-any? negative? (imapping-filter-map abs sparse-imap)))
+  ;; filter-map empties a mapping if the mapped proc always returns #f.
+  (test-eqv #t
+            (every imapping-empty?
+                   (map (lambda (m) (imapping-filter-map (constantly #f) m))
+                        (list empty-imap letter-imap mixed-imap sparse-imap))))
+  ;; Using filter-map as filter.
+  (test-equal (filter (lambda (p) (even? (cdr p))) mixed-seq)
+              (imapping->alist
+               (imapping-filter-map (lambda (v) (and (even? v) v))
+                                    mixed-imap)))
+  ;; Filtering and transforming the values of a mapping.
+  (test-equal (filter-map (lambda (p)
+                            (and (even? (cdr p))
+                                 (cons (car p) (abs (cdr p)))))
+                          sparse-seq)
+              (imapping->alist
+               (imapping-filter-map (lambda (v) (and (even? v) (abs v)))
+                                    sparse-imap)))
+
+  ;; filter-map/key is equivalent to map/key if the mapped procedure
+  ;; always returns a truthy value.  (Ignoring side-effects.)
+  (test-eqv #t (imapping=? default-comp
+                           empty-imap
+                           (imapping-filter-map/key (constantly #t)
+                                                    empty-imap)))
+  (test-eqv #t (imapping=? default-comp
+                           mixed-imap
+                           (imapping-filter-map/key (nth 1) mixed-imap)))
+  (test-eqv #t (imapping=? default-comp
+                           (imapping 0 "" 1 "b" 2 "cc")
+                           (imapping-filter-map/key
+                            make-string
+                            (imapping 0 #\a 1 #\b 2 #\c))))
+  ;; filter-map/key empties a mapping if the mapped proc always returns #f.
+  (test-eqv #t
+            (every imapping-empty?
+                   (map (lambda (m) (imapping-filter-map/key (constantly #f) m))
+                        (list empty-imap letter-imap mixed-imap sparse-imap))))
+  ;; Using filter-map/key as filter.
+  (test-equal (filter (lambda (p) (even? (cdr p))) mixed-seq)
+              (imapping->alist
+               (imapping-filter-map/key (lambda (k v) (and (even? v) v))
+                                        mixed-imap)))
+  ;; Filtering and transforming the values of a mapping.
+  (test-equal (filter-map (lambda (p)
+                            (let ((k (car p)) (v (cdr p)))
+                              (and (even? k) (cons k (+ k v)))))
+                          sparse-seq)
+              (imapping->alist
+               (imapping-filter-map/key (lambda (k v)
+                                          (and (even? k) (+ k v)))
+                                        sparse-imap)))
+
   ;;; filter
 
   (test-eqv #t

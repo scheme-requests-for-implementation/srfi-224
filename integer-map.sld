@@ -41,6 +41,7 @@
    imapping-map imapping-map/key
    imapping-map->list imapping-map/key->list
    imapping-for-each imapping-for-each/key
+   imapping-filter-map imapping-filter-map/key
    imapping-filter imapping-filter/key imapping-remove imapping-remove/key
    imapping-partition imapping-partition/key
    imapping->alist

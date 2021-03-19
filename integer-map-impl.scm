@@ -371,6 +371,23 @@
                            '()
                            imap))
 
+(define (%imapping-filter-map proc imap with-key)
+  (assume (procedure? proc))
+  (assume (imapping? imap))
+  (raw-imapping
+   (imapping-fold/key (lambda (k v t)
+                        (pmatch (if with-key (proc k v) (proc v))
+                          (#f t)
+                          (,v* (trie-insert t k v*))))
+                      the-empty-trie
+                      imap)))
+
+(define (imapping-filter-map proc imap)
+  (%imapping-filter-map proc imap #f))
+
+(define (imapping-filter-map/key proc imap)
+  (%imapping-filter-map proc imap #t))
+
 (define (imapping-filter pred imap)
   (assume (procedure? pred))
   (assume (imapping? imap))

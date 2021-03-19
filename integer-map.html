@@ -394,6 +394,21 @@ argument.</p>
 <p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
 
+<p><code>(imapping-filter-map</code> <em>proc imap</em><code>) → imapping</code><br>
+<code>(imapping-filter-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
+
+<p>The <em>proc</em> parameter of <code>imapping-filter-map</code> is a
+procedure of type <code>* → *-or-#f</code>; that of
+<code>imapping-filter-map/key</code> is of type
+<code>exact-integer * → *-or-#f</code>.</p>
+
+<p><code>imapping-filter-map</code> is similar to <code>imapping-map</code>,
+but only associations for which <em>proc</em> returns a true value are
+added to the new imapping.</p>
+
+<p><code>imapping-filter-map/key</code> is the same, except that <em>proc</em>
+is called on the key and value of each association.</p>
+
 <h2>Filter</h2>
 
 <p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code>
