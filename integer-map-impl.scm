@@ -169,11 +169,12 @@
     ((imap . keys)
      (imapping-delete-all imap keys))))
 
-;; FIXME: Uses keys as an lset, which is inefficient.
 (define (imapping-delete-all imap keys)
   (assume (imapping? imap))
   (assume (or (pair? keys) (null? keys)))
-  (imapping-remove/key (lambda (k _) (memv k keys)) imap))
+  (let ((key-set (list->iset keys)))
+    (imapping-remove/key (lambda (k _) (iset-contains? key-set k))
+                         imap)))
 
 ;; Update the association (key, value) in trie with the result of
 ;; (mproc value), which is a Maybe value.

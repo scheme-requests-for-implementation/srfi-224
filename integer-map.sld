@@ -5,7 +5,7 @@
           (only (srfi 128) comparator? =?)
           (srfi 189)
           (srfi 143)
-          (only (srfi 217) iset? iset-fold))
+          (only (srfi 217) iset? iset-fold list->iset iset-contains?))
 
   (cond-expand
     ((library (srfi 145))
