@@ -419,6 +419,12 @@
 (define (imapping-keys imap)
   (imapping-fold-right/key (lambda (k _ ks) (cons k ks)) '() imap))
 
+(define (imapping-keys-set imap)
+  (assume (imapping? imap))
+  (imapping-fold-left/key (lambda (k _v set) (iset-adjoin set k))
+                          (iset)
+                          imap))
+
 (define (imapping-values imap)
   (imapping-fold-right cons '() imap))
 

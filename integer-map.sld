@@ -5,7 +5,8 @@
           (only (srfi 128) comparator? =?)
           (srfi 189)
           (srfi 143)
-          (only (srfi 217) iset? iset-fold list->iset iset-contains?))
+          (only (srfi 217) iset? iset-fold list->iset iset-contains?
+                           iset-adjoin iset))
 
   (cond-expand
     ((library (srfi 145))
@@ -34,6 +35,7 @@
    imapping-count/key
    imapping-any? imapping-every?
    imapping-keys imapping-values
+   imapping-keys-set
    imapping-fold-left imapping-fold-right
    imapping-fold-left/key imapping-fold-right/key
    imapping-map imapping-map/key
