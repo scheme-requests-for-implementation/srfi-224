@@ -39,12 +39,17 @@
              (display *tests-failed*)
              (newline)))))))
 
-;;; SRFI 64-ish shim
+;;; SRFI 64 shim
 
-(define-syntax test
+(define-syntax test-equal
   (syntax-rules ()
     ((_ expected expr)
      (check expr => expected))))
+
+(define-syntax test-eqv
+  (syntax-rules ()
+    ((_ expected expr)
+     (check expr (=> eqv?) expected))))
 
 (define-syntax test-group
   (syntax-rules ()
@@ -57,4 +62,4 @@
       (newline)
       t ...))))
 
-(include "test-generic.scm")
+(include "test-body.scm")

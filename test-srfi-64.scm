@@ -3,10 +3,7 @@
         (srfi 128)
         (srfi 189)
         (srfi 64)
+        (srfi 217)
         (integer-map))
 
-(define-syntax test
-  (syntax-rules ()
-    ((test . rest) (test-equal . rest))))
-
-(include "test-generic.scm")
+(include "test-body.scm")
