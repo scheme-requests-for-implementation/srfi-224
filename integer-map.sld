@@ -4,7 +4,8 @@
           (only (srfi 1) fold every)
           (only (srfi 128) comparator? =?)
           (srfi 189)
-          (srfi 143))
+          (srfi 143)
+          (only (srfi 217) iset? iset-fold))
 
   (cond-expand
     ((library (srfi 145))
@@ -44,6 +45,7 @@
    imapping=? imapping<? imapping>? imapping<=? imapping>=?
    imapping-union imapping-intersection imapping-difference imapping-xor
    alist->imapping
+   iset->imapping
    imapping-open-interval imapping-closed-interval
    imapping-open-closed-interval imapping-closed-open-interval
    isubmapping= isubmapping< isubmapping<= isubmapping>=

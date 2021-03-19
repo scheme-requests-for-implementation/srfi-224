@@ -71,6 +71,16 @@
   (test '((10 . a)) (imapping->alist (imapping 10 'a)))
   (test mixed-seq (imapping->alist mixed-imap))
   (test sparse-seq (imapping->alist sparse-imap))
+
+  (test #t (imapping-empty? (iset->imapping values (iset))))
+  (let* ((ks '(-2 -1 0 1 2)) (set (list->iset ks)))
+    (test #t (imapping=? default-comp
+                         (iset->imapping values set)
+                         (alist->imapping (list->dup-alist ks))))
+    (test #t (imapping=? default-comp
+                         (iset->imapping abs set)
+                         (alist->imapping
+                          (map (lambda (k) (cons k (abs k))) ks)))))
   )
 
 (test-group "Constructors"

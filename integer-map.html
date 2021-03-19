@@ -135,6 +135,17 @@ This may be preferable when <em>f</em> is expensive to apply.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.</p>
 
+<p><code>(iset-&gt;imapping</code> <em>proc iset</em><code>) → imapping</code></p>
+
+<p><em>proc</em> is of type <code>exact-integer → *</code>.</p>
+
+<p>Returns a new imapping constructed from the elements of the integer
+set <em>iset</em> (see
+<a href="https://srfi.schemers.org/srfi-217/srfi-217.html">SRFI 217</a>).
+For each integer <em>k</em> in <em>iset</em>, the association
+(<em>k</em>, (<em>proc</em> <em>k</em>)) is added to the imapping.
+<em>iset</em> is traversed in an unspecified order.</p>
+
 <h2>Predicates</h2>
 
 <p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
