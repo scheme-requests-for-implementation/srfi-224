@@ -66,6 +66,11 @@ resulting imapping contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
 
+<p>Examples:</p>
+<pre class="example"><code>(imapping-&gt;alist (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b) (2 . c))
+(imapping-&gt;alist (imapping -10 'foo -10 'bar)) ⇒ ((-10 . foo))
+</code></pre>
+
 <p><code>(imapping-unfold</code> <em>stop? mapper successor seed</em><code>) → imapping</code></p>
 
 The arguments have the following types:
@@ -83,6 +88,15 @@ and an associated value, which are adjoined to the new imapping.
 Unfolding terminates when the predicate <em>stop?</em> returns a true
 value when applied to the current seed.</p>
 
+<p>Example:</p>
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-unfold (lambda (i) (= i 4))
+                  (lambda (i) (values i (make-string i #\a)))
+                  (lambda (i) (+ i 1))
+                  0))
+ ⇒ ((0 . "") (1 . "a") (2 . "aa") (3 . "aaa"))
+</code></pre>
+
 <p><code>(imapping-unfold-maybe</code> <em>mproc seed</em><code>) → imapping</code></p>
 
 The arguments have the following types:
@@ -96,6 +110,16 @@ a Maybe value.  If this value is Nothing, then unfolding terminates.
 If it is Just <em>k v seed′</em>, then a new association
 <em>(k, v)</em> is added to the resulting imapping and unfolding continues
 with <em>seed′</em>.</p>
+
+<p>Example:</p>
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-unfold-maybe (lambda (i)
+                          (if (&lt; i -3)
+                              (nothing)
+                              (just i (square i) (- i 1))))
+                        -1))
+ ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
+</code></pre>
 
 <strong>Rationale:</strong> As well as sometimes leading to more compact
 expressions than the
@@ -135,6 +159,11 @@ This may be preferable when <em>f</em> is expensive to apply.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.</p>
 
+<p>Example:</p>
+<pre class="example"><code>(imapping-&gt;alist (alist-&gt;imapping '((1 . b) (0 . a) (2 . c))))
+ ⇒ '((0 . a) (1 . b) (2 . c))
+</code></pre>
+
 <p><code>(iset-&gt;imapping</code> <em>proc iset</em><code>) → imapping</code></p>
 
 <p><em>proc</em> is of type <code>exact-integer → *</code>.</p>
@@ -146,6 +175,11 @@ For each integer <em>k</em> in <em>iset</em>, the association
 (<em>k</em>, (<em>proc</em> <em>k</em>)) is added to the imapping.
 <em>iset</em> is traversed in an unspecified order.</p>
 
+<p>Example:</p>
+<pre class="example"><code>(imapping-&gt;alist (iset-&gt;imapping square (iset 2 4 6 8)))
+ ⇒ ((2 . 4) (4 . 16) (6 . 36) (8 . 64))
+</code></pre>
+
 <h2>Predicates</h2>
 
 <p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
@@ -155,14 +189,26 @@ For each integer <em>k</em> in <em>iset</em>, the association
 <p><code>(imapping-contains? imap k) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em> contains an association for key <em>k</em>.</p>
+<p>Examples:</p>
+<pre class="example"><code>(imapping-contains? (imapping 1 'b) 1) ⇒ #t
+(imapping-contains? (imapping 1 'b) 0) ⇒ #f
+</code></pre>
 
 <p><code>(imapping-empty?</code> <em>imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em> contains no associations.</p>
+<p>Examples:</p>
+<pre class="example"><code>(imapping-empty? (alist-&gt;imapping '())) ⇒ #t
+(imapping-empty? (alist-&gt;imapping '((0 . a)))) ⇒ #f
+</code></pre>
 
 <p><code>(imapping-disjoint?</code> <em>imap</em>₁ <em>imap</em>₂<code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em>₁ and <em>imap</em>₂ have no keys in common.</p>
+<p>Examples:</p>
+<pre class="example"><code>(imapping-disjoint? (imapping 0 'a) (imapping 1 'b)) ⇒ #t
+(imapping-disjoint? (imapping 1 '(b)) (imapping 1 'b)) ⇒ #f
+</code></pre>
 
 <h2>Accessors</h2>
 
@@ -170,16 +216,32 @@ For each integer <em>k</em> in <em>iset</em>, the association
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
+<p>Examples:</p>
+<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just['zap]
+(imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
+</code></pre>
 
 <p><code>(imapping-ref</code> <em>imap k</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, an error is signaled.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-ref (imapping 36864 'zap) 36864) ⇒ zap
+(imapping-ref (imapping 0 'a) 36864) ⇒ ; error
+</code></pre>
+
 <p><code>(imapping-ref/default</code> <em>imap k obj</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, returns <em>obj</em>.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-ref/default (imapping 36864 'zap) 36864 #f) ⇒ zap
+(imapping-ref/default (imapping 0 'a) 36864 #f) ⇒ #f
+</code></pre>
 
 <p><code>(imapping-min</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
@@ -187,11 +249,23 @@ Otherwise, returns <em>obj</em>.</p>
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
 Nothing.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ just[0, 'a]
+(imapping-min (imapping)) ⇒ nothing
+</code></pre>
+
 <p><code>(imapping-max</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>imap</em>.
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
 Nothing.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-max (imapping 0 'a 1 'b 2 'c)) ⇒ just[2, 'c]
+(imapping-max (imapping)) ⇒ nothing
+</code></pre>
 
 <h2>Updaters</h2>
 
