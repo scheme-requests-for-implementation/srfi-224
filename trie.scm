@@ -369,6 +369,24 @@
            (branch p m (update l) r)))
       (else (update trie)))))
 
+(define (trie-pop-min trie)
+  (letrec
+   ((pop
+     (tmatch-lambda
+       (empty (error "trie-pop-min: empty trie"))
+       ((leaf ,k ,v) (values k v the-empty-trie))
+       ((branch ,p ,m ,l ,r)
+        (let-values (((k v l*) (pop l)))
+          (values k v (branch p m l* r)))))))
+    (tmatch trie
+      ((branch ,p ,m ,l ,r)
+       (if (fxnegative? m)
+           (let-values (((k v r*) (pop r)))
+             (values k v (branch p m l r*)))
+           (let-values (((k v l*) (pop l)))
+             (values k v (branch p m l* r)))))
+      (else (pop trie)))))
+
 (define (trie-max trie)
   (letrec
    ((search
@@ -399,6 +417,24 @@
            (branch p m (update l) r)
            (branch p m l (update r))))
       (else (update trie)))))
+
+(define (trie-pop-max trie)
+  (letrec
+   ((pop
+     (tmatch-lambda
+       (empty (error "trie-pop-max: empty trie"))
+       ((leaf ,k ,v) (values k v the-empty-trie))
+       ((branch ,p ,m ,l ,r)
+        (let-values (((k v r*) (pop r)))
+          (values k v (branch p m l r*)))))))
+    (tmatch trie
+      ((branch ,p ,m ,l ,r)
+       (if (fxnegative? m)
+           (let-values (((k v l*) (pop l)))
+             (values k v (branch p m l* r)))
+           (let-values (((k v r*) (pop r)))
+             (values k v (branch p m l r*)))))
+      (else (pop trie)))))
 
 ;;;; Comparisons
 

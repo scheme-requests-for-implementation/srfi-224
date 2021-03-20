@@ -218,6 +218,13 @@
   (raw-imapping
    (%trie-update-min/key (imapping-trie imap) success)))
 
+(define (imapping-pop-min imap)
+  (assume (imapping? imap))
+  (if (imapping-empty? imap)
+      (nothing)
+      (let-values (((k v trie) (trie-pop-min (imapping-trie imap))))
+        (just k v (raw-imapping trie)))))
+
 ;; Delete the element with the greatest key, or return an empty
 ;; mapping if `imap' is empty.
 (define (imapping-delete-max imap)
@@ -235,6 +242,13 @@
   (assume (procedure? success))
   (raw-imapping
    (%trie-update-max/key (imapping-trie imap) success)))
+
+(define (imapping-pop-max imap)
+  (assume (imapping? imap))
+  (if (imapping-empty? imap)
+      (nothing)
+      (let-values (((k v trie) (trie-pop-max (imapping-trie imap))))
+        (just k v (raw-imapping trie)))))
 
 ;;;; The whole imapping
 

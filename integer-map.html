@@ -455,6 +455,14 @@ as <code>imapping-update-min</code> and <code>imapping-update-max</code>, respec
 except that <em>mproc</em> is called on <em>k</em> and its associated value, in that
 order.</p>
 
+<p><code>(imapping-pop-min</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
+<code>(imapping-pop-max</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
+
+<p>Returns Just <em>k v imap′</em>, where (<em>k</em>, <em>v</em>) is the association of
+<em>imap</em> with the least/greatest key and <em>imap′</em> is a newly-allocated
+imapping containing all of the associations of <em>imap</em> except for
+(<em>k</em>, <em>v</em>).  If <em>imap</em> is empty, returns Nothing.</p>
+
 <h2>Size</h2>
 
 <p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>

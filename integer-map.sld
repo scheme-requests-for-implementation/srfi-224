@@ -30,6 +30,7 @@
    imapping-delete-min imapping-delete-max
    imapping-update-min imapping-update-max
    imapping-update-min/key imapping-update-max/key
+   imapping-pop-min imapping-pop-max
    imapping-size
    imapping-count
    imapping-count/key

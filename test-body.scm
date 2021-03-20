@@ -423,6 +423,36 @@
                                         (lambda (k v) (just (list k v))))
                25
                #f))
+
+  ;;; pop-min
+
+  (test-eqv #t (nothing? (imapping-pop-min empty-imap)))
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (let-values (((k v im*)
+                             (maybe-ref/default (imapping-pop-min im) #f))
+                            ((test-k test-v)
+                             (maybe-ref/default (imapping-min im) #f)))
+                 (and (= k test-k)
+                      (eqv? v test-v)
+                      (imapping=? default-comp (imapping-delete-min im) im*))))
+             (list mixed-imap letter-imap sparse-imap)))  ; non-empty only
+
+  ;;; pop-min
+
+  (test-eqv #t (nothing? (imapping-pop-min empty-imap)))
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (let-values (((k v im*)
+                             (maybe-ref/default (imapping-pop-max im) #f))
+                            ((test-k test-v)
+                             (maybe-ref/default (imapping-max im) #f)))
+                 (and (= k test-k)
+                      (eqv? v test-v)
+                      (imapping=? default-comp (imapping-delete-max im) im*))))
+             (list mixed-imap letter-imap sparse-imap)))  ; non-empty only
   )
 
 (test-group "Whole imappings"
