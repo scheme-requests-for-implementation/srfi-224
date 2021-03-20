@@ -278,12 +278,24 @@ The number of key/value arguments must be even.</p>
 <p>If any of the keys already have associations in <em>imap</em>, the old
 associations are replaced.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-adjoin (imapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
+</code></pre>
+
 <p><code>(imapping-adjoin/combine</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
 
 <p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>* * → *</code>.
 <em>proc</em> is called on the new and old values (in that order) associated
 with a duplicated key and is expected to return a value for the key.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-adjoin/combine (imapping 0 "a") string-append 0 "foo" 1 "bar"))
+ ⇒ ((0 . "afoo") (1 . "bar"))
+</code></pre>
 
 <p><code>(imapping-adjust imap k proc) → imapping</code><br>
 <code>(imapping-adjust/key imap k proc) → imapping</code></p>
@@ -293,16 +305,39 @@ is replaced by <em>(n, (proc v))</em>, or by <em>(n, (proc n v))</em> in the
 case of <code>imapping-adjust/key</code>.  If <em>n</em> has no association in <em>imap</em>,
 then (a copy of) <em>imap</em> is returned.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-adjust (imapping 0 -200 1 -100) 0 abs))
+ ⇒ '((0 . 200) (1 -100))
+
+(imapping-&gt;alist
+ (imapping-adjust/key (imapping 64 "var")
+                      64
+                      (lambda (k s) (string-append s (number-&gt;string k)))))
+ ⇒ ((64 . "var64"))
+</code></pre>
+
 <p><code>(imapping-delete imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
 association in <em>imap</em>, it is ignored.</p>
 
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-delete (imapping 0 -200 1 -100) 0)) ⇒ ((1 . -100))
+</code></pre>
+
 <p><code>(imapping-delete-all</code> <em>imap list</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-delete-all (imapping 0 'a 1 'b 2 'c) '(1 2)))
+ ⇒ ((0 . a))
+</code></pre>
 
 <p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code><br>
 <code>(imapping-update/key</code> <em>imap k mproc</em><code>) → imapping</code></p>
@@ -326,6 +361,23 @@ in terms of <code>imapping-update</code>, e.g.:</p>
   (imapping-adjoin imap k v)
 ≡
   (imapping-update imap k (lambda (_) (just v)))
+</code></pre>
+<p>Examples:</p>
+
+<pre class="example"><code>;; Delete the association for 1 if its value is a symbol.
+(imapping-&gt;alist
+ (imapping-update (imapping 0 'a 1 'b 2 'c)
+                  1
+                  (lambda (v)
+                    (if (symbol? v)
+                        (nothing)
+                        (just v)))))
+ ⇒ ((0 . a) (2 . c))
+
+;; Replace the value associated with 1.
+(imapping-&gt;alist
+ (imapping-update/key (imapping 0 'a 1 'b 2 'c) 1 (lambda (k _v) (just k))))
+ ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
 <p><code>(imapping-alter</code> <em>imap k proc</em><code>) → imapping</code></p>
@@ -351,6 +403,28 @@ example:</p>
                            (maybe-ref m
                                       nothing
                                       (lambda (v) (f v)))))
+</code></pre>
+
+<p>Examples:</p>
+
+<pre class="example"><code>;; Insert an association for 4 if it's not present.
+(imapping-&gt;alist
+ (imapping-alter (imapping 0 'a 1 'b)
+                 4
+                 (lambda (m)
+                   (if (nothing? m) (just 'e) m))))
+ ⇒ ((0 . a) (1 . b) (4 . e))
+
+;; Delete an association for 1 if its value is a symbol.
+(imapping-&gt;alist
+ (imapping-alter (imapping 0 'a 1 'b)
+                 1
+                 (lambda (m)
+                   (maybe-bind m (lambda (v)
+                                   (if (symbol? v)
+                                       (nothing)
+                                       (just v)))))))
+ ⇒ ((0 . a))
 </code></pre>
 
 <p><code>(imapping-delete-min</code> <em>imap</em><code>) → imapping</code><br>
