@@ -613,6 +613,61 @@
                                           (and (even? k) (+ k v)))
                                         sparse-imap)))
 
+  ;;; map-either
+
+  ;; Mapping `left' with map-either copies the imapping argument as
+  ;; the first returned value.
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (imapping=? default-comp
+                           im
+                           (let-values (((lm rm)
+                                         (imapping-map-either left im)))
+                             lm)))
+             (list empty-imap letter-imap mixed-imap sparse-imap)))
+  ;; Mapping `right' with map-either copies the imapping argument as
+  ;; the second returned value.
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (imapping=? default-comp
+                           im
+                           (let-values (((lm rm)
+                                         (imapping-map-either right im)))
+                             rm)))
+             (list empty-imap letter-imap mixed-imap sparse-imap)))
+  ;; Using map-either to partition an imapping.
+  (test-eqv #t
+            (let-values (((neg pos)
+                          (imapping-map-either
+                           (lambda (n)
+                             (if (negative? n) (left n) (right n)))
+                           sparse-imap)))
+              (and (imapping-every? negative? neg)
+                   (imapping-every? (lambda (x) (not (negative? x))) pos))))
+  ;; Using map-either to split and transform an imapping.
+  (test-eqv #t
+            (let-values (((lm rm)
+                          (imapping-map-either
+                           (lambda (n)
+                             (if (negative? n) (left (abs n)) (right n)))
+                           (imapping -2 -2 -1 -1 3 3 5 5))))
+              (and (imapping=? default-comp lm (imapping -2 2 -1 1))
+                   (imapping=? default-comp rm (imapping 3 3 5 5)))))
+
+  ;; Using map-either/key to split and transform an imapping.
+  (test-eqv #t
+            (let-values (((lm rm)
+                          (imapping-map-either/key
+                           (lambda (k n)
+                             (if (negative? n)
+                                 (left (+ k (abs n)))
+                                 (right (+ k n))))
+                           (imapping -2 -2 -1 -1 3 3 5 5))))
+              (and (imapping=? default-comp lm (imapping -2 0 -1 0))
+                   (imapping=? default-comp rm (imapping 3 6 5 10)))))
+
   ;;; filter
 
   (test-eqv #t
