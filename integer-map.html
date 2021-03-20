@@ -285,7 +285,7 @@ are combined with <em>proc</em>, which is a procedure of type <code>* * → *</c
 <em>proc</em> is called on the new and old values (in that order) associated
 with a duplicated key and is expected to return a value for the key.</p>
 
-<p><code>(imapping-adjust imap k proc) → imapping</code>
+<p><code>(imapping-adjust imap k proc) → imapping</code><br>
 <code>(imapping-adjust/key imap k proc) → imapping</code></p>
 
 <p>Returns a new imapping in which the association <em>(n, v)</em> in <em>imap</em>
@@ -304,7 +304,7 @@ association in <em>imap</em>, it is ignored.</p>
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
 
-<p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code>
+<p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code><br>
 <code>(imapping-update/key</code> <em>imap k mproc</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
@@ -389,7 +389,7 @@ order.</p>
 
 <h2>Traversal</h2>
 
-<p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code>
+<p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code><br>
 <code>(imapping-count/key</code> <em>pred imap</em><code>) → exact-integer</code></p>
 
 <p>Returns the number of associations in <em>imap</em> whose values satisfy
@@ -410,7 +410,7 @@ of keys.</p>
 <em>pred</em>, or if <em>imap</em> is empty.  <em>imap</em> is traversed in ascending
 numerical order of keys.</p>
 
-<p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code>
+<p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code><br>
 <code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
 
 <p>The <em>proc</em> argument of <code>imapping-map</code> is of type <code>* → *</code>;
@@ -429,7 +429,7 @@ the key and value of each association.</p>
 transform the values of <em>imap</em> only; that is, the set of keys of the
 resulting imapping is the same as that of <em>imap</em>.</p>
 
-<p><code>(imapping-for-each</code> <em>proc imap</em><code>) → unspecified</code>
+<p><code>(imapping-for-each</code> <em>proc imap</em><code>) → unspecified</code><br>
 <code>(imapping-for-each/key</code> <em>proc imap</em><code>) → unspecified</code></p>
 
 <p>Calls <em>proc</em> on the value of each association in <em>imap</em> and returns
@@ -506,7 +506,7 @@ is called on the key and value of each association.</p>
 
 <h2>Filter</h2>
 
-<p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code>
+<p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-filter/key</code> <em>pred imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of <em>imap</em>
@@ -515,7 +515,7 @@ whose values satisfy <em>pred</em>.</p>
 <p><code>imapping-filter/key</code> is the same, except that <em>pred</em> is applied to
 the key and value of each association.</p>
 
-<p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code>
+<p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-remove/key</code> <em>pred imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of <em>imap</em>
@@ -524,7 +524,7 @@ whose values do not satisfy <em>pred</em>.</p>
 <p><code>imapping-remove/key</code> is the same, except that <em>pred</em> is applied to
 the key and value of each association.</p>
 
-<p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code>
+<p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code><br>
 <code>(imapping-partition/key</code> <em>pred imap</em><code>) → imapping imapping</code></p>
 
 <p>Returns two new imappings: the first contains all associations of
