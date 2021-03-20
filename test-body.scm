@@ -667,9 +667,9 @@
                            (imapping -2 -2 -1 -1 3 3 5 5))))
               (and (imapping=? default-comp lm (imapping -2 0 -1 0))
                    (imapping=? default-comp rm (imapping 3 6 5 10)))))
+  )
 
-  ;;; filter
-
+(test-group "Filters"
   (test-eqv #t
             (every values
                    (map (lambda (m)
