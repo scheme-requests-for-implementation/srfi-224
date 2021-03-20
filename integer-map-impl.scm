@@ -388,6 +388,19 @@
 (define (imapping-filter-map/key proc imap)
   (%imapping-filter-map proc imap #t))
 
+(define (%imapping-map-either proc imap with-key)
+  (assume (procedure? proc))
+  (assume (imapping? imap))
+  (let-values (((trie-left trie-right)
+                (trie-map-either proc (imapping-trie imap) with-key)))
+    (values (raw-imapping trie-left) (raw-imapping trie-right))))
+
+(define (imapping-map-either proc imap)
+  (%imapping-map-either proc imap #f))
+
+(define (imapping-map-either/key proc imap)
+  (%imapping-map-either proc imap #t))
+
 (define (imapping-filter pred imap)
   (assume (procedure? pred))
   (assume (imapping? imap))

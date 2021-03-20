@@ -74,6 +74,14 @@
                 (lambda () en0 en1 ...)
                 (lambda args ej0 ej1 ...)))))
 
+;; Ditto, for Either.
+(define-syntax ematch
+  (syntax-rules (left right)
+    ((ematch eexp (left args el0 el1 ...) (right args er0 er1 ...))
+     (either-ref eexp
+                 (lambda args el0 el1 ...)
+                 (lambda args er0 er1 ...)))))
+
 ;;; pmatch, by Oleg Kiselyov, rev. Will Byrd.
 
 ;; This is a new version of pmatch (August 8, 2012).

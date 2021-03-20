@@ -297,6 +297,23 @@
          ((branch ? ? ,l ,r) (cata (cata b r) l))))))
     (cata nil trie)))
 
+(define (trie-map-either proc trie with-key)
+  (letrec
+   ((split-map
+     (lambda (t)
+       (tmatch t
+         (empty (values the-empty-trie the-empty-trie))
+         ((leaf ,k ,v)
+          (ematch (if with-key (proc k v) (proc v))
+            (left (v*) (values (leaf k v*) the-empty-trie))
+            (right (v*) (values the-empty-trie (leaf k v*)))))
+         ((branch ,p ,m ,l ,r)  ; slight naming confusion here.
+          (let-values (((l-lefts l-rights) (split-map l))
+                       ((r-lefts r-rights) (split-map r)))
+            (values (branch p m l-lefts r-lefts)
+                    (branch p m l-rights r-rights))))))))
+    (split-map trie)))
+
 (define (trie-filter pred trie)
   (letrec ((filter
             (lambda (t)
