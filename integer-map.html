@@ -809,14 +809,48 @@ equal (in the sense of <code>=</code>) and if their values are equal in the sens
 of the equality predicate of <em>comp</em> (see
 <a href="https://srfi.schemers.org/srfi-128/srfi-128.html">SRFI 128</a>).</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping=? (make-default-comparator)
+            (imapping 1 'a 2 'b)
+            (imapping 2 'b 1 'a))
+ ⇒ #t
+
+(imapping=? (make-default-comparator)
+            (imapping 1 'a 2 'b 3 'c)
+            (imapping 2 'b 1 'a))
+ ⇒ #f
+</code></pre>
+
 <p><code>(imapping&lt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
 <code>(imapping&lt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
 <code>(imapping&gt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
 <code>(imapping&gt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
+<!-- FIXME -->
 <p>Returns <code>#t</code> if and only if each <em>imap</em> other than the last is a proper
 subset/subset/proper superset/superset of the last.  Values are
 compared using the equality predicate of <em>comp</em>.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping&lt;? (make-default-comparator)
+            (imapping 1 'a 2 'b)
+            (imapping 2 'b 1 'a 3 'c))
+ ⇒ #t
+
+(imapping&gt;? (make-default-comparator)
+            (imapping 2 'b 1 "worf" 3 'c)
+            (imapping 1 'a 2 'b))
+ ⇒ #f
+
+(imapping&gt;=? (make-default-comparator)
+             (imapping 2 'b 1 'a 3 'c)
+             (imapping 1 'a 2 'b)
+             (imapping 2 'b 1 'a)
+             (imapping 1 'a))
+ ⇒ #t
+</code></pre>
 
 <h2>Set theory operations</h2>
 
@@ -835,6 +869,24 @@ only the keys are compared.  In case of duplicate keys, associations
 in the result imapping are drawn from the first imapping in which they
 appear.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-union (imapping 0 'a 2 'c)
+                                 (imapping 1 'b 3 'd)))
+ ⇒ ((0 . a) (1 . b) (2 . c) (3 . d))
+
+(imapping-&gt;alist
+ (imapping-intersection (imapping 0 'a 2 'c)
+                        (imapping 1 'b 2 'c 3 'd)
+                        (imapping 2 'c 4 'e)))
+ ⇒ ((2 . c))
+
+(imapping-&gt;alist (imapping-difference (imapping 0 'a 1 'b 2 'c)
+                                      (imapping 2 "worf")
+                                      (imapping 1 "data")))
+ ⇒ ((0 . a))
+</code></pre>
+
 <h2>Submappings</h2>
 
 <p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code><br>
@@ -849,6 +901,21 @@ whose keys are contained in the interval from <em>low</em> to <em>high</em>.  Th
 interval may be open, closed, open below and closed above, or open
 above and closed below.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-open-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ ⇒ ((2 . c))
+
+(imapping-&gt;alist
+ (imapping-closed-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ ⇒ ((1 . b) (2 . c) (3 . d))
+
+(imapping-&gt;alist
+ (imapping-closed-open-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ ⇒ ((1 . b) (2 . c))
+</code></pre>
+
 <p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code><br>
 <code>(isubmapping&lt;</code> <em>imap k</em><code>) → imapping</code><br>
 <code>(isubmapping&lt;=</code> <em>imap k</em><code>) → imapping</code><br>
@@ -859,6 +926,21 @@ above and closed below.</p>
 <em>imap</em> whose keys are equal to, less than/less than or equal
 to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>isubmapping=</code> contains at most one element.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (isubmapping= (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+ ⇒ ((2 . c))
+
+(imapping-&gt;alist
+ (isubmapping&lt; (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+ ⇒ ((0 . a) (1 . b))
+
+(imapping-&gt;alist
+ (isubmapping&gt;= (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+ ⇒ ((2 . c) (3 . d))
+</code></pre>
 
 <h1>License</h1>
 
