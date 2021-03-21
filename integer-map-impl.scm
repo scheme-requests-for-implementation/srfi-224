@@ -214,6 +214,7 @@
 ;; and use the value, a Maybe, to update the mapping.
 (define (imapping-update-min/key imap success)
   (assume (imapping? imap))
+  (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
    (%trie-update-min/key (imapping-trie imap) success)))
@@ -239,6 +240,7 @@
 ;; and use the value, a Maybe, to update the mapping.
 (define (imapping-update-max/key imap success)
   (assume (imapping? imap))
+  (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
    (%trie-update-max/key (imapping-trie imap) success)))

@@ -432,7 +432,7 @@ example:</p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 for the association with the least/greatest key.  If <em>imap</em> is empty,
-returns an empty imapping.</p>
+an error is signalled.</p>
 
 <p>Examples:</p>
 
@@ -454,7 +454,7 @@ that the association for the least/greatest key <em>k</em> is updated as
 follows.  <em>mproc</em> is applied to the value associated with <em>k</em> and is
 expected to return a Maybe value.  If it returns Nothing, the
 association is deleted; if it returns Just <em>v</em>, then <em>(k, v)</em> is added
-to the new imapping.</p>
+to the new imapping.  If <em>imap</em> is empty, an error is signalled.</p>
 
 <p><code>imapping-update-min/key</code> and <code>imapping-update-max/key</code> are the same
 as <code>imapping-update-min</code> and <code>imapping-update-max</code>, respectively,
