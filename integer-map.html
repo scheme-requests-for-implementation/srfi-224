@@ -714,6 +714,13 @@ whose values satisfy <em>pred</em>.</p>
 <p><code>imapping-filter/key</code> is the same, except that <em>pred</em> is applied to
 the key and value of each association.</p>
 
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-filter positive?
+                                  (imapping 0 2 1 -4 2 8 3 -16)))
+ ⇒ ((0 . 2) (2 . 8))
+</code></pre>
+
 <p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-remove/key</code> <em>pred imap</em><code>) → imapping</code></p>
 
@@ -722,6 +729,13 @@ whose values do not satisfy <em>pred</em>.</p>
 
 <p><code>imapping-remove/key</code> is the same, except that <em>pred</em> is applied to
 the key and value of each association.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping-remove positive?
+                                  (imapping 0 2 1 -4 2 8 3 -16)))
+ ⇒ ((1 . -4) (3 . -16))
+</code></pre>
 
 <p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code><br>
 <code>(imapping-partition/key</code> <em>pred imap</em><code>) → imapping imapping</code></p>
@@ -733,28 +747,57 @@ whose values do not.</p>
 <p><code>imapping-partition/key</code> is the same, except that <em>pred</em> is applied to
 the key and value of each association.</p>
 
+<p>Example:</p>
+
+<pre class="example"><code>(let-values (((pos ~pos) (imapping-partition positive?
+                                             (imapping 0 2 1 -4 2 8 3 -16))))
+  (values (imapping-&gt;alist pos)
+          (imapping-&gt;alist ~pos)))
+ ⇒ ((0 . 2) (2 . 8))
+   ((1 . -4) (3 . -16))
+</code></pre>
+
 <h2>Conversion</h2>
 
 <p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
 <p>Returns a car/cdr alist containing the associations of <em>imap</em> in
-ascending numerical order of keys.  Example:</p>
+ascending numerical order of keys.</p>
 
-<pre><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
 </code></pre>
 
 <p><code>(imapping-keys</code> <em>imap</em><code>) → list[exact-integer]</code></p>
 
 <p>Returns the keys of <em>imap</em> as a list in ascending numerical order.</p>
 
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-keys (imapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
+</code></pre>
+
 <p><code>(imapping-keys-set</code> <em>imap</em><code>) → iset</code></p>
 
 <p>Returns a SRFI 217 integer set containing the keys of <em>imap</em>.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(iset-&gt;list (imapping-keys-set (imapping 137 'a -24 'b -5072 'c)))
+ ⇒ (-5072 -24 137)
+</code></pre>
 
 <p><code>(imapping-values</code> <em>imap</em><code>) → list[*]</code></p>
 
 <p>Returns the elements of <em>imap</em> as a list in ascending numerical
 order of key.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-values (imapping 0 "picard" 1 "riker" 2 "troi"))
+ ⇒ ("picard" "riker" "troi")
+</code></pre>
 
 <h2>Comparison</h2>
 
