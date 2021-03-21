@@ -769,6 +769,16 @@ ascending numerical order of keys.</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
 </code></pre>
 
+<p><code>(imapping-&gt;decreasing-alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
+
+<p>Returns a car/cdr alist containing the associations of <em>imap</em> in
+decreasing numerical order of keys.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
+</code></pre>
+
 <p><code>(imapping-keys</code> <em>imap</em><code>) → list[exact-integer]</code></p>
 
 <p>Returns the keys of <em>imap</em> as a list in ascending numerical order.</p>

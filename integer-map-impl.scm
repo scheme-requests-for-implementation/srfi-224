@@ -454,6 +454,11 @@
                            '()
                            imap))
 
+(define (imapping->decreasing-alist imap)
+  (imapping-fold/key (lambda (k v as) (cons (cons k v) as))
+                     '()
+                     imap))
+
 (define (iset->imapping mapper set)
   (assume (procedure? mapper))
   (assume (iset? set))

@@ -47,6 +47,7 @@
    imapping-filter imapping-filter/key imapping-remove imapping-remove/key
    imapping-partition imapping-partition/key
    imapping->alist
+   imapping->decreasing-alist
    imapping=? imapping<? imapping>? imapping<=? imapping>=?
    imapping-union imapping-intersection imapping-difference imapping-xor
    alist->imapping

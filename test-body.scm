@@ -72,6 +72,11 @@
   (test-equal mixed-seq (imapping->alist mixed-imap))
   (test-equal sparse-seq (imapping->alist sparse-imap))
 
+  (test-eqv #t (null? (imapping->decreasing-alist empty-imap)))
+  (test-equal '((10 . a)) (imapping->decreasing-alist (imapping 10 'a)))
+  (test-equal (reverse mixed-seq) (imapping->decreasing-alist mixed-imap))
+  (test-equal (reverse sparse-seq) (imapping->decreasing-alist sparse-imap))
+
   (test-eqv #t (iset-empty? (imapping-keys-set empty-imap)))
   (let* ((ks '(-2 -1 0 1 2)) (set (list->iset ks)))
     (test-eqv #t (iset=? set (imapping-keys-set
