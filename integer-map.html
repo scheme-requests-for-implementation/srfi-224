@@ -434,6 +434,12 @@ example:</p>
 for the association with the least/greatest key.  If <em>imap</em> is empty,
 returns an empty imapping.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-delete-min (imapping 0 'a 1 'b 2 'c)) ⇒ ((1 . b) (2 . c))
+(imapping-delete-max (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
+</code></pre>
+
 <p><code>(imapping-update-min</code> <em>imap mproc</em><code>) → imapping</code><br>
 <code>(imapping-update-max</code> <em>imap mproc</em><code>) → imapping</code><br>
 <code>(imapping-update-min/key</code> <em>imap mproc</em><code>) → imapping</code><br>
@@ -455,6 +461,25 @@ as <code>imapping-update-min</code> and <code>imapping-update-max</code>, respec
 except that <em>mproc</em> is called on <em>k</em> and its associated value, in that
 order.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-update-min (lambda (v)
+                        (if (symbol? v)
+                            (just v)
+                            (nothing)))
+                      (imapping -5 "foo" -1 "bar")))
+ ⇒ ((-1 . "bar"))
+
+(imapping-&gt;alist
+ (imapping-update-max/key (lambda (k v)
+                            (if (and (negative? k) (string? v))
+                                (just (string-length v))
+                                (nothing)))
+                          (imapping -5 "foo" -1 "bar")))
+ ⇒ ((-5 . "foo") (-1 . 3))
+</code></pre>
+
 <p><code>(imapping-pop-min</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
 <code>(imapping-pop-max</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
 
@@ -462,6 +487,14 @@ order.</p>
 <em>imap</em> with the least/greatest key and <em>imap′</em> is a newly-allocated
 imapping containing all of the associations of <em>imap</em> except for
 (<em>k</em>, <em>v</em>).  If <em>imap</em> is empty, returns Nothing.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(maybe-let*-values (((k v imap)
+                     (imapping-pop-min (imapping 0 'a 1 'b 2 'c))))
+  (values k v (imapping-&gt;alist imap)))
+ ⇒ (just 0 a ((1 . b) (2 . c)))
+</code></pre>
 
 <h2>Size</h2>
 
@@ -480,17 +513,35 @@ imapping containing all of the associations of <em>imap</em> except for
 <p><code>imapping-count/key</code> is the same, except that <em>pred</em> is called on
 the key and value of each association.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-count even? (imapping 0 1 1 2 2 4 3 8)) ⇒ 3
+(imapping-count/key (lambda (k s) (= k (string-length s)))
+                    (imapping 0 "x" 1 "y" 2 "z"))
+ ⇒ 1
+</code></pre>
+
 <p><code>(imapping-any?</code> <em>pred imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if there exists an association in <em>imap</em> whose value
 satisfies <em>pred</em>.  <em>imap</em> is traversed in ascending numerical order
 of keys.</p>
 
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-any? odd? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+</code></pre>
+
 <p><code>(imapping-every?</code> <em>pred imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if the value of every association in <em>imap</em> satisfies
 <em>pred</em>, or if <em>imap</em> is empty.  <em>imap</em> is traversed in ascending
 numerical order of keys.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-every? integer? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+</code></pre>
 
 <p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code><br>
 <code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
@@ -507,6 +558,20 @@ unspecified.</p>
 <p><code>imapping-map/key</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-map string-length
+               (imapping 0 "picard" 1 "riker" 2 "troi")))
+ ⇒ ((0 . 6) (2 . 5) (3 . 4))
+
+(imapping-&gt;alist
+ (imapping-map/key (lambda (k s)
+                     (string-append s (number-&gt;string k)))
+                   (imapping 256 "x" 512 "y" 1024 "z")))
+ ⇒ ((256 . "x256") (512 . "y512") (1024 . "z1024"))
+</code></pre>
+
 <p>Note that, in contrast to SRFI 146&rsquo;s map procedures, these procedures
 transform the values of <em>imap</em> only; that is, the set of keys of the
 resulting imapping is the same as that of <em>imap</em>.</p>
@@ -520,6 +585,15 @@ order of keys.</p>
 
 <p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(let ((sum 0))
+  (imapping-for-each (lambda (v) (set! sum (+ sum v)))
+                     (imapping 0 1 1 2 2 4 3 8))
+  sum)
+ ⇒ 15
+</code></pre>
 
 <p><code>(imapping-fold</code> <em>kons knil imap</em><code>) → *</code><br>
 <code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code><br>
@@ -542,6 +616,17 @@ as <code>imapping-fold</code> and <code>imapping-fold-right</code>, respectively
 except that <em>kons</em> is also passed the key of each association as its first
 argument.</p>
 
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-fold-right cons '() (imapping 0 "worf" 1 "data" 2 "crusher"))
+ ⇒ ("worf" "data" "crusher")
+
+(imapping-fold/key (lambda (k _ ks) (cons k ks))
+                   '()
+                   (imapping 0 "worf" 1 "data" 2 "crusher"))
+ ⇒ (2 1 0)
+</code></pre>
+
 <p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code><br>
 <code>(imapping-map/key-&gt;list</code> <em>proc imap</em><code>) → list</code></p>
 
@@ -549,6 +634,14 @@ argument.</p>
 
 <p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-map-&gt;list string-length
+                     (imapping 0 "picard" 1 "riker" 2 "troi")))
+ ⇒ (6 5 4)
+</code></pre>
 
 <p><code>(imapping-filter-map</code> <em>proc imap</em><code>) → imapping</code><br>
 <code>(imapping-filter-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
@@ -564,6 +657,15 @@ added to the new imapping.</p>
 
 <p><code>imapping-filter-map/key</code> is the same, except that <em>proc</em>
 is called on the key and value of each association.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-filter-map (lambda (v)
+                        (and (positive? v) (square v)))
+                      (imapping 0 2 1 -4 2 8)))
+ ⇒ ((0 . 4) (2 . 64))
+</code></pre>
 
 <p><code>(imapping-map-either</code> <em>proc imap</em><code>) → imapping imapping</code><br>
 <code>(imapping-map-either/key</code> <em>proc imap</em><code>) → imapping imapping</code></p>
@@ -585,6 +687,21 @@ is added to the second new imapping.</p>
 
 <p><code>imapping-map-either/key</code> is the same, except that <em>proc</em>
 is called on the key and value of each association.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(let-values (((lefts rights)
+              (imapping-map-either
+               (lambda (v)
+                 (if (&gt;= v 0)
+                     (right v)
+                     (left v)))
+               (imapping 0 -50 4 -25 8 25 12 50))))
+  (values (imapping-&gt;alist lefts)
+          (imapping-&gt;alist rights)))
+ ⇒ ((0 . -50) (4 . -25))
+   ((8 . 25) (12 . 50))
+</code></pre>
 
 <h2>Filter</h2>
 
