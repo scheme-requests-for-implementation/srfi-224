@@ -125,7 +125,7 @@
 
 ;;;; Updaters
 
-(define imapping-adjoin/combine
+(define imapping-adjoin/combinator
   (case-lambda
     ((imap combine key value)      ; one-assoc fast path
      (raw-imapping
