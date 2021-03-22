@@ -25,12 +25,20 @@
    imapping-min imapping-max
    imapping-lookup imapping-ref imapping-ref/default imapping-adjoin
    imapping-adjoin/combine imapping-adjust imapping-adjust/key
+   imapping-adjoin! imapping-adjoin/combinator!
+   imapping-adjust! imapping-adjust/key!
    imapping-delete imapping-delete-all imapping-alter imapping-update
    imapping-update/key
+   imapping-delete! imapping-delete-all! imapping-alter! imapping-update!
+   imapping-update/key!
    imapping-delete-min imapping-delete-max
    imapping-update-min imapping-update-max
    imapping-update-min/key imapping-update-max/key
    imapping-pop-min imapping-pop-max
+   imapping-delete-min! imapping-delete-max!
+   imapping-update-min! imapping-update-max!
+   imapping-update-min/key! imapping-update-max/key!
+   imapping-pop-min! imapping-pop-max!
    imapping-size
    imapping-count
    imapping-count/key
@@ -43,19 +51,27 @@
    imapping-map->list imapping-map/key->list
    imapping-for-each imapping-for-each/key
    imapping-filter-map imapping-filter-map/key
+   imapping-filter-map! imapping-filter-map/key!
    imapping-map-either imapping-map-either/key
+   imapping-map-either! imapping-map-either/key!
    imapping-filter imapping-filter/key imapping-remove imapping-remove/key
    imapping-partition imapping-partition/key
+   imapping-filter! imapping-filter/key! imapping-remove! imapping-remove/key!
+   imapping-partition! imapping-partition/key!
    imapping->alist
    imapping->decreasing-alist
    imapping=? imapping<? imapping>? imapping<=? imapping>=?
    imapping-union imapping-intersection imapping-difference imapping-xor
+   imapping-union! imapping-intersection! imapping-difference! imapping-xor!
    alist->imapping
    iset->imapping
    imapping-open-interval imapping-closed-interval
    imapping-open-closed-interval imapping-closed-open-interval
+   imapping-open-interval! imapping-closed-interval!
+   imapping-open-closed-interval! imapping-closed-open-interval!
    isubmapping= isubmapping< isubmapping<= isubmapping>=
    isubmapping>
+   isubmapping=! isubmapping<! isubmapping<=! isubmapping>=! isubmapping>!
    imapping-relation-map
    )
 
