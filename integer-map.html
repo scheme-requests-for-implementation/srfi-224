@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+   <style>pre.example { margin-left: 2em; }</style>
   <title>Integer Mappings</title>
 </head>
 <body>
@@ -68,7 +69,7 @@ the arguments, earlier associations take priority.</p>
 
 <p>Examples:</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b) (2 . c))
-(imapping-&gt;alist (imapping -10 'foo -10 'bar)) ⇒ ((-10 . foo))
+(imapping-&gt;alist (imapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
 </code></pre>
 
 <p><code>(imapping-unfold</code> <em>stop? mapper successor seed</em><code>) → imapping</code></p>
@@ -293,8 +294,12 @@ with a duplicated key and is expected to return a value for the key.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
- (imapping-adjoin/combine (imapping 0 "a") string-append 0 "foo" 1 "bar"))
- ⇒ ((0 . "afoo") (1 . "bar"))
+ (imapping-adjoin/combine (imapping 0 "geordi" 1 "reginald")
+                          (lambda (last first)
+                            (string-append first " " last))
+                          0 "laforge"
+                          1 "barclay"))
+ ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
 <p><code>(imapping-adjust imap k proc) → imapping</code><br>
@@ -464,20 +469,20 @@ order.</p>
 <p>Examples:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
- (imapping-update-min (lambda (v)
+ (imapping-update-min (imapping -5 "phaser" -1 "tricorder")
+                      (lambda (v)
                         (if (symbol? v)
                             (just v)
-                            (nothing)))
-                      (imapping -5 "foo" -1 "bar")))
- ⇒ ((-1 . "bar"))
+                            (nothing)))))
+ ⇒ ((-1 . "tricorder"))
 
 (imapping-&gt;alist
- (imapping-update-max/key (lambda (k v)
+ (imapping-update-max/key (imapping -5 "phaser" -1 "tricorder")
+                          (lambda (k v)
                             (if (and (negative? k) (string? v))
                                 (just (string-length v))
-                                (nothing)))
-                          (imapping -5 "foo" -1 "bar")))
- ⇒ ((-5 . "foo") (-1 . 3))
+                                (nothing)))))
+ ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
 <p><code>(imapping-pop-min</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
