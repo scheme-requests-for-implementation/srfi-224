@@ -57,7 +57,37 @@ For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
 
 <p>since the type of the return value depends on <em>list</em>.</p>
 
-<h2>Constructors</h2>
+<h2>Index</h2>
+
+<ul>
+<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping,
+iset-&gt;imapping</code></p></li>
+<li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
+<li><p><a href="#accessors">Accessors</a>: <code>imapping-lookup, imapping-ref, imapping-ref/default, imapping-min, imapping-max</code></p></li>
+<li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin/combine, imapping-adjust, imapping-adjust/key, imapping-delete,
+imapping-delete-all, imapping-alter, imapping-update, imapping-update/key, imapping-delete-min,
+imapping-delete-max, imapping-update-min, imapping-update-max, imapping-update-min/key,
+imapping-update-max/key, imapping-pop-min, imapping-pop-max</code></p></li>
+<li><p><a href="#size">Size</a>: <code>imapping-size</code></p></li>
+<li><p><a href="#traversal">Traversal</a>: <code>imapping-count, imapping-count/key, imapping-any?, imapping-every?,
+imapping-fold, imapping-fold-right, imapping-fold/key, imapping-fold-right/key, imapping-map,
+imapping-map/key, imapping-map-&gt;list, imapping-map/key-&gt;list, imapping-for-each,
+imapping-for-each/key, imapping-filter-map, imapping-filter-map/key, imapping-map-either,
+imapping-map-either/key, imapping-relation-map</code></p></li>
+<li><p><a href="#filter">Filter</a>: <code>imapping-filter, imapping-filter/key, imapping-remove, imapping-remove/key,
+imapping-partition, imapping-partition/key</code></p></li>
+<li><p><a href="#conversion">Conversion</a>: <code>imapping-&gt;alist, imapping-&gt;decreasing-alist, imapping-keys,
+imapping-values, imapping-keys-set</code></p></li>
+<li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
+<li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
+imapping-xor</code></p></li>
+<li><p><a href="#submappings">Submappings</a>: <code>imapping-open-interval, imapping-closed-interval,
+imapping-open-closed-interval, imapping-closed-open-interval,
+isubmapping=, isubmapping&lt;, isubmapping&lt;=, isubmapping&gt;=,
+isubmapping&gt;</code></p></li>
+</ul>
+
+<h2 id="constructors">Constructors</h2>
 
 <p><code>(imapping</code> <em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
@@ -181,7 +211,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
  ⇒ ((2 . 4) (4 . 16) (6 . 36) (8 . 64))
 </code></pre>
 
-<h2>Predicates</h2>
+<h2 id="predicates">Predicates</h2>
 
 <p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
 
@@ -211,7 +241,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 (imapping-disjoint? (imapping 1 '(b)) (imapping 1 'b)) ⇒ #f
 </code></pre>
 
-<h2>Accessors</h2>
+<h2 id="accessors">Accessors</h2>
 
 <p><code>(imapping-lookup</code> <em>imap k</em><code>) → maybe[*]</code></p>
 
@@ -268,7 +298,7 @@ Nothing.</p>
 (imapping-max (imapping)) ⇒ nothing
 </code></pre>
 
-<h2>Updaters</h2>
+<h2 id="updaters">Updaters</h2>
 
 <p><code>(imapping-adjoin</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
@@ -501,13 +531,13 @@ imapping containing all of the associations of <em>imap</em> except for
  ⇒ (just 0 a ((1 . b) (2 . c)))
 </code></pre>
 
-<h2>Size</h2>
+<h2 id="size">Size</h2>
 
 <p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>
 
 <p>Returns the number of associations in <em>imap</em>.</p>
 
-<h2>Traversal</h2>
+<h2 id="traversal">Traversal</h2>
 
 <p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code><br>
 <code>(imapping-count/key</code> <em>pred imap</em><code>) → exact-integer</code></p>
@@ -708,7 +738,7 @@ is called on the key and value of each association.</p>
    ((8 . 25) (12 . 50))
 </code></pre>
 
-<h2>Filter</h2>
+<h2 id="filter">Filter</h2>
 
 <p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-filter/key</code> <em>pred imap</em><code>) → imapping</code></p>
@@ -762,7 +792,7 @@ the key and value of each association.</p>
    ((1 . -4) (3 . -16))
 </code></pre>
 
-<h2>Conversion</h2>
+<h2 id="conversion">Conversion</h2>
 
 <p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
@@ -814,7 +844,7 @@ order of key.</p>
  ⇒ ("picard" "riker" "troi")
 </code></pre>
 
-<h2>Comparison</h2>
+<h2 id="comparison">Comparison</h2>
 
 <p><code>(imapping=?</code> <em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
@@ -866,7 +896,7 @@ compared using the equality predicate of <em>comp</em>.</p>
  ⇒ #t
 </code></pre>
 
-<h2>Set theory operations</h2>
+<h2 id="settheory">Set theory operations</h2>
 
 <p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
@@ -901,7 +931,7 @@ appear.</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<h2>Submappings</h2>
+<h2 id="submappings">Submappings</h2>
 
 <p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code><br>
 <code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
