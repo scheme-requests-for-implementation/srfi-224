@@ -64,7 +64,7 @@ For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
 iset-&gt;imapping</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
 <li><p><a href="#accessors">Accessors</a>: <code>imapping-lookup, imapping-ref, imapping-ref/default, imapping-min, imapping-max</code></p></li>
-<li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combine,
+<li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
 imapping-adjoin!, imapping-adjoin/combinator!, imapping-adjust, imapping-adjust/key,
 imapping-adjust!, imapping-adjust/key!,
 imapping-delete, imapping-delete!,
@@ -340,7 +340,7 @@ associations are replaced.</p>
 except that it is permitted to mutate and return the <em>imap</em> argument rather
 than allocating a new imapping.</p>
 
-<p><code>(imapping-adjoin/combine</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
+<p><code>(imapping-adjoin/combinator</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
 
 <p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>* * → *</code>.
@@ -350,11 +350,11 @@ with a duplicated key and is expected to return a value for the key.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
- (imapping-adjoin/combine (imapping 0 "geordi" 1 "reginald")
-                          (lambda (last first)
-                            (string-append first " " last))
-                          0 "laforge"
-                          1 "barclay"))
+ (imapping-adjoin/combinator (imapping 0 "geordi" 1 "reginald")
+                             (lambda (last first)
+                               (string-append first " " last))
+                             0 "laforge"
+                             1 "barclay"))
  ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
