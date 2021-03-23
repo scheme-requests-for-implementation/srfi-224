@@ -19,61 +19,69 @@
            (or expr (car 0))))))))
 
   (export
-   imapping
-   imapping-unfold imapping-unfold-maybe
+   ;; Constructors
+   imapping imapping-unfold imapping-unfold-maybe alist->imapping
+   iset->imapping
+
+   ;; Predicates
    imapping? imapping-contains? imapping-empty? imapping-disjoint?
-   imapping-min imapping-max
-   imapping-lookup imapping-ref imapping-ref/default imapping-adjoin
-   imapping-adjoin/combinator imapping-adjust imapping-adjust/key
-   imapping-adjoin! imapping-adjoin/combinator!
-   imapping-adjust! imapping-adjust/key!
-   imapping-delete imapping-delete-all imapping-alter imapping-update
-   imapping-update/key
-   imapping-delete! imapping-delete-all! imapping-alter! imapping-update!
-   imapping-update/key!
-   imapping-delete-min imapping-delete-max
-   imapping-update-min imapping-update-max
-   imapping-update-min/key imapping-update-max/key
-   imapping-pop-min imapping-pop-max
-   imapping-delete-min! imapping-delete-max!
-   imapping-update-min! imapping-update-max!
+
+   ;; Accessors
+   imapping-min imapping-max imapping-lookup imapping-ref
+   imapping-ref/default
+
+   ;; Updaters
+   imapping-adjoin imapping-adjoin/combinator imapping-adjust
+   imapping-adjust/key imapping-adjoin! imapping-adjoin/combinator!
+   imapping-adjust! imapping-adjust/key! imapping-delete
+   imapping-delete-all imapping-alter imapping-update
+   imapping-update/key imapping-delete! imapping-delete-all!
+   imapping-alter! imapping-update! imapping-update/key!
+   imapping-delete-min imapping-delete-max imapping-update-min
+   imapping-update-max imapping-update-min/key imapping-update-max/key
+   imapping-pop-min imapping-pop-max imapping-delete-min!
+   imapping-delete-max! imapping-update-min! imapping-update-max!
    imapping-update-min/key! imapping-update-max/key!
    imapping-pop-min! imapping-pop-max!
-   imapping-size
-   imapping-count
-   imapping-count/key
-   imapping-any? imapping-every?
-   imapping-keys imapping-values
-   imapping-keys-set
-   imapping-fold imapping-fold-right
-   imapping-fold/key imapping-fold-right/key
-   imapping-map imapping-map/key
-   imapping-map->list imapping-map/key->list
-   imapping-for-each imapping-for-each/key
-   imapping-filter-map imapping-filter-map/key
-   imapping-filter-map! imapping-filter-map/key!
-   imapping-map-either imapping-map-either/key
+
+   ;; The whole imapping
+   imapping-size imapping-count imapping-count/key imapping-any?
+   imapping-every?
+
+   ;; Traversal
+   imapping-fold imapping-fold-right imapping-fold/key
+   imapping-fold-right/key imapping-map imapping-map/key imapping-map->list
+   imapping-map/key->list imapping-for-each imapping-for-each/key
+   imapping-filter-map imapping-filter-map/key imapping-filter-map!
+   imapping-filter-map/key! imapping-map-either imapping-map-either/key
    imapping-map-either! imapping-map-either/key!
+   imapping-relation-map
+
+   ;; Filter
    imapping-filter imapping-filter/key imapping-remove imapping-remove/key
    imapping-partition imapping-partition/key
-   imapping-filter! imapping-filter/key! imapping-remove! imapping-remove/key!
-   imapping-partition! imapping-partition/key!
-   imapping-copy
-   imapping->alist
-   imapping->decreasing-alist
+   imapping-filter! imapping-filter/key! imapping-remove!
+   imapping-remove/key! imapping-partition! imapping-partition/key!
+
+   ;; Copying and conversion
+   imapping-keys imapping-values imapping-keys-set imapping-copy
+   imapping->alist imapping->decreasing-alist
+
+   ;; Comparison
    imapping=? imapping<? imapping>? imapping<=? imapping>=?
+
+   ;; Set theory operations
    imapping-union imapping-intersection imapping-difference imapping-xor
    imapping-union! imapping-intersection! imapping-difference! imapping-xor!
-   alist->imapping
-   iset->imapping
+
+   ;; Submappings
    imapping-open-interval imapping-closed-interval
    imapping-open-closed-interval imapping-closed-open-interval
    imapping-open-interval! imapping-closed-interval!
    imapping-open-closed-interval! imapping-closed-open-interval!
-   isubmapping= isubmapping< isubmapping<= isubmapping>=
-   isubmapping>
-   isubmapping=! isubmapping<! isubmapping<=! isubmapping>=! isubmapping>!
-   imapping-relation-map
+   isubmapping= isubmapping< isubmapping<= isubmapping>= isubmapping>
+   isubmapping=! isubmapping<! isubmapping<=! isubmapping>=!
+   isubmapping>!
    )
 
   (include "matchers.scm")
