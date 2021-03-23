@@ -224,18 +224,18 @@
                            (imapping-adjoin empty-imap 0 'a 1 'b 2 'c)))
 
   (test-eqv 'U (imapping-ref/default
-                (imapping-adjoin/combine letter-imap first 20 'U)
+                (imapping-adjoin/combinator letter-imap first 20 'U)
                 20
                 #f))
   (test-eqv 'u (imapping-ref/default
-                (imapping-adjoin/combine letter-imap second 20 'U)
+                (imapping-adjoin/combinator letter-imap second 20 'U)
                 20
                 #f))
   (test-eqv #t
             (imapping=?
              default-comp
              (imapping 0 'a 1 'b 2 'c)
-             (imapping-adjoin/combine empty-imap first 0 'a 1 'b 2 'c)))
+             (imapping-adjoin/combinator empty-imap first 0 'a 1 'b 2 'c)))
 
   ;;; adjusts
 
