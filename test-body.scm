@@ -1018,3 +1018,10 @@
                (imapping-relation-map (lambda (k v) (values (- k) v))
                                       (imapping 0 'a -1 'b -2 'c))))
   )
+
+(test-group "Copying"
+  (test-eqv #t
+            (every
+             (lambda (im) (imapping=? default-comp im (imapping-copy im)))
+             all-test-imaps))
+  )

@@ -771,3 +771,10 @@
                           (trie-insert t k* v*)))
                       the-empty-trie
                       trie))
+
+(define trie-copy
+  (tmatch-lambda
+    (empty the-empty-trie)
+    ((leaf ,k ,v) (leaf k v))
+    ((branch ,p ,m ,l ,r)
+     (branch p m (trie-copy l) (trie-copy r)))))

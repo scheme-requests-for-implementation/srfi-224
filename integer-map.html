@@ -147,7 +147,8 @@ imapping-remove, imapping-remove/key,
 imapping-remove!, imapping-remove/key!,
 imapping-partition, imapping-partition/key,
 imapping-partition!, imapping-partition/key!</code></p></li>
-<li><p><a href="#conversion">Conversion</a>: <code>imapping-&gt;alist, imapping-&gt;decreasing-alist, imapping-keys,
+<li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
+imapping-&gt;decreasing-alist, imapping-keys,
 imapping-values, imapping-keys-set</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
@@ -1001,6 +1002,11 @@ are the same as <code>imapping-partition</code> and
 permitted to mutate the <em>imap</em> argument to produce their results.</p>
 
 <h2 id="conversion">Conversion</h2>
+
+<p><code>(imapping-copy</code> <em>imap</em><code>) → imapping</code></p>
+
+<p>Returns a newly allocated imapping containing the associations of
+<code>imap</code.</p>
 
 <p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
 

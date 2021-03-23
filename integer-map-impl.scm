@@ -490,7 +490,11 @@
 (define imapping-partition! imapping-partition)
 (define imapping-partition/key! imapping-partition/key)
 
-;;;; Conversion
+;;;; Copying & Conversion
+
+(define (imapping-copy imap)
+  (assume (imapping? imap))
+  (raw-imapping (trie-copy (imapping-trie imap))))
 
 (define (imapping->alist imap)
   (imapping-fold-right/key (lambda (k v as) (cons (cons k v) as))
