@@ -18,6 +18,13 @@
 
 <h1>Specification</h1>
 
+<p>Imappings form a new type, as if created by <code>define-record-type</code>
+(see R7RS § 5.5). The effects of using record-type inspection or inheritance
+for the imapping type are unspecified.</p>
+
+<p>It is an error to add or remove an association of an imapping while
+iterating over it.</p>
+
 <h2>Notation</h2>
 
 <p>The naming conventions of this document are consistent with those used
