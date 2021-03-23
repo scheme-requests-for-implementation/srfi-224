@@ -819,21 +819,33 @@
     (test-eqv #t (imapping<? default-comp subimap mixed-imap))
     (test-eqv #f (imapping<? default-comp mixed-imap subimap))
     (test-eqv #f (imapping<? default-comp mixed-imap mixed-imap))
+    (test-eqv #f (imapping<? default-comp
+                             (imapping 0 'z)
+                             (imapping 0 'a 1 'b)))
 
     (test-eqv #t (imapping>? default-comp mixed-imap (imapping)))
     (test-eqv #f (imapping>? default-comp subimap mixed-imap))
     (test-eqv #t (imapping>? default-comp mixed-imap subimap))
     (test-eqv #f (imapping>? default-comp mixed-imap mixed-imap))
+    (test-eqv #f (imapping>? default-comp
+                             (imapping 0 'z 1 'b)
+                             (imapping 0 'a)))
 
     (test-eqv #t (imapping<=? default-comp (imapping) mixed-imap))
     (test-eqv #t (imapping<=? default-comp subimap mixed-imap))
     (test-eqv #f (imapping<=? default-comp mixed-imap subimap))
     (test-eqv #t (imapping<=? default-comp mixed-imap mixed-imap))
+    (test-eqv #f (imapping<=? default-comp
+                              (imapping 0 'z 1 'b)
+                              (imapping 0 'a 1 'b)))
 
     (test-eqv #t (imapping>=? default-comp mixed-imap (imapping)))
     (test-eqv #f (imapping>=? default-comp subimap mixed-imap))
     (test-eqv #t (imapping>=? default-comp mixed-imap subimap))
     (test-eqv #t (imapping>=? default-comp mixed-imap mixed-imap))
+    (test-eqv #f (imapping<=? default-comp
+                              (imapping 0 'z 1 'b)
+                              (imapping 0 'a 1 'b)))
 
     ;; Variadic comparisons.
     (let ((subimap1 (imapping-filter positive? subimap)))
