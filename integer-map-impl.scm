@@ -580,7 +580,7 @@
   (let lp ((t1 (imapping-trie imap1))
            (t2 (imapping-trie imap2))
            (imaps imaps))
-    (and (memv (trie-subset-compare comp t1 t2) '(greater equal))
+    (and (memv (trie-subset-compare comp t2 t1) '(less equal))
          (pmatch imaps
            (() #t)
            ((,m . ,imaps*) (lp t2 (imapping-trie m) imaps*))))))
