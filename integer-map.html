@@ -75,9 +75,10 @@ imapping-update-min, imapping-update-max, imapping-update-min/key, imapping-upda
 imapping-update-min!, imapping-update-max!, imapping-update-min/key!, imapping-update-max/key!,
 imapping-pop-min, imapping-pop-max,
 imapping-pop-min!, imapping-pop-max!</code></p></li>
-<li><p><a href="#size">Size</a>: <code>imapping-size</code></p></li>
-<li><p><a href="#traversal">Traversal</a>: <code>imapping-count, imapping-count/key, imapping-any?, imapping-every?,
-imapping-fold, imapping-fold-right, imapping-fold/key, imapping-fold-right/key, imapping-map,
+<li><p><a href="#whole">The whole imapping</a>: <code>imapping-size,
+imapping-count, imapping-count/key, imapping-any?, imapping-every?</code></p></li>
+<li><p><a href="#traversal">Traversal</a>: <code>imapping-fold,
+imapping-fold-right, imapping-fold/key, imapping-fold-right/key, imapping-map,
 imapping-map/key, imapping-map!, imapping-map/key!,
 imapping-map-&gt;list, imapping-map/key-&gt;list, imapping-for-each,
 imapping-for-each/key, imapping-filter-map, imapping-filter-map/key,
@@ -631,13 +632,11 @@ are the same as <code>imapping-pop-min</code> and
 permitted to mutate and return the <em>imap</em> argument rather
 than allocating a new imapping.</p>
 
-<h2 id="size">Size</h2>
+<h2 id="whole">The whole imapping</h2>
 
 <p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>
 
 <p>Returns the number of associations in <em>imap</em>.</p>
-
-<h2 id="traversal">Traversal</h2>
 
 <p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code><br>
 <code>(imapping-count/key</code> <em>pred imap</em><code>) → exact-integer</code></p>
@@ -677,6 +676,8 @@ numerical order of keys.</p>
 
 <pre class="example"><code>(imapping-every? integer? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
+
+<h2 id="traversal">Traversal</h2>
 
 <p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code><br>
 <code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
