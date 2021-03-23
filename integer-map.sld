@@ -2,7 +2,8 @@
   (import (scheme base)
           (scheme case-lambda)
           (only (srfi 1) fold every)
-          (only (srfi 128) comparator? =?)
+          (only (srfi 128) make-comparator make-default-comparator
+                           comparator? =?)
           (srfi 189)
           (srfi 143)
           (only (srfi 217) iset? iset-fold list->iset iset-contains?
@@ -73,6 +74,8 @@
    isubmapping>
    isubmapping=! isubmapping<! isubmapping<=! isubmapping>=! isubmapping>!
    imapping-relation-map
+
+   make-imapping-comparator imapping-comparator
    )
 
   (include "matchers.scm")
