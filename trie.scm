@@ -458,7 +458,7 @@
 
 ;; Returns the symbol 'less' if trie1 is a proper subset of trie2,
 ;; 'equal' if they are the same, and 'greater' otherwise.  NB that
-;; disjoint sets will compare as greater.
+;; disjoint mappings will compare as greater.
 (define (trie-subset-compare comp trie1 trie2)
   (letrec
    ((compare
