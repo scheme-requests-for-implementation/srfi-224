@@ -709,22 +709,3 @@
   (assume (procedure? proc))
   (assume (imapping? imap))
   (raw-imapping (trie-relation-map proc (imapping-trie imap))))
-
-;;;; Comparator
-
-(define (make-imapping-comparator comp)
-  (assume (comparator? comp))
-  (make-comparator imapping?
-                   (lambda (imap1 imap2)
-                     (or (eqv? imap1 imap2)   ; quick check
-                         (trie=? comp
-                                 (imapping-trie imap1)
-                                 (imapping-trie imap2))))
-                   (lambda (imap1 imap2)
-                     (trie-proper-subset? comp
-                                          (imapping-trie imap1)
-                                          (imapping-trie imap2)))
-                   #f))
-
-(define (imapping-comparator)
-  (make-imapping-comparator (make-default-comparator)))
