@@ -432,10 +432,15 @@ than allocating a new imapping.</p>
 <p><code>(imapping-adjust imap k proc) → imapping</code><br>
 <code>(imapping-adjust/key imap k proc) → imapping</code></p>
 
-<p>Returns a new imapping in which the association <em>(n, v)</em> in <em>imap</em>
-is replaced by <em>(n, (proc v))</em>, or by <em>(n, (proc n v))</em> in the
-case of <code>imapping-adjust/key</code>.  If <em>n</em> has no association in <em>imap</em>,
-then (a copy of) <em>imap</em> is returned.</p>
+<p>The <em>proc</em> parameter of <code>imapping-adjust</code> is a
+procedure of type <code>* → *</code>; that of
+<code>imapping-adjust/key</code> is of type
+<code>exact-integer * → *</code>.</p>
+
+<p>Returns a new imapping in which the association (<em>k</em>, <em>v</em>) in <em>imap</em>
+is replaced by (<em>k</em>, (<em>proc v</em>)), or by (<em>k</em>, (<em>proc k v</em>)) in the
+case of <code>imapping-adjust/key</code>.  If <em>k</em> has no association in <em>imap</em>,
+then a copy of <em>imap</em> is returned.</p>
 
 <p>Examples:</p>
 
