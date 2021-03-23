@@ -57,6 +57,61 @@ For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
 
 <p>since the type of the return value depends on <em>list</em>.</p>
 
+<h3>Linear update</h3>
+
+<p>The procedures of this SRFI, by default, are "pure functional"--they
+do not alter their parameters.  However, this SRFI also defines
+"linear-update" procedures, all of whose names end in <code>!</code>.
+They have hybrid pure/side-effecting semantics: they are allowed,
+but not required, to side-effect one of their parameters in
+order to construct their result.  An implementation may legally
+implement these procedures as pure, side-effect-free functions, or it
+may implement them using side effects, depending upon the details of
+what is the most efficient or simple to implement in terms of the
+underlying representation.</p>
+
+<p>It is an error to rely upon these procedures working by side
+effect.  For example, this is not guaranteed to work:</p>
+
+<pre class="example">(let* ((imap1 (imapping 1 'b 2 'c))
+       (imap2 (imapping-adjoin! imap1 3 'd)))
+  imap1) ; Could be either {(1, b), (2, c)} or {(1, b), (2, c) (3, d)}.
+</pre>
+
+<p>However, this is well-defined:</p>
+
+<pre class="example">(let ((imap1 (imapping 1 'b 2 'c)))
+  (imapping-adjoin! imap1 3 'd))
+</pre>
+
+<p>So clients of these procedures write in a functional style, but
+must additionally be sure that, when the procedure is called, there
+are no other live references to the potentially-modified imapping
+(hence the term "linear update").</p>
+
+<p>There are two benefits to this convention:</p>
+
+<ul><li><p>Implementations are free to provide the most efficient
+possible implementation, either functional or side-effecting.</p></li>
+
+<li><p>Programmers may nonetheless continue to assume that imappings are
+purely functional data structures: they may be reliably shared without
+needing to be copied, uniquified, and so forth.</p></li></ul>
+
+<p>In practice, these procedures are most useful for efficiently
+constructing isets in a side-effecting manner, in some limited local
+context, before passing the iset outside the local construction scope
+to be used in a functional manner.</p>
+
+<p>Scheme provides no assistance in checking the linearity of the
+potentially side-effected parameters passed to these functions--there's
+no linear type checker or run-time mechanism for detecting
+violations.</p>
+
+<p>Note that if an implementation uses no side effects at all, it is
+allowed to return existing imappings rather than newly allocated ones,
+even where this SRFI explicitly says otherwise.</p>
+
 <h2>Index</h2>
 
 <ul>
