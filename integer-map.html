@@ -921,6 +921,39 @@ are the same as <code>imapping-map-either</code> and
 <code>imapping-map-either/key</code>, respectively, except that they are
 permitted to mutate the <em>imap</em> to produce their results.</p>
 
+<p><code>(imapping-relation-map</code> <em>proc imap</em><code>) → imapping</code></p>
+
+<p><code>proc</code> must be a procedure of type
+<code>exact-integer * → exact-integer *</code>.</p>
+
+<p>Returns a new imapping whose associations are the results of
+transforming both the keys and the values of <em>imap</em> with
+<em>proc</em>.  For each association (<em>k</em>,
+<em>v</em>) in <em>imap</em>, (<em>proc k v</em>) is evaluated to
+return a new key and a new value which are associated in the new
+imapping.  Duplicate keys are replaced, but the results in this case
+are unpredictable; if <em>proc</em> is not injective, that is, if it
+produces multiple associations with the same key, then it is unspecified
+which one of these associations will be present in the resulting
+imapping. The dynamic order of the applications of <em>proc</em> to the
+elements of <em>imap</em> is unspecified.</p>
+
+<p><strong>Rationale:</strong> <code>imapping-relation-map</code>
+corresponds to <code>mapping-map</code> from SRFI 146 and is specified
+primarily for compatibility with that SRFI.  It generalizes
+<code>imapping-map</code> and <code>imapping-map/key</code>, and can
+be used to produce a wide range of transformations on imappings.  This
+generality comes at a price, however.  Certain familiar laws that hold
+of <code>imapping-map</code> and other Scheme "map" functions do not
+hold of <code>imapping-relation-map</code>; in particular, the size of
+the input imapping <em>imap</em> may not be preserved, and a key with an
+association in <em>imap</em> may not have an association in the
+transformed imapping.</p>
+
+<p>As such, <code>imapping-map</code> and <code>imapping-map/key</code>
+likely conform better to the familiar pattern of Scheme "map" functions,
+while being sufficiently general for most purposes.</p>
+
 <h2 id="filter">Filter</h2>
 
 <p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code><br>
