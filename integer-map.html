@@ -104,6 +104,10 @@ iterating over it.</p>
 
 <h3>Notation</h3>
 
+<p>The words &ldquo;must&rdquo;, &ldquo;may&rdquo;, etc., though not
+capitalized in this SRFI, are to be interpreted as described in
+<a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+
 <p>The naming conventions of this document are consistent with those used
 in the R7RS Scheme standard.</p>
 
@@ -480,8 +484,8 @@ associations are replaced.</p>
 <p><code>(imapping-adjoin!</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p><code>imapping-adjoin!</code> is the same as <code>imapping-adjoin</code>,
-except that it is permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+except that it may mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-adjoin/combinator</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
 
@@ -504,9 +508,9 @@ with a duplicated key and is expected to return a value for the key.</p>
 <p><code>(imapping-adjoin/combinator!</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
 
 <p><code>imapping-adjoin/combinator!</code> is the same as
-<code>imapping-adjoin/combinator</code>, except that it is permitted
-to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-adjoin/combinator</code>, except that it may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-adjust imap k proc) → imapping</code><br>
 <code>(imapping-adjust/key imap k proc) → imapping</code></p>
@@ -538,9 +542,9 @@ then a copy of <em>imap</em> is returned.</p>
 
 <p><code>imapping-adjust!</code> and <code>imapping-adjust/key!</code>
 are the same as <code>imapping-adjust</code> and
-<code>imapping-adjust/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-adjust/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-delete imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
@@ -556,9 +560,9 @@ association in <em>imap</em>, it is ignored.</p>
 <p><code>(imapping-delete! imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p><code>imapping-delete!</code> is the same as
-<code>imapping-delete</code>, except that it is permitted
-to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-delete</code>, except that it may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-delete-all</code> <em>imap list</em><code>) → imapping</code></p>
 
@@ -574,9 +578,9 @@ those for keys equal to an element of <em>list</em>.</p>
 <p><code>(imapping-delete-all!</code> <em>imap list</em><code>) → imapping</code></p>
 
 <p><code>imapping-delete-all!</code> is the same as
-<code>imapping-delete-all</code>, except that it is permitted
-to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-delete-all</code>, except that it may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code><br>
 <code>(imapping-update/key</code> <em>imap k mproc</em><code>) → imapping</code></p>
@@ -624,9 +628,9 @@ in terms of <code>imapping-update</code>, e.g.:</p>
 
 <p><code>imapping-update!</code> and <code>imapping-update/key!</code>
 are the same as <code>imapping-update</code> and
-<code>imapping-update/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-update/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-alter</code> <em>imap k proc</em><code>) → imapping</code></p>
 
@@ -678,9 +682,9 @@ example:</p>
 <p><code>(imapping-alter!</code> <em>imap k proc</em><code>) → imapping</code></p>
 
 <p><code>imapping-alter!</code> is the same as
-<code>imapping-alter</code>, except that it is permitted
-to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-alter</code>, except that it may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-delete-min</code> <em>imap</em><code>) → imapping</code><br>
 <code>(imapping-delete-max</code> <em>imap</em><code>) → imapping</code></p>
@@ -694,9 +698,9 @@ an error is signalled.</p>
 
 <p><code>imapping-delete-min!</code> and <code>imapping-delete-max!</code>
 are the same as <code>imapping-delete-min</code> and
-<code>imapping-delete-max</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-delete-max</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p>Examples:</p>
 
@@ -750,8 +754,8 @@ order.</p>
 <code>(imapping-update-max/key!</code> <em>imap mproc</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
-<code>imapping-update-min</code>, etc..  They are permitted to
-mutate and return the <em>imap</em> argument rather than allocating
+<code>imapping-update-min</code>, etc..  They may
+mutate and return the <em>imap</em> argument instead of allocating
 a new imapping.</p>
 
 <p><code>(imapping-pop-min</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
@@ -775,9 +779,9 @@ imapping containing all of the associations of <em>imap</em> except for
 
 <p><code>imapping-pop-min!</code> and <code>imapping-pop-max!</code>
 are the same as <code>imapping-pop-min</code> and
-<code>imapping-pop-max</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-pop-max</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead
+of allocating a new imapping.</p>
 
 <h3 id="whole">The whole imapping</h3>
 
@@ -864,9 +868,9 @@ resulting imapping is the same as that of <em>imap</em>.</p>
 
 <p><code>imapping-map!</code> and <code>imapping-map/key!</code>
 are the same as <code>imapping-map</code> and
-<code>imapping-map/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-map/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-for-each</code> <em>proc imap</em><code>) → unspecified</code><br>
 <code>(imapping-for-each/key</code> <em>proc imap</em><code>) → unspecified</code></p>
@@ -964,9 +968,9 @@ is called on the key and value of each association.</p>
 
 <p><code>imapping-filter-map!</code> and <code>imapping-filter-map/key!</code>
 are the same as <code>imapping-filter-map</code> and
-<code>imapping-filter-map/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-filter-map/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-map-either</code> <em>proc imap</em><code>) → imapping imapping</code><br>
 <code>(imapping-map-either/key</code> <em>proc imap</em><code>) → imapping imapping</code></p>
@@ -1009,8 +1013,8 @@ is called on the key and value of each association.</p>
 
 <p><code>imapping-map-either!</code> and <code>imapping-map-either/key!</code>
 are the same as <code>imapping-map-either</code> and
-<code>imapping-map-either/key</code>, respectively, except that they are
-permitted to mutate the <em>imap</em> to produce their results.</p>
+<code>imapping-map-either/key</code>, respectively, except that they may
+mutate the <em>imap</em> parameter to produce their results.</p>
 
 <p><code>(imapping-relation-map</code> <em>proc imap</em><code>) → imapping</code></p>
 
@@ -1068,9 +1072,9 @@ the key and value of each association.</p>
 
 <p><code>imapping-filter!</code> and <code>imapping-filter/key!</code>
 are the same as <code>imapping-filter</code> and
-<code>imapping-filter/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-filter/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> parameter instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-remove/key</code> <em>pred imap</em><code>) → imapping</code></p>
@@ -1093,9 +1097,9 @@ the key and value of each association.</p>
 
 <p><code>imapping-remove!</code> and <code>imapping-remove/key!</code>
 are the same as <code>imapping-remove</code> and
-<code>imapping-remove/key</code>, respectively, except that they are
-permitted to mutate and return the <em>imap</em> argument rather
-than allocating a new imapping.</p>
+<code>imapping-remove/key</code>, respectively, except that they may
+mutate and return the <em>imap</em> parameter instead of
+allocating a new imapping.</p>
 
 <p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code><br>
 <code>(imapping-partition/key</code> <em>pred imap</em><code>) → imapping imapping</code></p>
@@ -1122,8 +1126,8 @@ the key and value of each association.</p>
 
 <p><code>imapping-partition!</code> and <code>imapping-partition/key!</code>
 are the same as <code>imapping-partition</code> and
-<code>imapping-partition/key</code>, respectively, except that they are
-permitted to mutate the <em>imap</em> argument to produce their results.</p>
+<code>imapping-partition/key</code>, respectively, except that they may
+mutate the <em>imap</em> parameter to produce their results.</p>
 
 <h3 id="conversion">Conversion</h3>
 
@@ -1275,9 +1279,9 @@ appear.</p>
 <code>(imapping-xor!</code> <em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
 
 <p>These are linear-update variants of
-<code>imapping-union</code>, etc..  They are permitted to
-mutate <strong>any</strong> of the <em>imap</em> arguments rather than allocating
-a new imapping.</p>
+<code>imapping-union</code>, etc..  They may
+mutate <strong>any</strong> of the <em>imap</em> parameters to
+produce their results.</p>
 
 <p><code>(imapping-union/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-intersection/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
@@ -1314,9 +1318,9 @@ respectively, then the resulting imapping will contain the association
 <code>(imapping-intersection/combinator!</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
 
 <p>These are linear-update variants of <code>imapping-union/combinator</code>
-and <code>imapping-intersection/combinator</code>.  They are permitted to
-mutate <strong>any</strong> of the <em>imap</em> parameters rather than
-allocating a new imapping.</p>
+and <code>imapping-intersection/combinator</code>.  They may
+mutate <strong>any</strong> of the <em>imap</em> parameters to
+produce their results.</p>
 
 <h3 id="submappings">Submappings</h3>
 
@@ -1353,8 +1357,8 @@ above and closed below.</p>
 <code>(imapping-closed-open-interval!</code> <em>imap low high</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
-<code>imapping-open-interval</code>, etc..  They are permitted to
-mutate and return the <em>imap</em> argument rather than allocating
+<code>imapping-open-interval</code>, etc..  They may
+mutate and return the <em>imap</em> parameter instead of allocating
 a new imapping.</p>
 
 <p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code><br>
@@ -1390,8 +1394,8 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>(isubmapping&gt;=!</code> <em>imap k</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
-<code>isubmapping=</code>, etc..  They are permitted to
-mutate and return the <em>imap</em> argument rather than allocating
+<code>isubmapping=</code>, etc..  They may
+mutate and return the <em>imap</em> parameter instead of allocating
 a new imapping.</p>
 
 <h2 id="implementation">Implementation</h2>
@@ -1415,6 +1419,9 @@ on the Algorithmic Language Scheme&rdquo; (R7RS) (2013).  Available
 
 <p>Chris Okasaki &amp; Andrew Gill, &ldquo;Fast Mergeable Integer Maps&rdquo;,
 1998 <em>Workshop on ML</em>, p. 77-86.</p>
+
+<p>S. Bradner, &ldquo;Key words for use in RFCs to Indicate Requirement Levels&rdquo;.
+1997. http://www.ietf.org/rfc/rfc2119.txt</p>
 
 <h2>License</h2>
 
