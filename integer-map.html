@@ -36,6 +36,15 @@ for the imapping type are unspecified.</p>
 <p>It is an error to add or remove an association of an imapping while
 iterating over it.</p>
 
+<h2>Dependencies</h2>
+
+<p>The specification of this SRFI depends on the Maybe and Either types
+specified in <a href="https://srfi.schemers.org/srfi-189">SRFI 189</a>,
+and on the comparator type described in
+<a href="https://srfi.schemers.org/srfi-128">SRFI 128</a>.  The sample
+implementation has further dependencies; see the
+<a href="#implementation">appropriate section</a> for more details.</p>
+
 <h2>Notation</h2>
 
 <p>The naming conventions of this document are consistent with those used
@@ -1327,6 +1336,8 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>isubmapping=</code>, etc..  They are permitted to
 mutate and return the <em>imap</em> argument rather than allocating
 a new imapping.</p>
+
+<h1 id="implementation">Implementation</h1>
 
 <h1>Acknowledgements</h1>
 
