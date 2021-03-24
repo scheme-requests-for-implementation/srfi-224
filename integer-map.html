@@ -8,11 +8,11 @@
 <body>
 <h1>Integer Mappings</h1>
 
-<h1>Author</h1>
+<h2>Author</h2>
 
 <p>Wolfgang Corcoran-Mathe</p>
 
-<h1>Abstract</h1>
+<h2>Abstract</h2>
 
 <p>Integer maps, or <em>imappings</em>, are finite sets, where each element is
 an association between an exact-integer key and an arbitrary Scheme
@@ -25,7 +25,7 @@ treated as ordered sets, using the natural ordering on keys; a
 substantial sublibrary for working with imappings in this fashion is
 included.</p>
 
-<h1>Rationale</h1>
+<h2>Rationale</h2>
 
 <p>&ldquo;Finite maps are the workhorse data structure in every compiler.&rdquo;
 &ndash;Okasaki &amp; Gill</p>
@@ -93,7 +93,7 @@ equality of values, not keys) described in
 SRFI 128.  The sample implementation has further dependencies; see the
 <a href="#implementation">appropriate section</a> for more details.</p>
 
-<h1>Specification</h1>
+<h2>Specification</h2>
 
 <p>Imappings form a new type, as if created by <code>define-record-type</code>
 (see R7RS § 5.5). The effects of using record-type inspection or inheritance
@@ -102,7 +102,7 @@ for the imapping type are unspecified.</p>
 <p>It is an error to add or remove an association of an imapping while
 iterating over it.</p>
 
-<h2>Notation</h2>
+<h3>Notation</h3>
 
 <p>The naming conventions of this document are consistent with those used
 in the R7RS Scheme standard.</p>
@@ -196,7 +196,7 @@ violations.</p>
 allowed to return existing imappings rather than newly allocated ones,
 even where this SRFI explicitly says otherwise.</p>
 
-<h2>Index</h2>
+<h3>Index</h3>
 
 <ul>
 <li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping,
@@ -250,7 +250,7 @@ isubmapping=!, isubmapping&lt;!, isubmapping&lt;=!, isubmapping&gt;=!,
 isubmapping&gt;!</code></p></li>
 </ul>
 
-<h2 id="constructors">Constructors</h2>
+<h3 id="constructors">Constructors</h3>
 
 <p><code>(imapping</code> <em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
@@ -374,7 +374,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
  ⇒ ((2 . 4) (4 . 16) (6 . 36) (8 . 64))
 </code></pre>
 
-<h2 id="predicates">Predicates</h2>
+<h3 id="predicates">Predicates</h3>
 
 <p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
 
@@ -404,7 +404,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 (imapping-disjoint? (imapping 1 '(b)) (imapping 1 'b)) ⇒ #f
 </code></pre>
 
-<h2 id="accessors">Accessors</h2>
+<h3 id="accessors">Accessors</h3>
 
 <p><code>(imapping-lookup</code> <em>imap k</em><code>) → maybe[*]</code></p>
 
@@ -461,7 +461,7 @@ Nothing.</p>
 (imapping-max (imapping)) ⇒ nothing
 </code></pre>
 
-<h2 id="updaters">Updaters</h2>
+<h3 id="updaters">Updaters</h3>
 
 <p><code>(imapping-adjoin</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
@@ -779,7 +779,7 @@ are the same as <code>imapping-pop-min</code> and
 permitted to mutate and return the <em>imap</em> argument rather
 than allocating a new imapping.</p>
 
-<h2 id="whole">The whole imapping</h2>
+<h3 id="whole">The whole imapping</h3>
 
 <p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>
 
@@ -824,7 +824,7 @@ numerical order of keys.</p>
 <pre class="example"><code>(imapping-every? integer? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
 
-<h2 id="traversal">Traversal</h2>
+<h3 id="traversal">Traversal</h3>
 
 <p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code><br>
 <code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
@@ -1045,7 +1045,7 @@ transformed imapping.</p>
 likely conform better to the familiar pattern of Scheme "map" functions,
 while being sufficiently general for most purposes.</p>
 
-<h2 id="filter">Filter</h2>
+<h3 id="filter">Filter</h3>
 
 <p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code><br>
 <code>(imapping-filter/key</code> <em>pred imap</em><code>) → imapping</code></p>
@@ -1125,7 +1125,7 @@ are the same as <code>imapping-partition</code> and
 <code>imapping-partition/key</code>, respectively, except that they are
 permitted to mutate the <em>imap</em> argument to produce their results.</p>
 
-<h2 id="conversion">Conversion</h2>
+<h3 id="conversion">Conversion</h3>
 
 <p><code>(imapping-copy</code> <em>imap</em><code>) → imapping</code></p>
 
@@ -1182,7 +1182,7 @@ order of key.</p>
  ⇒ ("picard" "riker" "troi")
 </code></pre>
 
-<h2 id="comparison">Comparison</h2>
+<h3 id="comparison">Comparison</h3>
 
 <p><code>(imapping=?</code> <em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
@@ -1234,7 +1234,7 @@ compared using the equality predicate of <em>comp</em>.</p>
  ⇒ #t
 </code></pre>
 
-<h2 id="settheory">Set theory operations</h2>
+<h3 id="settheory">Set theory operations</h3>
 
 <p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
@@ -1318,7 +1318,7 @@ and <code>imapping-intersection/combinator</code>.  They are permitted to
 mutate <strong>any</strong> of the <em>imap</em> parameters rather than
 allocating a new imapping.</p>
 
-<h2 id="submappings">Submappings</h2>
+<h3 id="submappings">Submappings</h3>
 
 <p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code><br>
 <code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
@@ -1394,9 +1394,9 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 mutate and return the <em>imap</em> argument rather than allocating
 a new imapping.</p>
 
-<h1 id="implementation">Implementation</h1>
+<h2 id="implementation">Implementation</h2>
 
-<h1>Acknowledgements</h1>
+<h2>Acknowledgements</h2>
 
 <p>Thanks to Marc-Nieper Wißkirchen and Arthur A. Gleckler, the
 authors of SRFI 146, as well as to Daan Leijen and Andriy Palamarchuk,
@@ -1407,7 +1407,7 @@ SRFI.</p>
 <p>Thanks to the SRFI editor and to the contributors to the SRFI
 mailing list.</p>
 
-<h1>References</h1>
+<h2>References</h2>
 
 <p>Alex Shinn, John Cowan, &amp; Arthur A. Gleckler, eds., &ldquo;Revised<sup>7</sup> Report
 on the Algorithmic Language Scheme&rdquo; (R7RS) (2013).  Available
@@ -1416,7 +1416,7 @@ on the Algorithmic Language Scheme&rdquo; (R7RS) (2013).  Available
 <p>Chris Okasaki &amp; Andrew Gill, &ldquo;Fast Mergeable Integer Maps&rdquo;,
 1998 <em>Workshop on ML</em>, p. 77-86.</p>
 
-<h1>License</h1>
+<h2>License</h2>
 
 <p>Copyright &copy; Wolfgang Corcoran-Mathe (2020). All rights reserved.</p>
 
