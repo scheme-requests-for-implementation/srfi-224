@@ -631,6 +631,7 @@
          rest)))
 
 (define (imapping-intersection/combinator proc imap . rest)
+  (assume (procedure? proc))
   (assume (imapping? imap))
   (assume (pair? rest))
   (raw-imapping
