@@ -160,7 +160,9 @@ imapping-values, imapping-keys-set</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
 imapping-xor,
-imapping-union!, imapping-intersection!, imapping-difference!, imapping-xor!</code></p></li>
+imapping-union!, imapping-intersection!, imapping-difference!, imapping-xor!,
+imapping-union/combinator, imapping-intersection/combinator,
+imapping-union/combinator!, imapping-intersection/combinator!</code></p></li>
 <li><p><a href="#submappings">Submappings</a>: <code>imapping-open-interval, imapping-closed-interval,
 imapping-open-closed-interval, imapping-closed-open-interval,
 imapping-open-interval!, imapping-closed-interval!,
@@ -1199,6 +1201,45 @@ appear.</p>
 <code>imapping-union</code>, etc..  They are permitted to
 mutate <strong>any</strong> of the <em>imap</em> arguments rather than allocating
 a new imapping.</p>
+
+<p><code>(imapping-union/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
+
+<p><em>proc</em> is a procedure of type <code>* * → *</code>.</p>
+
+<p>Return a new imapping whose set of keys is the union/intersection of
+the sets of keys of the <em>imaps</em>.  The values associated with duplicate
+keys are combined with <em>proc</em>; that is, if an integer <em>k</em> is associated
+with values <em>v</em>₁, <em>v</em>₂, …, <em>v</em>ₙ in <em>imap</em>₁, <em>imap</em>₂, …, <em>imap</em>ₙ,
+respectively, then the resulting imapping will contain the association
+(<em>k</em>, (<em>proc</em> … (<em>proc v</em>₁ <em>v</em>₂) … <em>v</em>ₙ)).</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>;; Right-biased union.
+(imapping-&gt;alist
+ (imapping-union/combinator (lambda (_l r) r)
+                            (imapping 1 'b 2 'c)
+                            (imapping 2 "data" 3 "picard")))
+
+ ⇒ ((1 . b) (2 . "data") (3 . "picard"))
+
+(imapping-&gt;alist
+ (imapping-intersection/combinator
+  (lambda (l r) (string-append l " " r))
+  (imapping 1 "q" 3 "jean-luc" 5 "miles" 7 "quark")
+  (imapping 3 "picard" 5 "o'brien")))
+
+ ⇒ ((3 . "jean-luc picard") (5 . "miles o'brien"))
+</code></pre>
+
+<p><code>(imapping-union/combinator!</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection/combinator!</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
+
+<p>These are linear-update variants of <code>imapping-union/combinator</code>
+and <code>imapping-intersection/combinator</code>.  They are permitted to
+mutate <strong>any</strong> of the <em>imap</em> parameters rather than
+allocating a new imapping.</p>
 
 <h2 id="submappings">Submappings</h2>
 
