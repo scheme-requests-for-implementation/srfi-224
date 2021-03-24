@@ -592,10 +592,10 @@
 ;;;; Set theory operations
 
 (define (imapping-union . args)
-  (apply imapping-union/combinator second-arg args))
+  (apply imapping-union/combinator first-arg args))
 
 (define (imapping-intersection . args)
-  (apply imapping-intersection/combinator second-arg args))
+  (apply imapping-intersection/combinator first-arg args))
 
 (define (imapping-difference imap . rest)
   (assume (imapping? imap))
@@ -626,7 +626,7 @@
   (raw-imapping
    (fold (lambda (im t)
            (assume (imapping? im))
-           (trie-merge proc (imapping-trie im) t))
+           (trie-merge proc t (imapping-trie im)))
          (imapping-trie imap)
          rest)))
 
@@ -637,7 +637,7 @@
   (raw-imapping
    (fold (lambda (im t)
            (assume (imapping? im))
-           (trie-intersection proc (imapping-trie im) t))
+           (trie-intersection proc t (imapping-trie im)))
          (imapping-trie imap)
          rest)))
 
