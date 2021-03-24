@@ -255,7 +255,7 @@ isubmapping&gt;!</code></p></li>
 <p><code>(imapping</code> <em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping.  The arguments alternate between keys (which
-must be exact integers) and values (which may be anything); the
+must be exact integers) and values (which are arbitrary Scheme objects); the
 resulting imapping contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
@@ -355,7 +355,7 @@ exact integer.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist (alist-&gt;imapping '((1 . b) (0 . a) (2 . c))))
- ⇒ '((0 . a) (1 . b) (2 . c))
+ ⇒ ((0 . a) (1 . b) (2 . c))
 </code></pre>
 
 <p><code>(iset-&gt;imapping</code> <em>proc iset</em><code>) → imapping</code></p>
@@ -411,7 +411,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
 <p>Examples:</p>
-<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just['zap]
+<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
 (imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
@@ -445,7 +445,7 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ just[0, 'a]
+<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ just[0, a]
 (imapping-min (imapping)) ⇒ nothing
 </code></pre>
 
@@ -457,7 +457,7 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-max (imapping 0 'a 1 'b 2 'c)) ⇒ just[2, 'c]
+<pre class="example"><code>(imapping-max (imapping 0 'a 1 'b 2 'c)) ⇒ just[2, c]
 (imapping-max (imapping)) ⇒ nothing
 </code></pre>
 
@@ -594,11 +594,11 @@ if it returns Just <em>v</em>, then <em>(k, v)</em> is added to the new imapping
 in terms of <code>imapping-update</code>, e.g.:</p>
 
 <pre><code>  (imapping-delete imap k)
-≡
+   ≡
   (imapping-update imap k (lambda (_) (nothing)))
 
   (imapping-adjoin imap k v)
-≡
+   ≡
   (imapping-update imap k (lambda (_) (just v)))
 </code></pre>
 <p>Examples:</p>
@@ -646,7 +646,7 @@ of the other update operations may be defined in terms of it.  For
 example:</p>
 
 <pre><code>  (imapping-update imap k f)
-≡
+   ≡
   (imapping-alter imap k (lambda (m)
                            (maybe-ref m
                                       nothing
@@ -1286,7 +1286,7 @@ a new imapping.</p>
 
 <p>Return a new imapping whose set of keys is the union/intersection of
 the sets of keys of the <em>imaps</em>.  The values associated with duplicate
-keys are combined with <em>proc</em>; that is, if an integer <em>k</em> is associated
+keys are combined left-associatively with <em>proc</em>; that is, if an integer <em>k</em> is associated
 with values <em>v</em>₁, <em>v</em>₂, …, <em>v</em>ₙ in <em>imap</em>₁, <em>imap</em>₂, …, <em>imap</em>ₙ,
 respectively, then the resulting imapping will contain the association
 (<em>k</em>, (<em>proc</em> … (<em>proc v</em>₁ <em>v</em>₂) … <em>v</em>ₙ)).</p>
@@ -1329,7 +1329,7 @@ allocating a new imapping.</p>
 
 <p>Procedures that return a subset of <em>imap</em> containing the associations
 whose keys are contained in the interval from <em>low</em> to <em>high</em>.  The
-interval may be open, closed, open below and closed above, or open
+interval is open/closed/open below and closed above/open
 above and closed below.</p>
 
 <p>Examples:</p>
@@ -1364,7 +1364,7 @@ a new imapping.</p>
 <code>(isubmapping&gt;=</code> <em>imap k</em><code>) → imapping</code></p>
 
 <p>Procedures that return an imapping containing the associations of
-<em>imap</em> whose keys are equal to, less than/less than or equal
+<em>imap</em> whose keys are equal to/less than/less than or equal
 to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>isubmapping=</code> contains at most one element.</p>
 
