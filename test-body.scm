@@ -923,6 +923,53 @@
     (test-eqv #t (imapping=? default-comp
                              (imapping -2 'b 7 'f)
                              (imapping-xor imap2 imap3)))
+
+    ;;; /combinator variants
+
+    (test-eqv #t (imapping=? default-comp
+                             sparse-imap
+                             (imapping-union/combinator second-arg
+                                                        sparse-imap
+                                                        empty-imap)))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping -2 'b 3 'd 5 'g 7 'f)
+                  (imapping-union/combinator second-arg imap2 imap3)))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping -5 'a -2 'b 1 'c 3 'd 5 'g 7 'f)
+                  (imapping-union/combinator second-arg imap1 imap2 imap3)))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping 0 "abc")
+                  (imapping-union/combinator string-append
+                                             (imapping 0 "a")
+                                             (imapping 0 "b")
+                                             (imapping 0 "c"))))
+
+    (test-eqv #t (imapping=? default-comp
+                             empty-imap
+                             (imapping-intersection/combinator second-arg
+                                                               sparse-imap
+                                                               empty-imap)))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping 3 'd 5 'g)
+                  (imapping-intersection/combinator second-arg imap2 imap3)))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping -2 'z)
+                  (imapping-intersection/combinator second-arg
+                                                    imap1
+                                                    imap2
+                                                    (imapping -2 'z))))
+    (test-eqv #t (imapping=?
+                  default-comp
+                  (imapping 0 "abc")
+                  (imapping-intersection/combinator string-append
+                                                    (imapping 0 "a")
+                                                    (imapping 0 "b")
+                                                    (imapping 0 "c"))))
     ))
 
 (test-group "Intervals"
