@@ -27,6 +27,72 @@ included.</p>
 
 <h1>Rationale</h1>
 
+<p>&ldquo;Finite maps are the workhorse data structure in every compiler.&rdquo;
+&ndash;Okasaki &amp; Gill</p>
+
+<p>Mappings provide operations that are critical to a host of functional
+algorithms. They describe finite sets of key-value associations (pairs)
+which can be efficiently extended, queried, and transformed.  Critically,
+all of these operations can be efficiently implemented as &ldquo;pure&rdquo;
+functions.  While
+hash-tables (see <a href="https://srfi.schemers.org/srfi-125">SRFI 125</a>)
+provide similar operations, they generally provide a strictly imperative
+language for insertion of associations and mutation of association
+sets.</p>
+
+<p>Mappings are already familiar to Scheme;
+<a href="https://srfi.schemers.org/srfi-146">SRFI 146</a> provides general
+mappings and was added to the Tangerine Edition of R7RS-large.  But
+the generality of SRFI 146 is costly.  Any comparable type of Scheme
+object can be used as a key in a SRFI 146 mapping, so comparisons
+between keys must use the dispatch-based generic methods of
+<a href="https://srfi.schemers.org/srfi-128">SRFI 128</a>.  This is overkill for
+many use-cases; in particular, if we wish to use exact integers as keys,
+we expect comparisons to be very efficient and to require no mediation
+from a comparison dictionary.  In addition,
+some efficient and simple mapping representations, for example the
+Okasaki-Gill radix tree model used in this SRFI&rsquo;s sample implementation,
+are unsuitable for representing general mappings.</p>
+
+<p>The integer mappings we describe restrict the type of keys to
+exact integers (&ldquo;fixnums&rdquo;).  This is a ubiquitous type in computing,
+and broadly useful as a key-type for mappings; its use opens up a
+range of implementation options.</p>
+
+<p>This library provides an interface similar to that used by
+SRFI 146, although it diverges in some areas.  In addition,
+<code>imapping-adjust</code>, <code>imapping-alter</code>, and
+several other forms derive from Haskell&rsquo;s
+<a href="https://hackage.haskell.org/package/containers/docs/Data-IntMap-Strict.html">IntMap</a>
+library.</p>
+
+<p>Many forms make
+instrumental use of <a href="https://srfi.schemers.org/srfi-189">SRFI 189&rsquo;s</a>
+Maybe type; the author believes that this choice results in simpler,
+more compositional definitions.  (Compare, for instance, the
+<code>mapping-ref</code> form of SRFI 146 with <code>imapping-lookup</code>.)  Where the
+use of Maybe values would clarify nothing, I have preferred the
+traditional &ldquo;value or #f&rdquo; Lisp protocol.</p>
+
+<p>Unusual among SRFIs, this library provides &ldquo;with-key&rdquo; variants for
+many staple higher-order procedures (e.g. <code>map</code>, <code>fold</code>, etc.).
+These variants, indicated by the suffix <code>-/key</code>, call their auxiliary
+functions on both the keys and values of an imapping (possibly along
+with other parameters).  A smaller
+library proposal might eschew variant forms of a procedure; consider,
+for example, the single index-and-value form of <code>vector-map</code> from
+<a href="https://srfi.schemers.org/srfi-133">SRFI 133</a>.  However, this creates
+unnecessary inflexibility and incompatibility between SRFI.  In practice,
+the added complexity of providing variant higher-order forms is minimal,
+and their availability can be a boon to both the programmer and to the
+standardizer.</p>
+
+<p>The specification of this SRFI depends on the Maybe and Either types
+specified in SRFI 189 and on the comparator type (used to determine the
+equality of values, not keys) described in
+SRFI 128.  The sample implementation has further dependencies; see the
+<a href="#implementation">appropriate section</a> for more details.</p>
+
 <h1>Specification</h1>
 
 <p>Imappings form a new type, as if created by <code>define-record-type</code>
@@ -35,15 +101,6 @@ for the imapping type are unspecified.</p>
 
 <p>It is an error to add or remove an association of an imapping while
 iterating over it.</p>
-
-<h2>Dependencies</h2>
-
-<p>The specification of this SRFI depends on the Maybe and Either types
-specified in <a href="https://srfi.schemers.org/srfi-189">SRFI 189</a>,
-and on the comparator type described in
-<a href="https://srfi.schemers.org/srfi-128">SRFI 128</a>.  The sample
-implementation has further dependencies; see the
-<a href="#implementation">appropriate section</a> for more details.</p>
 
 <h2>Notation</h2>
 
