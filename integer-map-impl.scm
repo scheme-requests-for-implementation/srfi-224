@@ -597,16 +597,19 @@
 (define (imapping-intersection . args)
   (apply imapping-intersection/combinator first-arg args))
 
-(define (imapping-difference imap . rest)
-  (assume (imapping? imap))
-  (assume (pair? rest))
-  (raw-imapping
-   (trie-difference (imapping-trie imap)
-                    (imapping-trie
-                     (pmatch rest
-                       ((,imap2) imap2)
-                       ((,imap2 . ,imaps)
-                        (apply imapping-union imap2 imaps)))))))
+(define imapping-difference
+  (case-lambda
+    ((imap1 imap2)
+     (assume (imapping? imap1))
+     (assume (imapping? imap2))
+     (raw-imapping
+      (trie-difference (imapping-trie imap1) (imapping-trie imap2))))
+    ((imap . rest)
+     (assume (imapping? imap))
+     (assume (pair? rest))
+     (raw-imapping
+      (trie-difference (imapping-trie imap)
+                       (imapping-trie (apply imapping-union rest)))))))
 
 (define (imapping-xor imap1 imap2)
   (assume (imapping? imap1))
