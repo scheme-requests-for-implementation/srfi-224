@@ -424,7 +424,7 @@ with a duplicated key and is expected to return a value for the key.</p>
  ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
-<p><code>(imapping-adjoin/combinator!</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)</code></p>
+<p><code>(imapping-adjoin/combinator!</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
 
 <p><code>imapping-adjoin/combinator!</code> is the same as
 <code>imapping-adjoin/combinator</code>, except that it is permitted
@@ -1053,7 +1053,7 @@ permitted to mutate the <em>imap</em> argument to produce their results.</p>
 <p><code>(imapping-copy</code> <em>imap</em><code>) → imapping</code></p>
 
 <p>Returns a newly allocated imapping containing the associations of
-<code>imap</code.</p>
+<code>imap</code>.</p>
 
 <p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
