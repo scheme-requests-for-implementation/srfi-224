@@ -4,8 +4,8 @@
 
 (define (constantly x) (lambda _ x))
 
-(define (first x _) x)
-(define (second _ y) y)
+(define (first-arg x _) x)
+(define (second-arg _ y) y)
 (define (nth n) (lambda args (list-ref args n)))
 
 (define (square x) (* x x))
@@ -224,18 +224,18 @@
                            (imapping-adjoin empty-imap 0 'a 1 'b 2 'c)))
 
   (test-eqv 'U (imapping-ref/default
-                (imapping-adjoin/combinator letter-imap first 20 'U)
+                (imapping-adjoin/combinator letter-imap first-arg 20 'U)
                 20
                 #f))
   (test-eqv 'u (imapping-ref/default
-                (imapping-adjoin/combinator letter-imap second 20 'U)
+                (imapping-adjoin/combinator letter-imap second-arg 20 'U)
                 20
                 #f))
   (test-eqv #t
             (imapping=?
              default-comp
              (imapping 0 'a 1 'b 2 'c)
-             (imapping-adjoin/combinator empty-imap first 0 'a 1 'b 2 'c)))
+             (imapping-adjoin/combinator empty-imap first-arg 0 'a 1 'b 2 'c)))
 
   ;;; adjusts
 

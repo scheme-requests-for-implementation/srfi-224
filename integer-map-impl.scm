@@ -29,8 +29,8 @@
        (loop (proc k v b) ps*))
       (else (error "plist-fold: invalid plist")))))
 
-(define (first x _) x)
-(define (second _ y) y)
+(define (first-arg x _) x)
+(define (second-arg _ y) y)
 
 (define (constantly x)
   (lambda _ x))
@@ -47,7 +47,7 @@
 (define (imapping . args)
   (raw-imapping
     (plist-fold (lambda (k v trie)
-                  (trie-insert/combine trie k v second))
+                  (trie-insert/combine trie k v second-arg))
                 #f
                 args)))
 
@@ -59,7 +59,7 @@
   (raw-imapping
     (fold (lambda (p trie)
             (assume (pair? p) "alist->imapping: not a pair")
-            (trie-insert/combine trie (car p) (cdr p) second))
+            (trie-insert/combine trie (car p) (cdr p) second-arg))
           #f
           as)))
 
@@ -591,25 +591,11 @@
 
 ;;;; Set theory operations
 
-(define (imapping-union imap . rest)
-  (assume (imapping? imap))
-  (assume (pair? rest))
-  (raw-imapping
-   (fold (lambda (im t)
-           (assume (imapping? im))
-           (trie-merge second (imapping-trie im) t))
-         (imapping-trie imap)
-         rest)))
+(define (imapping-union . args)
+  (apply imapping-union/combinator second-arg args))
 
-(define (imapping-intersection imap . rest)
-  (assume (imapping? imap))
-  (assume (pair? rest))
-  (raw-imapping
-   (fold (lambda (im t)
-           (assume (imapping? im))
-           (trie-intersection second (imapping-trie im) t))
-         (imapping-trie imap)
-         rest)))
+(define (imapping-intersection . args)
+  (apply imapping-intersection/combinator second-arg args))
 
 (define (imapping-difference imap . rest)
   (assume (imapping? imap))
