@@ -557,25 +557,29 @@
          (else t)))))  ; key doesn't occur in t
     (update trie)))
 
-;; Left-biased intersection: Preserve associations in trie1 in case
-;; of duplicates.
-(define (trie-intersection trie1 trie2)
+(define (trie-intersection combine trie1 trie2)
   (letrec
    ((intersect
      (lambda (s t)
        (cond ((or (trie-empty? s) (trie-empty? t)) the-empty-trie)
              ((and (leaf? s) (leaf? t))
-              (if (fx=? (leaf-key s) (leaf-key t)) s the-empty-trie))
-             ((leaf? s) (insert-leaf s t))
-             ((leaf? t) (insert-leaf t s))
+              (tmatch s
+                ((leaf ,sk ,sv)
+                 (tmatch t
+                   ((leaf ,tk ,tv) (guard (fx=? sk tk))
+                    (leaf sk (combine sv tv)))
+                   (else the-empty-trie)))))
+             ((leaf? s) (insert-leaf combine s t))
+             ((leaf? t) (insert-leaf (swap-args combine) t s))
              (else (intersect-branches s t)))))
     (insert-leaf
-     (lambda (lf t)
+     (lambda (comb lf t)
        (tmatch lf
          ((leaf ,k ,v)
           (let lp ((t t))
             (tmatch t
-              ((leaf ,tk ?) (if (fx=? k tk) lf the-empty-trie))
+              ((leaf ,tk ,tv) (guard (fx=? k tk)) (leaf k (comb v tv)))
+              ((leaf ? ?) the-empty-trie)
               ((branch ,p ,m ,l ,r)
                (and (match-prefix? k p m)
                     (if (zero-bit? k m) (lp l) (lp r))))

@@ -607,7 +607,7 @@
   (raw-imapping
    (fold (lambda (im t)
            (assume (imapping? im))
-           (trie-intersection (imapping-trie im) t))
+           (trie-intersection second (imapping-trie im) t))
          (imapping-trie imap)
          rest)))
 
@@ -632,6 +632,30 @@
 (define imapping-intersection! imapping-intersection)
 (define imapping-difference! imapping-difference)
 (define imapping-xor! imapping-xor)
+
+(define (imapping-union/combinator proc imap . rest)
+  (assume (procedure? proc))
+  (assume (imapping? imap))
+  (assume (pair? rest))
+  (raw-imapping
+   (fold (lambda (im t)
+           (assume (imapping? im))
+           (trie-merge proc (imapping-trie im) t))
+         (imapping-trie imap)
+         rest)))
+
+(define (imapping-intersection/combinator proc imap . rest)
+  (assume (imapping? imap))
+  (assume (pair? rest))
+  (raw-imapping
+   (fold (lambda (im t)
+           (assume (imapping? im))
+           (trie-intersection proc (imapping-trie im) t))
+         (imapping-trie imap)
+         rest)))
+
+(define imapping-union/combinator! imapping-union/combinator)
+(define imapping-intersection/combinator! imapping-intersection/combinator)
 
 ;;;; Subsets
 

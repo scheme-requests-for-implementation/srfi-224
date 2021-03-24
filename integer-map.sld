@@ -73,6 +73,8 @@
    ;; Set theory operations
    imapping-union imapping-intersection imapping-difference imapping-xor
    imapping-union! imapping-intersection! imapping-difference! imapping-xor!
+   imapping-union/combinator imapping-intersection/combinator
+   imapping-union/combinator! imapping-intersection/combinator!
 
    ;; Submappings
    imapping-open-interval imapping-closed-interval
