@@ -1428,6 +1428,19 @@ a new imapping.</p>
 
 <h2 id="implementation">Implementation</h2>
 
+<p>The sample implementation is found in the repository for this SRFI.
+The imapping implementation is based on the radix (Patricia) tree
+approach described by Chris Okasaki and Andrew Gill in &ldquo;Fast
+Mergeable Integer Maps&rdquo; (see <a href="#references">References</a>).
+These trees provide fast insert, lookup, and set-theoretical operations.</p>
+
+<p>The implementation should be portable without changes to any R7RS
+Scheme that provides SRFIs 1, 128, 143, 145, and 217.  The provided
+tests can be run with SRFIs 64 or 78; additional shims for the test
+libraries preferred by <a href="http://synthcode.com/scheme/chibi/lib/chibi/test.html">chibi-scheme</a>
+and <a href="https://wiki.call-cc.org/eggref/5/test">CHICKEN</a> are also
+included.</p>
+
 <h2>Acknowledgements</h2>
 
 <p>Thanks to Marc-Nieper Wißkirchen and Arthur A. Gleckler, the
@@ -1450,7 +1463,7 @@ R<sup><em>n</em></sup>RS standards.</p>
 <p>Of course, none of this should be understood to imply that any of
 the individuals mentioned above endorse this SRFI.</p>
 
-<h2>References</h2>
+<h2 id="references">References</h2>
 
 <p>Alex Shinn, John Cowan, &amp; Arthur A. Gleckler, eds., &ldquo;Revised<sup>7</sup> Report
 on the Algorithmic Language Scheme&rdquo; (R7RS) (2013).  Available
