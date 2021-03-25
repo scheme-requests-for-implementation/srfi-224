@@ -83,6 +83,8 @@
                  (lambda args er0 er1 ...)))))
 
 ;;; pmatch, by Oleg Kiselyov, rev. Will Byrd.
+;;; The original public-domain code can be found at
+;;; http://okmij.org/ftp/Scheme/match-case-simple.scm
 
 ;; This is a new version of pmatch (August 8, 2012).
 ;; It has two important new features:
