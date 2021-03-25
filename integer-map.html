@@ -130,20 +130,43 @@ in the R7RS Scheme standard.</p>
 <p>It is an error (unless otherwise noted) if the procedures are passed arguments
 that do not have the type implied by the argument names.</p>
 
+<p>The pair notation (<em>k</em>,<em>v</em>) is often used to describe
+an association of an imapping.  Here, <em>k</em> is the key and
+<em>v</em> its associated value.  If an imapping <em>imap</em> is said
+to "contain the association (<em>k</em>,<em>v</em>)", then this is to
+be understood in the sense that looking up <em>k</em> in <em>imap</em>
+(via <code>(imapping-ref</code> <em>imap k</em><code>)</code>, for
+example) will produce the value <em>v</em>.</p>
+
 <p>Each procedure is written in the form</p>
 
-<p><code>(</code><em>proc arg₁ arg₂</em> …<code>)</code> → <em>type</em>₁ <em>type</em>₂ …</p>
+<p><code>(</code><em>proc&nbsp;arg₁ arg₂</em> …<code>)</code> → [<em>type</em>₁, <em>type</em>₂, …]</p>
 
 <p>where <em>proc</em> is the name of the procedure, the <em>args</em> are its
 parameters, and the <em>types</em> are the types of the objects it returns.
-The latter refer (informally) to Scheme types, e.g. boolean, integer,
-etc.  An exception is the notation &lsquo;*&rsquo;, which indicates that the type
-of the value depends on the context of the procedure call.
+If the procedure returns a single value, the brackets on the right-hand side
+may be omitted.
+The <em>types</em> refer (informally) to Scheme types; e.g. <code>boolean</code>
+denotes a Scheme boolean, <code>list[integer]</code> denotes a list of integers,
+etc.  The special notation &lsquo;*&rsquo; indicates that the type
+of the value may be anything, depending on the context of the procedure call.
 For example, Scheme&rsquo;s <code>list-ref</code> procedure would be written</p>
 
 <p><code>(</code>list-ref <em>list k</em><code>) → *</code></p>
 
-<p>since the type of the return value depends on <em>list</em>.</p>
+<p>since the type of the return value depends on <em>list</em>.  Multiple
+<code>*</code> values appearing in the same type signature do not necessarily
+denote the same type.  For example, the signature <code>* * → boolean</code> might
+denote the type of a procedure taking two values of the same type to a boolean,
+or two values of differing types.  The accompanying description may clarify
+the semantics of procedures defined on <code>*</code> values, but Scheme's
+type system makes it difficult to explain all of the possible interactions of
+these procedures.</p>
+
+<p>A procedure which returns a value of type <em>τ</em><code>-or-false</code>
+(where <em>τ</em> denotes a type) returns a <em>τ</em> on success, and
+<code>#f</code> otherwise.  Thus the <code>memv</code> procedure of R7RS
+would have the type signature <code>* list[*] → list[*]-or-false</code>.</p>
 
 <h3>Linear update</h3>
 
@@ -972,8 +995,8 @@ are the same as <code>imapping-filter-map</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-map-either/key</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code><br>
+<code>(imapping-map-either/key</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code></p>
 
 <p>The <em>proc</em> of <code>imapping-map-either</code> is a procedure
 of type <code>* → either[*]</code>, where <code>either[*]</code> denotes
@@ -1019,7 +1042,7 @@ mutate the <em>imap</em> parameter to produce their results.</p>
 <p><code>(imapping-relation-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p><code>proc</code> must be a procedure of type
-<code>exact-integer * → exact-integer *</code>.</p>
+<code>exact-integer * → [exact-integer, *]</code>.</p>
 
 <p>Returns a new imapping whose associations are the results of
 transforming both the keys and the values of <em>imap</em> with
@@ -1101,8 +1124,8 @@ are the same as <code>imapping-remove</code> and
 mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-partition/key</code>&nbsp;<em>pred imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code><br>
+<code>(imapping-partition/key</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
 
 <p>Returns two new imappings: the first contains all associations of
 <em>imap</em> whose values satisfy <em>pred</em>, and the second contains those
