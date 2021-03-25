@@ -256,7 +256,7 @@ isubmapping&gt;!</code></p></li>
 
 <h3 id="constructors">Constructors</h3>
 
-<p><code>(imapping</code> <em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(imapping</code>&nbsp;<em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping.  The arguments alternate between keys (which
 must be exact integers) and values (which are arbitrary Scheme objects); the
@@ -269,7 +269,7 @@ the arguments, earlier associations take priority.</p>
 (imapping-&gt;alist (imapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
 </code></pre>
 
-<p><code>(imapping-unfold</code> <em>stop? mapper successor seed</em><code>) → imapping</code></p>
+<p><code>(imapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em><code>) → imapping</code></p>
 
 The arguments have the following types:
 <ul>
@@ -295,7 +295,7 @@ value when applied to the current seed.</p>
  ⇒ ((0 . "") (1 . "a") (2 . "aa") (3 . "aaa"))
 </code></pre>
 
-<p><code>(imapping-unfold-maybe</code> <em>mproc seed</em><code>) → imapping</code></p>
+<p><code>(imapping-unfold-maybe</code>&nbsp;<em>mproc seed</em><code>) → imapping</code></p>
 
 The arguments have the following types:
 <ul>
@@ -351,7 +351,7 @@ each step:
 
 This may be preferable when <em>f</em> is expensive to apply.
 
-<p><code>(alist-&gt;imapping</code> <em>alist</em><code>) → imapping</code></p>
+<p><code>(alist-&gt;imapping</code>&nbsp;<em>alist</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
@@ -362,7 +362,7 @@ exact integer.</p>
  ⇒ ((0 . a) (1 . b) (2 . c))
 </code></pre>
 
-<p><code>(iset-&gt;imapping</code> <em>proc iset</em><code>) → imapping</code></p>
+<p><code>(iset-&gt;imapping</code>&nbsp;<em>proc iset</em><code>) → imapping</code></p>
 
 <p><em>proc</em> is of type <code>exact-integer → *</code>.</p>
 
@@ -380,11 +380,11 @@ For each integer <em>k</em> in <em>iset</em>, the association
 
 <h3 id="predicates">Predicates</h3>
 
-<p><code>(imapping?</code> <em>obj</em><code>) → boolean</code></p>
+<p><code>(imapping?</code>&nbsp;<em>obj</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>obj</em> is an imapping.</p>
 
-<p><code>(imapping-contains? imap k) → boolean</code></p>
+<p><code>(imapping-contains?</code>&nbsp;<em>imap k</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em> contains an association for key <em>k</em>.</p>
 <p>Examples:</p>
@@ -392,7 +392,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 (imapping-contains? (imapping 1 'b) 0) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-empty?</code> <em>imap</em><code>) → boolean</code></p>
+<p><code>(imapping-empty?</code>&nbsp;<em>imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em> contains no associations.</p>
 <p>Examples:</p>
@@ -400,7 +400,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 (imapping-empty? (alist-&gt;imapping '((0 . a)))) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-disjoint?</code> <em>imap</em>₁ <em>imap</em>₂<code>) → boolean</code></p>
+<p><code>(imapping-disjoint?</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if <em>imap</em>₁ and <em>imap</em>₂ have no keys in common.</p>
 <p>Examples:</p>
@@ -410,7 +410,7 @@ For each integer <em>k</em> in <em>iset</em>, the association
 
 <h3 id="accessors">Accessors</h3>
 
-<p><code>(imapping-lookup</code> <em>imap k</em><code>) → maybe[*]</code></p>
+<p><code>(imapping-lookup</code>&nbsp;<em>imap k</em><code>) → maybe[*]</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
@@ -419,7 +419,7 @@ Otherwise, returns Nothing.</p>
 (imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-ref</code> <em>imap k</em><code>) → *</code></p>
+<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, an error is signaled.</p>
@@ -430,7 +430,7 @@ Otherwise, an error is signaled.</p>
 (imapping-ref (imapping 0 'a) 36864) ⇒ ; error
 </code></pre>
 
-<p><code>(imapping-ref/default</code> <em>imap k obj</em><code>) → *</code></p>
+<p><code>(imapping-ref/default</code>&nbsp;<em>imap k obj</em><code>) → *</code></p>
 
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, returns <em>obj</em>.</p>
@@ -441,7 +441,7 @@ Otherwise, returns <em>obj</em>.</p>
 (imapping-ref/default (imapping 0 'a) 36864 #f) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-min</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(imapping-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>imap</em>.
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
@@ -453,7 +453,7 @@ Nothing.</p>
 (imapping-min (imapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-max</code> <em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(imapping-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>imap</em>.
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
@@ -467,7 +467,7 @@ Nothing.</p>
 
 <h3 id="updaters">Updaters</h3>
 
-<p><code>(imapping-adjoin</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(imapping-adjoin</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of
 <em>imap</em> as well as the associations (<em>k</em>₁, <em>v</em>₁), (<em>k</em>₂, <em>k</em>₂), …
@@ -481,13 +481,13 @@ associations are replaced.</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping-adjoin (imapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(imapping-adjoin!</code> <em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(imapping-adjoin!</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p><code>imapping-adjoin!</code> is the same as <code>imapping-adjoin</code>,
 except that it may mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-adjoin/combinator</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
+<p><code>(imapping-adjoin/combinator</code>&nbsp;<em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ …)`</p>
 
 <p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>* * → *</code>.
@@ -505,7 +505,7 @@ with a duplicated key and is expected to return a value for the key.</p>
  ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
-<p><code>(imapping-adjoin/combinator!</code> <em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
+<p><code>(imapping-adjoin/combinator!</code>&nbsp;<em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
 
 <p><code>imapping-adjoin/combinator!</code> is the same as
 <code>imapping-adjoin/combinator</code>, except that it may
@@ -546,7 +546,7 @@ are the same as <code>imapping-adjust</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-delete imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(imapping-delete imap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
@@ -557,14 +557,14 @@ association in <em>imap</em>, it is ignored.</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping-delete (imapping 0 -200 1 -100) 0)) ⇒ ((1 . -100))
 </code></pre>
 
-<p><code>(imapping-delete! imap</code> <em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(imapping-delete! imap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p><code>imapping-delete!</code> is the same as
 <code>imapping-delete</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-delete-all</code> <em>imap list</em><code>) → imapping</code></p>
+<p><code>(imapping-delete-all</code>&nbsp;<em>imap list</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
@@ -575,15 +575,15 @@ those for keys equal to an element of <em>list</em>.</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-delete-all!</code> <em>imap list</em><code>) → imapping</code></p>
+<p><code>(imapping-delete-all!</code>&nbsp;<em>imap list</em><code>) → imapping</code></p>
 
 <p><code>imapping-delete-all!</code> is the same as
 <code>imapping-delete-all</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-update</code> <em>imap k mproc</em><code>) → imapping</code><br>
-<code>(imapping-update/key</code> <em>imap k mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code><br>
+<code>(imapping-update/key</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
@@ -623,8 +623,8 @@ in terms of <code>imapping-update</code>, e.g.:</p>
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
-<p><code>(imapping-update!</code> <em>imap k mproc</em><code>) → imapping</code><br>
-<code>(imapping-update/key!</code> <em>imap k mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update!</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code><br>
+<code>(imapping-update/key!</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
 
 <p><code>imapping-update!</code> and <code>imapping-update/key!</code>
 are the same as <code>imapping-update</code> and
@@ -632,7 +632,7 @@ are the same as <code>imapping-update</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-alter</code> <em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
 <p><em>proc</em> is a procedure of type <code>maybe[*] → maybe[*]</code>.</p>
 
@@ -679,22 +679,22 @@ example:</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-alter!</code> <em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
 <p><code>imapping-alter!</code> is the same as
 <code>imapping-alter</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-delete-min</code> <em>imap</em><code>) → imapping</code><br>
-<code>(imapping-delete-max</code> <em>imap</em><code>) → imapping</code></p>
+<p><code>(imapping-delete-min</code>&nbsp;<em>imap</em><code>) → imapping</code><br>
+<code>(imapping-delete-max</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 for the association with the least/greatest key.  If <em>imap</em> is empty,
 an error is signalled.</p>
 
-<p><code>(imapping-delete-min!</code> <em>imap</em><code>) → imapping</code><br>
-<code>(imapping-delete-max!</code> <em>imap</em><code>) → imapping</code></p>
+<p><code>(imapping-delete-min!</code>&nbsp;<em>imap</em><code>) → imapping</code><br>
+<code>(imapping-delete-max!</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-delete-min!</code> and <code>imapping-delete-max!</code>
 are the same as <code>imapping-delete-min</code> and
@@ -708,10 +708,10 @@ allocating a new imapping.</p>
 (imapping-delete-max (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(imapping-update-min</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-min/key</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max/key</code> <em>imap mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update-min</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-max</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-min/key</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-max/key</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
 
 <p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
 type <code>* → maybe[*]</code>; that of <code>imapping-update-min/key</code> and of
@@ -748,18 +748,18 @@ order.</p>
  ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
-<p><code>(imapping-update-min!</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max!</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-min/key!</code> <em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max/key!</code> <em>imap mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update-min!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-max!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-min/key!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
+<code>(imapping-update-max/key!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
 <code>imapping-update-min</code>, etc..  They may
 mutate and return the <em>imap</em> argument instead of allocating
 a new imapping.</p>
 
-<p><code>(imapping-pop-min</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
-<code>(imapping-pop-max</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
+<p><code>(imapping-pop-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
+<code>(imapping-pop-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
 
 <p>Returns Just <em>k v imap′</em>, where (<em>k</em>, <em>v</em>) is the association of
 <em>imap</em> with the least/greatest key and <em>imap′</em> is a newly-allocated
@@ -774,8 +774,8 @@ imapping containing all of the associations of <em>imap</em> except for
  ⇒ (just 0 a ((1 . b) (2 . c)))
 </code></pre>
 
-<p><code>(imapping-pop-min!</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
-<code>(imapping-pop-max!</code> <em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
+<p><code>(imapping-pop-min!</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
+<code>(imapping-pop-max!</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
 
 <p><code>imapping-pop-min!</code> and <code>imapping-pop-max!</code>
 are the same as <code>imapping-pop-min</code> and
@@ -785,12 +785,12 @@ of allocating a new imapping.</p>
 
 <h3 id="whole">The whole imapping</h3>
 
-<p><code>(imapping-size</code> <em>imap</em><code>) → exact-integer</code></p>
+<p><code>(imapping-size</code>&nbsp;<em>imap</em><code>) → exact-integer</code></p>
 
 <p>Returns the number of associations in <em>imap</em>.</p>
 
-<p><code>(imapping-count</code> <em>pred imap</em><code>) → exact-integer</code><br>
-<code>(imapping-count/key</code> <em>pred imap</em><code>) → exact-integer</code></p>
+<p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code><br>
+<code>(imapping-count/key</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
 
 <p>Returns the number of associations in <em>imap</em> whose values satisfy
 <em>pred</em>.</p>
@@ -806,7 +806,7 @@ the key and value of each association.</p>
  ⇒ 1
 </code></pre>
 
-<p><code>(imapping-any?</code> <em>pred imap</em><code>) → boolean</code></p>
+<p><code>(imapping-any?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if there exists an association in <em>imap</em> whose value
 satisfies <em>pred</em>.  <em>imap</em> is traversed in ascending numerical order
@@ -817,7 +817,7 @@ of keys.</p>
 <pre class="example"><code>(imapping-any? odd? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
 
-<p><code>(imapping-every?</code> <em>pred imap</em><code>) → boolean</code></p>
+<p><code>(imapping-every?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if the value of every association in <em>imap</em> satisfies
 <em>pred</em>, or if <em>imap</em> is empty.  <em>imap</em> is traversed in ascending
@@ -830,8 +830,8 @@ numerical order of keys.</p>
 
 <h3 id="traversal">Traversal</h3>
 
-<p><code>(imapping-map</code> <em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
+<code>(imapping-map/key</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p>The <em>proc</em> argument of <code>imapping-map</code> is of type <code>* → *</code>;
 that of <code>imapping-map/key</code> is of type <code>exact-integer * → *</code>.</p>
@@ -863,8 +863,8 @@ the key and value of each association.</p>
 transform the values of <em>imap</em> only; that is, the set of keys of the
 resulting imapping is the same as that of <em>imap</em>.</p>
 
-<p><code>(imapping-map!</code> <em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-map/key!</code> <em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
+<code>(imapping-map/key!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-map!</code> and <code>imapping-map/key!</code>
 are the same as <code>imapping-map</code> and
@@ -872,8 +872,8 @@ are the same as <code>imapping-map</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-for-each</code> <em>proc imap</em><code>) → unspecified</code><br>
-<code>(imapping-for-each/key</code> <em>proc imap</em><code>) → unspecified</code></p>
+<p><code>(imapping-for-each</code>&nbsp;<em>proc imap</em><code>) → unspecified</code><br>
+<code>(imapping-for-each/key</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
 
 <p>Calls <em>proc</em> on the value of each association in <em>imap</em> and returns
 an unspecified value.  <em>imap</em> in traversed in ascending numerical
@@ -891,10 +891,10 @@ the key and value of each association.</p>
  ⇒ 15
 </code></pre>
 
-<p><code>(imapping-fold</code> <em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-right</code> <em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold/key</code> <em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-right/key</code> <em>kons knil imap</em><code>) → *</code></p>
+<p><code>(imapping-fold</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold-right</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold/key</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
+<code>(imapping-fold-right/key</code>&nbsp;<em>kons knil imap</em><code>) → *</code></p>
 
 <p>The <em>kons</em> argument of <code>imapping-fold</code> and <code>imapping-fold-right</code> is a
 procedure of type <code>* * → *</code>; that of <code>imapping-fold/key</code>
@@ -923,10 +923,10 @@ argument.</p>
  ⇒ (2 1 0)
 </code></pre>
 
-<p><code>(imapping-map-&gt;list</code> <em>proc imap</em><code>) → list</code><br>
-<code>(imapping-map/key-&gt;list</code> <em>proc imap</em><code>) → list</code></p>
+<p><code>(imapping-map-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code><br>
+<code>(imapping-map/key-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code></p>
 
-<p>Efficient fusion of <code>(imapping-values (imapping-map</code> <em>proc imap</em><code>))</code>.</p>
+<p>Efficient fusion of <code>(imapping-values (imapping-map</code>&nbsp;<em>proc imap</em><code>))</code>.</p>
 
 <p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
 the key and value of each association.</p>
@@ -939,8 +939,8 @@ the key and value of each association.</p>
  ⇒ (6 5 4)
 </code></pre>
 
-<p><code>(imapping-filter-map</code> <em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-filter-map/key</code> <em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
+<code>(imapping-filter-map/key</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p>The <em>proc</em> parameter of <code>imapping-filter-map</code> is a
 procedure of type <code>* → *-or-#f</code>; that of
@@ -963,8 +963,8 @@ is called on the key and value of each association.</p>
  ⇒ ((0 . 4) (2 . 64))
 </code></pre>
 
-<p><code>(imapping-filter-map!</code> <em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-filter-map/key!</code> <em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
+<code>(imapping-filter-map/key!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-filter-map!</code> and <code>imapping-filter-map/key!</code>
 are the same as <code>imapping-filter-map</code> and
@@ -972,8 +972,8 @@ are the same as <code>imapping-filter-map</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-map-either</code> <em>proc imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-map-either/key</code> <em>proc imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code><br>
+<code>(imapping-map-either/key</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code></p>
 
 <p>The <em>proc</em> of <code>imapping-map-either</code> is a procedure
 of type <code>* → either[*]</code>, where <code>either[*]</code> denotes
@@ -1008,15 +1008,15 @@ is called on the key and value of each association.</p>
    ((8 . 25) (12 . 50))
 </code></pre>
 
-<p><code>(imapping-map-either!</code> <em>proc imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-map-either/key!</code> <em>proc imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-map-either!</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code><br>
+<code>(imapping-map-either/key!</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code></p>
 
 <p><code>imapping-map-either!</code> and <code>imapping-map-either/key!</code>
 are the same as <code>imapping-map-either</code> and
 <code>imapping-map-either/key</code>, respectively, except that they may
 mutate the <em>imap</em> parameter to produce their results.</p>
 
-<p><code>(imapping-relation-map</code> <em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-relation-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p><code>proc</code> must be a procedure of type
 <code>exact-integer * → exact-integer *</code>.</p>
@@ -1051,8 +1051,8 @@ while being sufficiently general for most purposes.</p>
 
 <h3 id="filter">Filter</h3>
 
-<p><code>(imapping-filter</code> <em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-filter/key</code> <em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
+<code>(imapping-filter/key</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of <em>imap</em>
 whose values satisfy <em>pred</em>.</p>
@@ -1067,8 +1067,8 @@ the key and value of each association.</p>
  ⇒ ((0 . 2) (2 . 8))
 </code></pre>
 
-<p><code>(imapping-filter!</code> <em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-filter/key!</code> <em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
+<code>(imapping-filter/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-filter!</code> and <code>imapping-filter/key!</code>
 are the same as <code>imapping-filter</code> and
@@ -1076,8 +1076,8 @@ are the same as <code>imapping-filter</code> and
 mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-remove</code> <em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-remove/key</code> <em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-remove</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
+<code>(imapping-remove/key</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of <em>imap</em>
 whose values do not satisfy <em>pred</em>.</p>
@@ -1092,8 +1092,8 @@ the key and value of each association.</p>
  ⇒ ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-remove!</code> <em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-remove/key!</code> <em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-remove!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
+<code>(imapping-remove/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-remove!</code> and <code>imapping-remove/key!</code>
 are the same as <code>imapping-remove</code> and
@@ -1101,8 +1101,8 @@ are the same as <code>imapping-remove</code> and
 mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-partition</code> <em>pred imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-partition/key</code> <em>pred imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → imapping imapping</code><br>
+<code>(imapping-partition/key</code>&nbsp;<em>pred imap</em><code>) → imapping imapping</code></p>
 
 <p>Returns two new imappings: the first contains all associations of
 <em>imap</em> whose values satisfy <em>pred</em>, and the second contains those
@@ -1121,8 +1121,8 @@ the key and value of each association.</p>
    ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-partition!</code> <em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-partition/key!</code> <em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-partition!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
+<code>(imapping-partition/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p><code>imapping-partition!</code> and <code>imapping-partition/key!</code>
 are the same as <code>imapping-partition</code> and
@@ -1131,12 +1131,12 @@ mutate the <em>imap</em> parameter to produce their results.</p>
 
 <h3 id="conversion">Conversion</h3>
 
-<p><code>(imapping-copy</code> <em>imap</em><code>) → imapping</code></p>
+<p><code>(imapping-copy</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
 
 <p>Returns a newly allocated imapping containing the associations of
 <code>imap</code>.</p>
 
-<p><code>(imapping-&gt;alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
 <p>Returns a car/cdr alist containing the associations of <em>imap</em> in
 ascending numerical order of keys.</p>
@@ -1146,7 +1146,7 @@ ascending numerical order of keys.</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
 </code></pre>
 
-<p><code>(imapping-&gt;decreasing-alist</code> <em>imap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(imapping-&gt;decreasing-alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
 <p>Returns a car/cdr alist containing the associations of <em>imap</em> in
 decreasing numerical order of keys.</p>
@@ -1156,7 +1156,7 @@ decreasing numerical order of keys.</p>
 <pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
 </code></pre>
 
-<p><code>(imapping-keys</code> <em>imap</em><code>) → list[exact-integer]</code></p>
+<p><code>(imapping-keys</code>&nbsp;<em>imap</em><code>) → list[exact-integer]</code></p>
 
 <p>Returns the keys of <em>imap</em> as a list in ascending numerical order.</p>
 
@@ -1165,7 +1165,7 @@ decreasing numerical order of keys.</p>
 <pre class="example"><code>(imapping-keys (imapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
 </code></pre>
 
-<p><code>(imapping-keys-set</code> <em>imap</em><code>) → iset</code></p>
+<p><code>(imapping-keys-set</code>&nbsp;<em>imap</em><code>) → iset</code></p>
 
 <p>Returns a SRFI 217 integer set containing the keys of <em>imap</em>.</p>
 
@@ -1175,7 +1175,7 @@ decreasing numerical order of keys.</p>
  ⇒ (-5072 -24 137)
 </code></pre>
 
-<p><code>(imapping-values</code> <em>imap</em><code>) → list[*]</code></p>
+<p><code>(imapping-values</code>&nbsp;<em>imap</em><code>) → list[*]</code></p>
 
 <p>Returns the elements of <em>imap</em> as a list in ascending numerical
 order of key.</p>
@@ -1188,7 +1188,7 @@ order of key.</p>
 
 <h3 id="comparison">Comparison</h3>
 
-<p><code>(imapping=?</code> <em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+<p><code>(imapping=?</code>&nbsp;<em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if all of the <em>imaps</em> contain equal
 associations.  Two associations are equal exactly when their keys are
@@ -1209,10 +1209,10 @@ of the equality predicate of <em>comp</em> (see
  ⇒ #f
 </code></pre>
 
-<p><code>(imapping&lt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&lt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&gt;?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&gt;=?</code> <em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+<p><code>(imapping&lt;?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
+<code>(imapping&lt;=?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
+<code>(imapping&gt;?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
+<code>(imapping&gt;=?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if each <em>imap</em> other than the last is a proper
 subset/subset/proper superset/superset of the following <em>imap</em>.  Values are
@@ -1240,10 +1240,10 @@ compared using the equality predicate of <em>comp</em>.</p>
 
 <h3 id="settheory">Set theory operations</h3>
 
-<p><code>(imapping-union</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-difference</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-xor</code> <em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
+<p><code>(imapping-union</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-difference</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-xor</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
 
 <p>Return a newly allocated imapping whose set of associations is the
 union, intersection, asymmetric difference, or symmetric difference of
@@ -1273,18 +1273,18 @@ appear.</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-union!</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection!</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-difference!</code> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-xor!</code> <em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
+<p><code>(imapping-union!</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection!</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-difference!</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-xor!</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
 
 <p>These are linear-update variants of
 <code>imapping-union</code>, etc..  They may
 mutate <strong>any</strong> of the <em>imap</em> parameters to
 produce their results.</p>
 
-<p><code>(imapping-union/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection/combinator</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
+<p><code>(imapping-union/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
 
 <p><em>proc</em> is a procedure of type <code>* * → *</code>.</p>
 
@@ -1314,8 +1314,8 @@ respectively, then the resulting imapping will contain the association
  ⇒ ((3 . "jean-luc picard") (5 . "miles o'brien"))
 </code></pre>
 
-<p><code>(imapping-union/combinator!</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection/combinator!</code> <em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
+<p><code>(imapping-union/combinator!</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
+<code>(imapping-intersection/combinator!</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
 
 <p>These are linear-update variants of <code>imapping-union/combinator</code>
 and <code>imapping-intersection/combinator</code>.  They may
@@ -1324,10 +1324,10 @@ produce their results.</p>
 
 <h3 id="submappings">Submappings</h3>
 
-<p><code>(imapping-open-interval</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-open-closed-interval</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-open-interval</code> <em>imap low high</em><code>) → imapping</code></p>
+<p><code>(imapping-open-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-closed-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-open-closed-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-closed-open-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code></p>
 
 <p><em>low</em> and <em>high</em> are both exact integers.</p>
 
@@ -1351,21 +1351,21 @@ above and closed below.</p>
  ⇒ ((1 . b) (2 . c))
 </code></pre>
 
-<p><code>(imapping-open-interval!</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-interval!</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-open-closed-interval!</code> <em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-open-interval!</code> <em>imap low high</em><code>) → imapping</code></p>
+<p><code>(imapping-open-interval!</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-closed-interval!</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-open-closed-interval!</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
+<code>(imapping-closed-open-interval!</code>&nbsp;<em>imap low high</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
 <code>imapping-open-interval</code>, etc..  They may
 mutate and return the <em>imap</em> parameter instead of allocating
 a new imapping.</p>
 
-<p><code>(isubmapping=</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;=</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;=</code> <em>imap k</em><code>) → imapping</code></p>
+<p><code>(isubmapping=</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;=</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&gt;</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&gt;=</code>&nbsp;<em>imap k</em><code>) → imapping</code></p>
 
 <p>Procedures that return an imapping containing the associations of
 <em>imap</em> whose keys are equal to/less than/less than or equal
@@ -1387,11 +1387,11 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
  ⇒ ((2 . c) (3 . d))
 </code></pre>
 
-<p><code>(isubmapping=!</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;!</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;=!</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;!</code> <em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;=!</code> <em>imap k</em><code>) → imapping</code></p>
+<p><code>(isubmapping=!</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;!</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&lt;=!</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&gt;!</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
+<code>(isubmapping&gt;=!</code>&nbsp;<em>imap k</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
 <code>isubmapping=</code>, etc..  They may
