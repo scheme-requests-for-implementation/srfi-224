@@ -177,7 +177,7 @@ would have the type signature <code>* list[*] → list[*]-or-false</code>.</p>
 
 <h3>Linear update</h3>
 
-<p>The procedures of this SRFI, by default, are "pure functional"--they
+<p>The procedures of this SRFI, by default, are "pure functional" — they
 do not alter their parameters.  However, this SRFI also defines
 "linear-update" procedures, all of whose names end in <code>!</code>.
 They have hybrid pure/side-effecting semantics: they are allowed,
@@ -217,12 +217,12 @@ purely functional data structures: they may be reliably shared without
 needing to be copied, uniquified, and so forth.</p></li></ul>
 
 <p>In practice, these procedures are most useful for efficiently
-constructing isets in a side-effecting manner, in some limited local
-context, before passing the iset outside the local construction scope
+constructing imappings in a side-effecting manner, in some limited local
+context, before passing the imapping outside the local construction scope
 to be used in a functional manner.</p>
 
 <p>Scheme provides no assistance in checking the linearity of the
-potentially side-effected parameters passed to these functions--there's
+potentially side-effected parameters passed to these functions — there's
 no linear type checker or run-time mechanism for detecting
 violations.</p>
 
@@ -906,7 +906,7 @@ allocating a new imapping.</p>
 <code>(imapping-for-each/key</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
 
 <p>Calls <em>proc</em> on the value of each association in <em>imap</em> and returns
-an unspecified value.  <em>imap</em> in traversed in ascending numerical
+an unspecified value.  <em>imap</em> is traversed in ascending numerical
 order of keys.</p>
 
 <p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
