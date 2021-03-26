@@ -633,7 +633,9 @@ allocating a new imapping.</p>
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to the value associated with <em>k</em>.
 If it returns Nothing, the association is deleted;
-if it returns Just <em>v</em>, then <em>(k, v)</em> is added to the new imapping.</p>
+if it returns Just <em>v</em>, then <em>(k, v)</em> is added to the new imapping.
+If <em>k</em> has no association in <em>imap</em>, then a copy of <em>imap</em>
+is returned.</p>
 
 <p><code>imapping-update/key</code> is the same as <code>imapping-update</code>, except that
 <em>mproc</em> is called on <em>n</em> and its associated value, in that order.</p>
