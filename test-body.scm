@@ -173,6 +173,10 @@
   (test-eqv #t (nothing? (imapping-lookup mixed-imap -51)))
   (test-equal (just 36864) (imapping-lookup sparse-imap 36864))
   (test-eqv #t (nothing? (imapping-lookup sparse-imap 36800)))
+  ;; Ensure that false values are not conflated with missing assocs.
+  (test-eqv #t (maybe= eqv?
+                       (just #f)
+                       (imapping-lookup (imapping 0 #f) 0)))
 
   (test-equal -50 (imapping-ref mixed-imap -50))
   (test-equal 36864 (imapping-ref sparse-imap 36864))
