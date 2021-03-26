@@ -166,16 +166,16 @@
             (just (v) (trie-join key 0 (leaf key v) p m t))))))))
     (update trie)))
 
-;; Return the value associated with key in trie; if there is
-;; none, return #f.
+;; If `key' has an association in `trie', then return a Just
+;; containing the associated value.  Otherwise, return Nothing.
 (define (trie-assoc trie key)
   (letrec
    ((search
      (tmatch-lambda
-       ((leaf ,k ,v) (and (fx=? k key) v))
+       ((leaf ,k ,v) (guard (fx=? k key)) (just v))
        ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
         (if (zero-bit? key m) (search l) (search r)))
-       (else #f))))
+       (else (nothing)))))
     (search trie)))
 
 (define (branching-bit-higher? mask1 mask2)
@@ -519,8 +519,8 @@
                   (let ((k (leaf-key s)))
                     (if (leaf? t)
                         (not (fx=? k (leaf-key t)))
-                        (not (trie-assoc t k)))))
-                 ((leaf? t) (not (trie-assoc s (leaf-key t))))
+                        (nothing? (trie-assoc t k)))))
+                 ((leaf? t) (nothing? (trie-assoc s (leaf-key t))))
                  (else (branches-disjoint? s t))))))
     (branches-disjoint?
      (lambda (s t)
@@ -612,7 +612,9 @@
        (cond ((trie-empty? s) the-empty-trie)
              ((trie-empty? t) s)
              ((leaf? s)
-              (if (trie-assoc t (leaf-key s)) the-empty-trie s))
+              (if (just? (trie-assoc t (leaf-key s)))
+                  the-empty-trie
+                  s))
              ((leaf? t) (trie-delete s (leaf-key t)))
              (else (branch-difference s t)))))
     (branch-difference

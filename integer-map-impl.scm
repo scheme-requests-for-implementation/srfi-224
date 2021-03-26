@@ -84,9 +84,7 @@
 ;;;; Predicates
 
 (define (imapping-contains? imap n)
-  (assume (imapping? imap))
-  (assume (valid-integer? n))
-  (and (trie-assoc (imapping-trie imap) n) #t))
+  (just? (imapping-lookup imap n)))
 
 (define (imapping-empty? imap)
   (assume (imapping? imap))
@@ -102,18 +100,20 @@
 (define (imapping-lookup imap key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
-  (truth->maybe (trie-assoc (imapping-trie imap) key)))
+  (trie-assoc (imapping-trie imap) key))
 
 (define (imapping-ref imap key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
-  (or (trie-assoc (imapping-trie imap) key)
-      (error "imapping-ref: key not found" imap key)))
+  (mmatch (trie-assoc (imapping-trie imap) key)
+    (nothing (error "imapping-ref: key not found" imap key))
+    (just (v) v)))
 
 (define (imapping-ref/default imap key default)
   (assume (imapping? imap))
   (assume (valid-integer? key))
-  (or (trie-assoc (imapping-trie imap) key) default))
+  (maybe-ref/default (trie-assoc (imapping-trie imap) key)
+                     default))
 
 (define (imapping-min imap)
   (assume (imapping? imap))
