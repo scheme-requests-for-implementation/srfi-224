@@ -2,7 +2,7 @@
 (import (srfi 1)
         (srfi 128)
         (srfi 189)
-        (integer-map))
+        (srfi 224))
 
 (cond-expand
   ((library (srfi 78))

@@ -1,4 +1,4 @@
-(define-library (integer-map)
+(define-library (srfi 224)
   (import (scheme base)
           (scheme case-lambda)
           (only (srfi 1) fold every)
@@ -88,4 +88,4 @@
 
   (include "matchers.scm")
   (include "trie.scm")
-  (include "integer-map-impl.scm"))
+  (include "224.scm"))

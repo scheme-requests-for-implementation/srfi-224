@@ -4,6 +4,6 @@
         (srfi 189)
         (srfi 64)
         (srfi 217)
-        (integer-map))
+        (srfi 224))
 
 (include "test-body.scm")

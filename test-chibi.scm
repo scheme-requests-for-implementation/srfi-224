@@ -6,7 +6,7 @@
         (srfi 128)
         (srfi 189)
         (srfi 217)
-        (integer-map))
+        (srfi 224))
 
 ;;; SRFI 64 shim
 
