@@ -168,10 +168,10 @@
   ;;; lookups
 
   (test-eqv #t (nothing? (imapping-lookup empty-imap 1)))
-  (test-equal (just 'a) (imapping-lookup letter-imap 0))
-  (test-equal (just -50) (imapping-lookup mixed-imap -50))
+  (test-eqv #t (maybe= eqv? (just 'a) (imapping-lookup letter-imap 0)))
+  (test-eqv #t (maybe= eqv? (just -50) (imapping-lookup mixed-imap -50)))
   (test-eqv #t (nothing? (imapping-lookup mixed-imap -51)))
-  (test-equal (just 36864) (imapping-lookup sparse-imap 36864))
+  (test-eqv #t (maybe= eqv? (just 36864) (imapping-lookup sparse-imap 36864)))
   (test-eqv #t (nothing? (imapping-lookup sparse-imap 36800)))
   ;; Ensure that false values are not conflated with missing assocs.
   (test-eqv #t (maybe= eqv?
