@@ -698,9 +698,7 @@ example:</p>
 <pre><code>  (imapping-update imap k f)
    ≡
   (imapping-alter imap k (lambda (m)
-                           (maybe-ref m
-                                      nothing
-                                      (lambda (v) (f v)))))
+                           (maybe-ref m nothing f))
 </code></pre>
 
 <p>Examples:</p>
