@@ -250,7 +250,7 @@ even where this SRFI explicitly says otherwise.</p>
 <li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping,
 iset-&gt;imapping</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
-<li><p><a href="#accessors">Accessors</a>: <code>imapping-lookup, imapping-ref, imapping-ref/default, imapping-min, imapping-max</code></p></li>
+<li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default, imapping-lookup, imapping-min, imapping-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
 imapping-adjoin!, imapping-adjoin/combinator!, imapping-adjust, imapping-adjust/key,
 imapping-adjust!, imapping-adjust/key!,
@@ -454,15 +454,6 @@ For each integer <em>k</em> in <em>iset</em>, the association
 
 <h3 id="accessors">Accessors</h3>
 
-<p><code>(imapping-lookup</code>&nbsp;<em>imap k</em><code>) → maybe[*]</code></p>
-
-<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
-Otherwise, returns Nothing.</p>
-<p>Examples:</p>
-<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
-(imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
-</code></pre>
-
 <p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → *</code></p>
 
 <p>If the optional <em>failure</em> parameter is supplied, then it must
@@ -491,6 +482,15 @@ Otherwise, returns <em>obj</em>.</p>
 
 <pre class="example"><code>(imapping-ref/default (imapping 36864 'zap) 36864 #f) ⇒ zap
 (imapping-ref/default (imapping 0 'a) 36864 #f) ⇒ #f
+</code></pre>
+
+<p><code>(imapping-lookup</code>&nbsp;<em>imap k</em><code>) → maybe[*]</code></p>
+
+<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
+Otherwise, returns Nothing.</p>
+<p>Examples:</p>
+<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
+(imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
 <p><code>(imapping-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
