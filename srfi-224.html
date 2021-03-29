@@ -463,15 +463,23 @@ Otherwise, returns Nothing.</p>
 (imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code>) → *</code></p>
+<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → *</code></p>
 
-<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
-Otherwise, an error is signaled.</p>
+<p>If the optional <em>failure</em> parameter is supplied, then it must
+be a procedure of no arguments returning zero or more values of arbitrary
+type.  The optional <em>success</em> parameter is a procedure of type
+<code>* → *</code>.  <em>failure</em> defaults to a procedure which
+signals an error; <em>success</em> defaults to <code>values</code>.</p>
+
+<p>If an association <em>(k, v)</em> occurs in <em>imap</em>,
+tail-calls <em>success</em> on <em>v</em>.  Otherwise, <em>failure</em>
+is tail-called on no arguments.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>(imapping-ref (imapping 36864 'zap) 36864) ⇒ zap
 (imapping-ref (imapping 0 'a) 36864) ⇒ ; error
+(imapping-ref (imapping 0 "worf") 0 (lambda () #f) string-length) ⇒ 4
 </code></pre>
 
 <p><code>(imapping-ref/default</code>&nbsp;<em>imap k obj</em><code>) → *</code></p>

@@ -180,6 +180,8 @@
 
   (test-equal -50 (imapping-ref mixed-imap -50))
   (test-equal 36864 (imapping-ref sparse-imap 36864))
+  (test-eqv 'z (imapping-ref sparse-imap 17 (lambda () 'z)))
+  (test-eqv 625 (imapping-ref mixed-imap 25 (lambda () #f) square))
 
   (test-eqv 'z (imapping-ref/default empty-imap 1 'z))
   (test-eqv 'a (imapping-ref/default letter-imap 0 #f))

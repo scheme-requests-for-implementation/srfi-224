@@ -102,12 +102,25 @@
   (assume (valid-integer? key))
   (trie-assoc (imapping-trie imap) key))
 
-(define (imapping-ref imap key)
-  (assume (imapping? imap))
-  (assume (valid-integer? key))
-  (mmatch (trie-assoc (imapping-trie imap) key)
-    (nothing (error "imapping-ref: key not found" imap key))
-    (just (v) v)))
+(define imapping-ref
+  (case-lambda
+    ((imap key)
+     (imapping-ref imap
+                   key
+                   (lambda () (error "imapping-ref: key not found"
+                                     key
+                                     imap))
+                   values))
+    ((imap key failure)
+     (imapping-ref imap key failure values))
+    ((imap key failure success)
+     (assume (imapping? imap))
+     (assume (valid-integer? key))
+     (assume (procedure? failure))
+     (assume (procedure? success))
+     (maybe-ref (trie-assoc (imapping-trie imap) key)
+                failure
+                success))))
 
 (define (imapping-ref/default imap key default)
   (assume (imapping? imap))
