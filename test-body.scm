@@ -178,16 +178,16 @@
                        (just #f)
                        (imapping-lookup (imapping 0 #f) 0)))
 
-  (test-equal -50 (imapping-ref mixed-imap -50))
-  (test-equal 36864 (imapping-ref sparse-imap 36864))
+  (test-eqv -50 (imapping-ref mixed-imap -50))
+  (test-eqv 36864 (imapping-ref sparse-imap 36864))
   (test-eqv 'z (imapping-ref sparse-imap 17 (lambda () 'z)))
   (test-eqv 625 (imapping-ref mixed-imap 25 (lambda () #f) square))
 
   (test-eqv 'z (imapping-ref/default empty-imap 1 'z))
   (test-eqv 'a (imapping-ref/default letter-imap 0 #f))
-  (test-equal -50 (imapping-ref/default mixed-imap -50 #f))
+  (test-eqv -50 (imapping-ref/default mixed-imap -50 #f))
   (test-eqv 'z (imapping-ref/default mixed-imap -51 'z))
-  (test-equal 36864 (imapping-ref/default sparse-imap 36864 #f))
+  (test-eqv 36864 (imapping-ref/default sparse-imap 36864 #f))
   (test-eqv 'z (imapping-ref/default sparse-imap 36800 'z))
 
   ;;; min/max
@@ -353,7 +353,7 @@
                                 (constantly (nothing)))
                 100
                 'z))
-  (test-equal -16383 (imapping-ref/default
+  (test-eqv -16383 (imapping-ref/default
                     (imapping-alter sparse-imap
                                     -16384
                                     (lambda (m)
@@ -390,13 +390,13 @@
   (test-eqv #f (imapping-contains?
                 (imapping-update-min letter-imap (constantly (nothing)))
                 0))
-  (test-equal -65535 (imapping-ref/default
+  (test-eqv -65535 (imapping-ref/default
                       (imapping-update-min sparse-imap
                                            (lambda (v) (just (+ v 1))))
                       -65536
                       #f))
 
-  (test-equal -200 (imapping-ref/default
+  (test-eqv -200 (imapping-ref/default
                     (imapping-update-min/key mixed-imap
                                              (lambda (k v) (just (+ k v))))
                     -100
@@ -473,10 +473,10 @@
   (test-eqv 0 (imapping-count even? empty-imap))
   (test-eqv 26 (imapping-count symbol? letter-imap))
   (let ((ss '(f r o b)))
-    (test-equal (length ss)
-                (imapping-count (lambda (s) (memv s ss)) letter-imap))
-    (test-equal (- (imapping-size letter-imap) (length ss))
-                (imapping-count (lambda (s) (not (memv s ss))) letter-imap)))
+    (test-eqv (length ss)
+              (imapping-count (lambda (s) (memv s ss)) letter-imap))
+    (test-eqv (- (imapping-size letter-imap) (length ss))
+              (imapping-count (lambda (s) (not (memv s ss))) letter-imap)))
   (test-eqv 4 (imapping-count positive? mixed-imap))
 
   (test-eqv 2 (imapping-count/key (lambda (k v) (and (even? k) (positive? v)))
@@ -547,7 +547,7 @@
   (test-equal (reverse '(a b c d e f g h i j k l m n o p q r s t u v w x y z))
               (imapping-fold cons '() letter-imap))
   (test-equal (reverse (iota 9 -100 25)) (imapping-fold cons '() mixed-imap))
-  (test-equal (fold + 0 (iota 9 -100 25)) (imapping-fold + 0 mixed-imap))
+  (test-eqv (fold + 0 (iota 9 -100 25)) (imapping-fold + 0 mixed-imap))
 
   (test-equal (reverse '((0 . "") (1 . "b") (2 . "cc")))
               (imapping-fold/key (lambda (k c as)
@@ -561,7 +561,7 @@
   (test-equal '(a b c d e f g h i j k l m n o p q r s t u v w x y z)
               (imapping-fold-right cons '() letter-imap))
   (test-equal (iota 9 -100 25) (imapping-fold-right cons '() mixed-imap))
-  (test-equal (fold + 0 (iota 9 -100 25)) (imapping-fold-right + 0 mixed-imap))
+  (test-eqv (fold + 0 (iota 9 -100 25)) (imapping-fold-right + 0 mixed-imap))
 
   (test-equal '((0 . "") (1 . "b") (2 . "cc"))
               (imapping-fold-right/key (lambda (k c as)
