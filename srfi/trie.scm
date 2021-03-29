@@ -352,7 +352,7 @@
 
 ;; Call success on the key and value of the leftmost leaf and use
 ;; the resulting Maybe to update the value.
-(define (%trie-update-min/key trie success)
+(define (trie-update-min/key trie success)
   (letrec
    ((update
      (tmatch-lambda
@@ -401,7 +401,7 @@
 
 ;; Call success on the key and value of the greatest-keyed leaf
 ;; and use the resulting Maybe to update the value.
-(define (%trie-update-max/key trie success)
+(define (trie-update-max/key trie success)
   (letrec
    ((update
      (tmatch-lambda

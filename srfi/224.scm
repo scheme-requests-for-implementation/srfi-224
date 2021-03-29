@@ -245,7 +245,7 @@
   (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
-   (%trie-update-min/key (imapping-trie imap) success)))
+   (trie-update-min/key (imapping-trie imap) success)))
 
 (define (imapping-pop-min imap)
   (assume (imapping? imap))
@@ -276,7 +276,7 @@
   (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
-   (%trie-update-max/key (imapping-trie imap) success)))
+   (trie-update-max/key (imapping-trie imap) success)))
 
 (define (imapping-pop-max imap)
   (assume (imapping? imap))
