@@ -5,6 +5,7 @@
           (only (srfi 128) comparator? =?)
           (srfi 189)
           (srfi 143)
+          (only (srfi 158) make-coroutine-generator)
           (only (srfi 217) iset? iset-fold list->iset iset-contains?
                            iset-adjoin iset))
 
@@ -65,7 +66,8 @@
 
    ;; Copying and conversion
    imapping-keys imapping-values imapping-keys-set imapping-copy
-   imapping->alist imapping->decreasing-alist
+   imapping->alist imapping->decreasing-alist imapping->generator
+   imapping->decreasing-generator
 
    ;; Comparison
    imapping=? imapping<? imapping>? imapping<=? imapping>=?

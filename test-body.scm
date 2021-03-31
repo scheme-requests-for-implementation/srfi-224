@@ -99,6 +99,19 @@
                          (iset->imapping abs set)
                          (alist->imapping
                           (map (lambda (k) (cons k (abs k))) ks)))))
+
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (equal? (imapping->alist im)
+                       (generator->list (imapping->generator im))))
+             all-test-imaps))
+  (test-eqv #t
+            (every
+             (lambda (im)
+               (equal? (imapping->decreasing-alist im)
+                       (generator->list (imapping->decreasing-generator im))))
+             all-test-imaps))
   )
 
 (test-group "Constructors"

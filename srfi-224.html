@@ -111,7 +111,10 @@ standardizer.</p>
 specified in SRFI 189 and on the comparator type (used to determine the
 equality of values, not keys) described in
 SRFI 128.  A few forms also make use of
-<a href="https://srfi.schemers.org/srfi-217/">SRFI 217</a> integer sets.
+<a href="https://srfi.schemers.org/srfi-217/">SRFI 217</a> integer sets,
+and conversions from imappings to
+<a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generators
+are provided.
 The sample implementation has further dependencies; see the
 <a href="#implementation">appropriate section</a> for more details.</p>
 
@@ -282,7 +285,8 @@ imapping-partition, imapping-partition/key,
 imapping-partition!, imapping-partition/key!</code></p></li>
 <li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
 imapping-&gt;decreasing-alist, imapping-keys,
-imapping-values, imapping-keys-set</code></p></li>
+imapping-values, imapping-keys-set,
+imapping->generator, imapping->decreasing-generator</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
 imapping-xor,
@@ -1239,6 +1243,29 @@ order of key.</p>
  ⇒ ("picard" "riker" "troi")
 </code></pre>
 
+<p><code>(imapping-&gt;generator</code> <em>imapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+
+<p>Returns a <a href="https://srfi.schemers.org/srfi-158">SRFI 158</a> generator which
+produces the associations of <em>imapping</em> as key/value pairs in increasing
+order of key.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(generator->list (imapping->generator (imapping 3 "yar" 2 "troi")))
+ ⇒ ((2 . "troi") (3 . "yar"))
+</code></pre>
+
+<p><code>(imapping-&gt;decreasing-generator</code> <em>imapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+
+<p>This is the same as <code>imapping-&gt;generator</code>, except that the associations
+of <em>imapping</em> are produced in decreasing order of key.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(generator->list (imapping->decreasing-generator (imapping 3 "yar" 2 "troi")))
+ ⇒ ((3 . "yar") (2 . "troi"))
+</code></pre>
+
 <h3 id="comparison">Comparison</h3>
 
 <p><code>(imapping=?</code>&nbsp;<em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
@@ -1460,7 +1487,7 @@ Mergeable Integer Maps&rdquo; (see <a href="#references">References</a>).
 These trees provide fast insert, lookup, and set-theoretical operations.</p>
 
 <p>The implementation should be portable without changes to any R7RS
-Scheme that provides SRFIs 1, 128, 143, 145, and 217.  The provided
+Scheme that provides SRFIs 1, 128, 143, 145, 158, and 217.  The provided
 tests can be run with SRFIs 64 or 78; additional shims for the test
 libraries preferred by <a href="http://synthcode.com/scheme/chibi/lib/chibi/test.html">chibi-scheme</a>
 and <a href="https://wiki.call-cc.org/eggref/5/test">CHICKEN</a> are also

@@ -539,6 +539,22 @@
 (define (imapping-values imap)
   (imapping-fold-right cons '() imap))
 
+(define (imapping->generator imap)
+  (assume (imapping? imap))
+  (make-coroutine-generator
+   (lambda (yield)
+     (imapping-fold/key (lambda (k v _) (yield (cons k v)))
+                        #f
+                        imap))))
+
+(define (imapping->decreasing-generator imap)
+  (assume (imapping? imap))
+  (make-coroutine-generator
+   (lambda (yield)
+     (imapping-fold-right/key (lambda (k v _) (yield (cons k v)))
+                              #f
+                              imap))))
+
 ;;;; Comparison
 
 (define (imapping=? comp imap1 imap2 . imaps)

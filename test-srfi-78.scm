@@ -1,6 +1,7 @@
 ;;; Generic test framework using SRFI 78.
 (import (srfi 1)
         (srfi 128)
+        (srfi 158)
         (srfi 189)
         (srfi 217)
         (srfi 224))
