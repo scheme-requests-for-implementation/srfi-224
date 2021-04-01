@@ -301,7 +301,7 @@ imapping-partition!, imapping-partition/key!</code></p></li>
 <li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
 imapping-&gt;decreasing-alist, imapping-keys,
 imapping-values, imapping-keys-set,
-imapping->generator, imapping->decreasing-generator</code></p></li>
+imapping-&gt;generator, imapping-&gt;decreasing-generator</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
 imapping-xor,
@@ -1267,7 +1267,7 @@ order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator->list (imapping->generator (imapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list (imapping-&gt;generator (imapping 3 "yar" 2 "troi")))
  ⇒ ((2 . "troi") (3 . "yar"))
 </code></pre>
 
@@ -1278,7 +1278,7 @@ of <em>imapping</em> are produced in decreasing order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator->list (imapping->decreasing-generator (imapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list (imapping-&gt;decreasing-generator (imapping 3 "yar" 2 "troi")))
  ⇒ ((3 . "yar") (2 . "troi"))
 </code></pre>
 
