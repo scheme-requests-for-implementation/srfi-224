@@ -368,7 +368,7 @@ with <em>seed′</em>.</p>
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
 </code></pre>
 
-<strong>Rationale:</strong> As well as sometimes leading to more compact
+<p><strong>Rationale:</strong> As well as sometimes leading to more compact
 expressions than the
 traditional "three procedure" unfold, <code>imapping-unfold-maybe</code>
 is also more efficient when the programmer wants the value of each new seed
@@ -376,7 +376,7 @@ to depend on the computed key and value.  For example,
 assume that we apply some procedure <em>f</em> to a seed <em>s</em> to get a
 key <em>k</em> and a value <em>v</em>, and that we also want to compute a new
 seed from <em>k</em> and <em>v</em>.  Using <em>imapping-unfold</em>, we'd
-have no choice other than to compute <em>k</em> and <em>v</em> twice:
+have no choice other than to compute <em>k</em> and <em>v</em> twice:</p>
 
 <pre class="example"><code>(imapping-unfold stop?
                  f
@@ -386,9 +386,9 @@ have no choice other than to compute <em>k</em> and <em>v</em> twice:
                        s*)))
                  seed)</code></pre>
 
-Using <code>imapping-unfold-maybe</code>, however, it's easy to write an
+<p>Using <code>imapping-unfold-maybe</code>, however, it's easy to write an
 equivalent unfold which computes <em>k</em> and <em>v</em> only once for
-each step:
+each step:</p>
 
 <pre class="example"><code>(imapping-unfold-maybe (lambda (s)
                          (if (stop? s)
@@ -398,8 +398,8 @@ each step:
                                  (just k v s*)))))
                        seed)</code></pre>
 
-This may be preferable when <em>f</em> is expensive to apply or entails
-side-effects.
+<p>This may be preferable when <em>f</em> is expensive to apply or entails
+side-effects.</p>
 
 <p><code>(alist-&gt;imapping</code>&nbsp;<em>alist</em><code>) → imapping</code></p>
 
