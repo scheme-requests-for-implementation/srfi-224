@@ -75,7 +75,7 @@ Okasaki-Gill radix tree model used in this SRFI&rsquo;s sample implementation,
 are unsuitable for representing general mappings.</p>
 
 <p>The integer mappings we describe restrict the type of keys to
-exact integers (&ldquo;fixnums&rdquo;).  This is a ubiquitous type in computing,
+exact integers.  This is a ubiquitous type in computing,
 and broadly useful as a key-type for mappings; its use opens up a
 range of implementation options.</p>
 
@@ -126,6 +126,20 @@ for the imapping type are unspecified.</p>
 
 <p>It is an error to add or remove an association of an imapping while
 iterating over it.</p>
+
+<h3>Exact integers</h3>
+
+<p>Scheme implementations that provide arbitrarily large exact integers
+usually divide these numbers into two classes: <em>fixnums</em> and
+<em>bignums</em>.  (See the R⁶RS § 3.3 and
+<a href="https://srfi.schemers.org/srfi-143">SRFI 143</a>.)  The former
+are integers "within a certain implementation-dependent subrange",
+typically those that fit in a single word of memory.
+
+<p>Implementations of this SRFI must support fixnum keys, and may restrict
+the set of valid keys to the fixnums.</p>
+
+<p>Implementations may support bignum keys.</p>
 
 <h3>Notation</h3>
 
