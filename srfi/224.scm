@@ -750,6 +750,12 @@
 (define isubmapping>=! isubmapping>=)
 (define isubmapping>! isubmapping>)
 
+(define (imapping-split imap k)
+  (assume (imapping? imap))
+  (assume (integer? k))
+  (let-values (((trie-low trie-high) (trie-split (imapping-trie imap) k)))
+    (values (raw-imapping trie-low) (raw-imapping trie-high))))
+
 ;;;; imappings as relations
 
 (define (imapping-relation-map proc imap)

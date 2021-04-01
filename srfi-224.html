@@ -300,7 +300,7 @@ imapping-open-closed-interval!, imapping-closed-open-interval!,
 isubmapping=, isubmapping&lt;, isubmapping&lt;=, isubmapping&gt;=,
 isubmapping&gt;,
 isubmapping=!, isubmapping&lt;!, isubmapping&lt;=!, isubmapping&gt;=!,
-isubmapping&gt;!</code></p></li>
+isubmapping&gt;!, imapping-split</code></p></li>
 </ul>
 
 <h3 id="constructors">Constructors</h3>
@@ -1477,6 +1477,29 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>isubmapping=</code>, etc..  They may
 mutate and return the <em>imap</em> parameter instead of allocating
 a new imapping.</p>
+
+<p><code>(imapping-split</code> <em>imap k</em><code>) → [imapping, imapping]</code></p>
+
+<p>Returns two new imappings.  The first contains all of the associations
+of <em>imap</em> whose keys are less than or equal to <em>k</em>, and the second
+contains the remaining associations.  The following are equivalent:</p>
+
+<pre><code>(imapping-split imap k)
+ ≡
+(values (isubmapping&lt;= imap k) (isubmapping&gt; imap k))
+</code></pre>
+
+<p>If <em>imap</em> is empty, then both of the imappings returned by
+<code>imapping-split</code> are empty.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(let-values ((imaps (imapping-split (imapping 0 'a 1 'b 2 'c 3 'd) 2)))
+  (map imapping-&gt;alist imaps))
+
+ ⇒ (((0 . a) (1 . b) (2 . c))
+    ((3 . d)))
+</code></pre>
 
 <h2 id="implementation">Implementation</h2>
 

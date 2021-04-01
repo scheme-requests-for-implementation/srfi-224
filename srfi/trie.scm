@@ -768,6 +768,36 @@
                                 (subtrie< l b high-inclusive)))))
       (else (interval trie)))))
 
+(define (trie-split trie pivot)
+  (letrec
+   ((split
+     (lambda (t)
+       (tmatch t
+         ((leaf ,k ,v)
+          (if (fx<=? k pivot)
+              (values t the-empty-trie)
+              (values the-empty-trie t)))
+         ((branch ,p ,m ,l ,r)
+          (if (match-prefix? pivot p m)
+              (if (zero-bit? pivot m)
+                  (let-values (((ta tb) (split l)))
+                    (values ta (trie-union tb r)))
+                  (let-values (((ta tb) (split r)))
+                    (values (trie-union l ta) tb)))
+              (if (fx<=? p pivot)
+                  (values t the-empty-trie)
+                  (values the-empty-trie t))))))))
+
+    (tmatch trie
+      (empty (values the-empty-trie the-empty-trie))
+      ((branch ? ,m ,l ,r) (guard (fxnegative? m))
+       (if (fxnegative? pivot)
+           (let-values (((ta tb) (split r)))
+             (values ta (trie-union tb l)))
+           (let-values (((ta tb) (split l)))
+             (values (trie-union r ta) tb))))
+      (else (split trie)))))
+
 ;;;; Tries as (Integer, *) relations
 
 (define (trie-relation-map proc trie)

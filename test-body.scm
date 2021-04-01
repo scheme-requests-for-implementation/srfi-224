@@ -1067,6 +1067,27 @@
               (imapping->alist (isubmapping>= letter-imap 22)))
   (test-equal (list->dup-alist '(53248 57344 61440 65536))
               (imapping->alist (isubmapping>= sparse-imap 53248)))
+
+  (test-equal (list (list->dup-alist (iota 5 -100 25))
+                    (list->dup-alist (iota 4 25 25)))
+              (let-values ((imaps (imapping-split mixed-imap 0)))
+                (map imapping->alist imaps)))
+  (test-equal (list '() sparse-seq)
+              (maybe-ref
+               (imapping-min sparse-imap)
+               (constantly #f)
+               (lambda (min-key _)
+                 (let-values ((imaps (imapping-split sparse-imap
+                                                     (- min-key 1))))
+                   (map imapping->alist imaps)))))
+  (test-equal (list sparse-seq '())
+              (maybe-ref
+               (imapping-max sparse-imap)
+               (constantly #f)
+               (lambda (max-key _)
+                 (let-values ((imaps (imapping-split sparse-imap
+                                                     (+ max-key 1))))
+                   (map imapping->alist imaps)))))
   )
 
 (test-group "Relation map"

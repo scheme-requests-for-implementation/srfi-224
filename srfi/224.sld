@@ -86,6 +86,7 @@
    isubmapping= isubmapping< isubmapping<= isubmapping>= isubmapping>
    isubmapping=! isubmapping<! isubmapping<=! isubmapping>=!
    isubmapping>!
+   imapping-split
    )
 
   (include "matchers.scm")
