@@ -544,7 +544,8 @@ Nothing.</p>
 <p><code>(imapping-adjoin</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of
-<em>imap</em> as well as the associations (<em>k</em>₁, <em>v</em>₁), (<em>k</em>₂, <em>k</em>₂), …
+<em>imap</em> as well as the associations (<em>k</em>₁, <em>obj</em>₁),
+(<em>k</em>₂, <em>obj</em>₂), ….
 The number of key/value arguments must be even.</p>
 
 <p>If any of the keys already have associations in <em>imap</em>, the old
