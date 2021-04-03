@@ -519,22 +519,8 @@
                      '()
                      imap))
 
-(define (iset->imapping mapper set)
-  (assume (procedure? mapper))
-  (assume (iset? set))
-  (raw-imapping
-   (iset-fold (lambda (k t) (trie-insert t k (mapper k)))
-              the-empty-trie
-              set)))
-
 (define (imapping-keys imap)
   (imapping-fold-right/key (lambda (k _ ks) (cons k ks)) '() imap))
-
-(define (imapping-keys-set imap)
-  (assume (imapping? imap))
-  (imapping-fold/key (lambda (k _v set) (iset-adjoin set k))
-                     (iset)
-                     imap))
 
 (define (imapping-values imap)
   (imapping-fold-right cons '() imap))

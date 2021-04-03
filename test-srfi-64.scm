@@ -4,7 +4,6 @@
         (srfi 158)
         (srfi 189)
         (srfi 64)
-        (srfi 217)
         (srfi 224))
 
 (include "test-body.scm")

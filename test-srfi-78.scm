@@ -3,7 +3,6 @@
         (srfi 128)
         (srfi 158)
         (srfi 189)
-        (srfi 217)
         (srfi 224))
 
 (cond-expand

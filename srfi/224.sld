@@ -6,8 +6,7 @@
           (srfi 189)
           (srfi 143)
           (only (srfi 158) make-coroutine-generator)
-          (only (srfi 217) iset? iset-fold list->iset iset-contains?
-                           iset-adjoin iset))
+          (only (srfi 217) list->iset iset-contains?))
 
   (cond-expand
     ((library (srfi 145))
@@ -22,7 +21,6 @@
   (export
    ;; Constructors
    imapping imapping-unfold imapping-unfold-maybe alist->imapping
-   iset->imapping
 
    ;; Predicates
    imapping? imapping-contains? imapping-empty? imapping-disjoint?
@@ -65,7 +63,7 @@
    imapping-remove/key! imapping-partition! imapping-partition/key!
 
    ;; Copying and conversion
-   imapping-keys imapping-values imapping-keys-set imapping-copy
+   imapping-keys imapping-values imapping-copy
    imapping->alist imapping->decreasing-alist imapping->generator
    imapping->decreasing-generator
 

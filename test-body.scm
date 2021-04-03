@@ -77,11 +77,6 @@
   (test-equal (reverse mixed-seq) (imapping->decreasing-alist mixed-imap))
   (test-equal (reverse sparse-seq) (imapping->decreasing-alist sparse-imap))
 
-  (test-eqv #t (iset-empty? (imapping-keys-set empty-imap)))
-  (let* ((ks '(-2 -1 0 1 2)) (set (list->iset ks)))
-    (test-eqv #t (iset=? set (imapping-keys-set
-                                (alist->imapping (list->dup-alist ks))))))
-
   (test-eqv #t (null? (imapping-keys empty-imap)))
   (test-equal (map car mixed-seq) (imapping-keys mixed-imap))
   (test-equal (map car sparse-seq) (imapping-keys sparse-imap))
@@ -89,16 +84,6 @@
   (test-eqv #t (null? (imapping-values empty-imap)))
   (test-equal (map cdr mixed-seq) (imapping-values mixed-imap))
   (test-equal (map cdr sparse-seq) (imapping-values sparse-imap))
-
-  (test-eqv #t (imapping-empty? (iset->imapping values (iset))))
-  (let* ((ks '(-2 -1 0 1 2)) (set (list->iset ks)))
-    (test-eqv #t (imapping=? default-comp
-                             (iset->imapping values set)
-                             (alist->imapping (list->dup-alist ks))))
-    (test-eqv #t (imapping=? default-comp
-                         (iset->imapping abs set)
-                         (alist->imapping
-                          (map (lambda (k) (cons k (abs k))) ks)))))
 
   (test-eqv #t
             (every

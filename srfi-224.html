@@ -112,9 +112,7 @@ standardizer.</p>
 <p>The specification of this SRFI depends on the Maybe and Either types
 specified in SRFI 189 and on the comparator type (used to determine the
 equality of values, not keys) described in
-SRFI 128.  A few forms also make use of
-<a href="https://srfi.schemers.org/srfi-217/">SRFI 217</a> integer sets,
-and conversions from imappings to
+SRFI 128.  Conversions from imappings to
 <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generators
 are provided.
 The sample implementation has further dependencies; see the
@@ -267,8 +265,7 @@ even where this SRFI explicitly says otherwise.</p>
 <h3>Index</h3>
 
 <ul>
-<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping,
-iset-&gt;imapping</code></p></li>
+<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
 <li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default, imapping-lookup, imapping-min, imapping-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
@@ -301,7 +298,7 @@ imapping-partition, imapping-partition/key,
 imapping-partition!, imapping-partition/key!</code></p></li>
 <li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
 imapping-&gt;decreasing-alist, imapping-keys,
-imapping-values, imapping-keys-set,
+imapping-values,
 imapping-&gt;generator, imapping-&gt;decreasing-generator</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
@@ -426,22 +423,6 @@ exact integer.</p>
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist (alist-&gt;imapping '((1 . b) (0 . a) (2 . c))))
  ⇒ ((0 . a) (1 . b) (2 . c))
-</code></pre>
-
-<p><code>(iset-&gt;imapping</code>&nbsp;<em>proc iset</em><code>) → imapping</code></p>
-
-<p><em>proc</em> is of type <code>exact-integer → *</code>.</p>
-
-<p>Returns a new imapping constructed from the elements of the integer
-set <em>iset</em> (see
-<a href="https://srfi.schemers.org/srfi-217/">SRFI 217</a>).
-For each integer <em>k</em> in <em>iset</em>, the association
-(<em>k</em>, (<em>proc</em> <em>k</em>)) is added to the imapping.
-<em>iset</em> is traversed in an unspecified order.</p>
-
-<p>Example:</p>
-<pre class="example"><code>(imapping-&gt;alist (iset-&gt;imapping square (iset 2 4 6 8)))
- ⇒ ((2 . 4) (4 . 16) (6 . 36) (8 . 64))
 </code></pre>
 
 <h3 id="predicates">Predicates</h3>
@@ -1238,16 +1219,6 @@ decreasing numerical order of keys.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(imapping-keys (imapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
-</code></pre>
-
-<p><code>(imapping-keys-set</code>&nbsp;<em>imap</em><code>) → iset</code></p>
-
-<p>Returns a SRFI 217 integer set containing the keys of <em>imap</em>.</p>
-
-<p>Example:</p>
-
-<pre class="example"><code>(iset-&gt;list (imapping-keys-set (imapping 137 'a -24 'b -5072 'c)))
- ⇒ (-5072 -24 137)
 </code></pre>
 
 <p><code>(imapping-values</code>&nbsp;<em>imap</em><code>) → list[*]</code></p>
