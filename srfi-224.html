@@ -92,8 +92,11 @@ instrumental use of <a href="https://srfi.schemers.org/srfi-189/">SRFI 189&rsquo
 Maybe type; I believe that this choice results in simpler,
 more compositional definitions.  (Compare, for instance, the
 conventional <code>imapping-ref</code> form with
-<code>imapping-lookup</code>.)  Where the
-use of Maybe values would clarify nothing, I have preferred the
+<code>imapping-lookup</code>.)  Using the protocol conversions of
+SRFI 189 (<code>maybe->truth</code>, <code>maybe->generation</code>, etc.),
+procedures that operate on Maybe values can be easily integrated with
+traditional Scheme code.
+Where the use of Maybe values would clarify nothing, I have preferred the
 traditional &ldquo;value or <code>#f</code>&rdquo; Lisp protocol.</p>
 
 <p>This library provides &ldquo;with-key&rdquo; variants for
@@ -492,7 +495,10 @@ Otherwise, returns <em>obj</em>.</p>
 <p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
 <p>Examples:</p>
-<pre class="example"><code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
+<pre class="example">(define (imapping-ref imap k failure success)
+  (maybe-ref (imapping-lookup imap k) failure success))
+
+<code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
 (imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
@@ -504,7 +510,8 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ just[0, a]
+<pre class="example"><code>(maybe->list-truth
+ (imapping-min (imapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
 (imapping-min (imapping)) ⇒ nothing
 </code></pre>
 
@@ -516,7 +523,8 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-max (imapping 0 'a 1 'b 2 'c)) ⇒ just[2, c]
+<pre class="example"><code>(maybe->list-truth
+ (imapping-max (imapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
 (imapping-max (imapping)) ⇒ nothing
 </code></pre>
 
@@ -824,10 +832,11 @@ imapping containing all of the associations of <em>imap</em> except for
 
 <p>Example:</p>
 
-<pre class="example"><code>(maybe-let*-values (((k v imap)
-                     (imapping-pop-min (imapping 0 'a 1 'b 2 'c))))
-  (values k v (imapping-&gt;alist imap)))
- ⇒ (just 0 a ((1 . b) (2 . c)))
+<pre class="example"><code>(maybe->list-truth
+ (maybe-let*-values (((k v imap)
+                      (imapping-pop-min (imapping 0 'a 1 'b 2 'c))))
+   (values k v (imapping-&gt;alist imap))))
+ ⇒ (0 a ((1 . b) (2 . c)))
 </code></pre>
 
 <p><code>(imapping-pop-min!</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
