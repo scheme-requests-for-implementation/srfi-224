@@ -1,4 +1,4 @@
-;;; This file implements integers maps as compressed binary radix
+;;; This file implements integer maps as big-endian binary radix
 ;;; trees (AKA Patricia tries), as described by Chris Okasaki and
 ;;; Andrew Gill in "Fast Mergeable Integer Maps" (1998).  Integers
 ;;; in big-endian binary encoding are stored in a trie structure
