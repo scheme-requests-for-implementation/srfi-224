@@ -261,9 +261,12 @@ potentially side-effected parameters passed to these functions — there's
 no linear type checker or run-time mechanism for detecting
 violations.</p>
 
-<p>Note that if an implementation uses no side effects at all, it is
-allowed to return existing imappings rather than newly allocated ones,
-even where this SRFI explicitly says otherwise.</p>
+<p>If integer mappings are implemented by immutable structures, then
+procedures which return "newly allocated" imappings may
+return existing imappings, or imappings which share structure with
+existing imappings.  Such an implementation must ensure that
+this reuse cannot cause the forms of this library to return incorrect
+results.</p>
 
 <h3>Index</h3>
 
