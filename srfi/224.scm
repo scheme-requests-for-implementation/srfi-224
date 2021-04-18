@@ -507,7 +507,7 @@
 
 (define (imapping-copy imap)
   (assume (imapping? imap))
-  (raw-imapping (trie-copy (imapping-trie imap))))
+  imap)
 
 (define (imapping->alist imap)
   (imapping-fold-right/key (lambda (k v as) (cons (cons k v) as))
