@@ -1204,6 +1204,9 @@ mutate the <em>imap</em> parameter to produce their results.</p>
 <p>Returns a newly allocated imapping containing the associations of
 <code>imap</code>.</p>
 
+<p>In an implementation with immutable imappings, <code>imapping-copy</code>
+may simply return <em>imap</em>.</p>
+
 <p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
 <p>Returns a car/cdr alist containing the associations of <em>imap</em> in
