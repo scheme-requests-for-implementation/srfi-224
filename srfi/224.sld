@@ -32,6 +32,7 @@
    ;; Updaters
    imapping-adjoin imapping-adjoin/combinator imapping-adjust
    imapping-adjust/key imapping-adjoin! imapping-adjoin/combinator!
+   imapping-set imapping-set!
    imapping-adjust! imapping-adjust/key! imapping-delete
    imapping-delete-all imapping-alter imapping-update
    imapping-update/key imapping-delete! imapping-delete-all!

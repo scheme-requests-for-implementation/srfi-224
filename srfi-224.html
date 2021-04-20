@@ -275,7 +275,8 @@ results.</p>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
 <li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default, imapping-lookup, imapping-min, imapping-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
-imapping-adjoin!, imapping-adjoin/combinator!, imapping-adjust, imapping-adjust/key,
+imapping-adjoin!, imapping-adjoin/combinator!, imapping-set, imapping-set!,
+imapping-adjust, imapping-adjust/key,
 imapping-adjust!, imapping-adjust/key!,
 imapping-delete, imapping-delete!,
 imapping-delete-all, imapping-delete-all!, imapping-alter, imapping-alter!, imapping-update,
@@ -541,7 +542,7 @@ Nothing.</p>
 The number of key/value arguments must be even.</p>
 
 <p>If any of the keys already have associations in <em>imap</em>, the old
-associations are replaced.</p>
+associations are preserved.</p>
 
 <p>Examples:</p>
 
@@ -577,6 +578,25 @@ with a duplicated key and is expected to return a value for the key.</p>
 <p><code>imapping-adjoin/combinator!</code> is the same as
 <code>imapping-adjoin/combinator</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
+allocating a new imapping.</p>
+
+<p><code>(imapping-set</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+
+<p><code>imapping-set</code> is the same as <code>imapping-adjoin</code>,
+except that any existing associations for <em>k</em>₁, <em>k</em>₂, … are
+replaced.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-set (imapping 0 "geordi" 1 "reginald") 1 "tasha"))
+ ⇒ ((0 . "geordi") (1 . "tasha"))
+</code></pre>
+
+<p><code>(imapping-set!</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+
+<p><code>imapping-set!</code> is the same as <code>imapping-set</code>,
+except that it may mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
 <p><code>(imapping-adjust imap k proc) → imapping</code><br>

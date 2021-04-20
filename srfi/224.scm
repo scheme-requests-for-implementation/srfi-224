@@ -150,9 +150,26 @@
                   (imapping-trie imap)
                   ps)))))
 
+;; Preserve existing associations for keys.
 (define imapping-adjoin
   (case-lambda
     ((imap key value)              ; one-assoc fast path
+     (raw-imapping
+      (trie-insert/combine (imapping-trie imap) key value second-arg)))
+    ((imap . ps)
+     (raw-imapping
+      (plist-fold (lambda (k v t)
+                    (trie-insert/combine t k v second-arg))
+                  (imapping-trie imap)
+                  ps)))))
+
+(define imapping-adjoin/combinator! imapping-adjoin/combinator)
+(define imapping-adjoin! imapping-adjoin)
+
+;; Replace existing associations for keys.
+(define imapping-set
+  (case-lambda
+    ((imap key value)      ; one-assoc fast path
      (raw-imapping
       (trie-insert (imapping-trie imap) key value)))
     ((imap . ps)
@@ -161,8 +178,7 @@
                   (imapping-trie imap)
                   ps)))))
 
-(define imapping-adjoin/combinator! imapping-adjoin/combinator)
-(define imapping-adjoin! imapping-adjoin)
+(define imapping-set! imapping-set)
 
 (define (imapping-adjust imap key proc)
   (assume (imapping? imap))

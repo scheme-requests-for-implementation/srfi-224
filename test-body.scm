@@ -226,6 +226,8 @@
   (test-eqv #t (imapping=? default-comp
                            (imapping 0 'a 1 'b 2 'c)
                            (imapping-adjoin empty-imap 0 'a 1 'b 2 'c)))
+  (test-eqv (imapping-ref sparse-imap -4096)
+            (imapping-ref (imapping-adjoin sparse-imap -4096 'z) -4096))
 
   (test-eqv 'U (imapping-ref/default
                 (imapping-adjoin/combinator letter-imap first-arg 20 'U)
@@ -240,6 +242,19 @@
              default-comp
              (imapping 0 'a 1 'b 2 'c)
              (imapping-adjoin/combinator empty-imap first-arg 0 'a 1 'b 2 'c)))
+
+  ;;; set
+
+  (test-eqv #t (imapping=? default-comp
+                           (imapping 0 'a)
+                           (imapping-set empty-imap 0 'a)))
+  (test-eqv #t (imapping-contains? (imapping-set mixed-imap 200 #t) 200))
+  (test-eqv #t (imapping-contains? (imapping-set sparse-imap -200 #t) -200))
+  (test-eqv #t (imapping=? default-comp
+                           (imapping 0 'a 1 'b 2 'c)
+                           (imapping-set empty-imap 0 'a 1 'b 2 'c)))
+  (test-eqv 'z
+            (imapping-ref (imapping-set sparse-imap -4096 'z) -4096))
 
   ;;; adjusts
 
