@@ -93,7 +93,7 @@ Maybe type; I believe that this choice results in simpler,
 more compositional definitions.  (Compare, for instance, the
 conventional <code>imapping-ref</code> form with
 <code>imapping-lookup</code>.)  Using the protocol conversions of
-SRFI 189 (<code>maybe->truth</code>, <code>maybe->generation</code>, etc.),
+SRFI 189 (<code>maybe-&gt;truth</code>, <code>maybe-&gt;generation</code>, etc.),
 procedures that operate on Maybe values can be easily integrated with
 traditional Scheme code.
 Where the use of Maybe values would clarify nothing, I have preferred the
@@ -546,7 +546,7 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(maybe->list-truth
+<pre class="example"><code>(maybe-&gt;list-truth
  (imapping-min (imapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
 (imapping-min (imapping)) ⇒ nothing
 </code></pre>
@@ -559,7 +559,7 @@ Nothing.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(maybe->list-truth
+<pre class="example"><code>(maybe-&gt;list-truth
  (imapping-max (imapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
 (imapping-max (imapping)) ⇒ nothing
 </code></pre>
@@ -887,7 +887,7 @@ imapping containing all of the associations of <em>imap</em> except for
 
 <p>Example:</p>
 
-<pre class="example"><code>(maybe->list-truth
+<pre class="example"><code>(maybe-&gt;list-truth
  (maybe-let*-values (((k v imap)
                       (imapping-pop-min (imapping 0 'a 1 'b 2 'c))))
    (values k v (imapping-&gt;alist imap))))
