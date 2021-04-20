@@ -21,6 +21,7 @@
   (export
    ;; Constructors
    imapping imapping-unfold imapping-unfold-maybe alist->imapping
+   alist->imapping/combinator
 
    ;; Predicates
    imapping? imapping-contains? imapping-empty? imapping-disjoint?

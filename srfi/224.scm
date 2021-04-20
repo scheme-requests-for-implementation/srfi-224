@@ -54,14 +54,18 @@
 (define (pair-or-null? x)
   (or (pair? x) (null? x)))
 
-(define (alist->imapping as)
+(define (alist->imapping/combinator comb as)
+  (assume (procedure? comb))
   (assume (pair-or-null? as))
   (raw-imapping
     (fold (lambda (p trie)
-            (assume (pair? p) "alist->imapping: not a pair")
-            (trie-insert/combine trie (car p) (cdr p) second-arg))
+            (assume (pair? p) "alist->imapping/combinator: not a pair")
+            (trie-insert/combine trie (car p) (cdr p) comb))
           #f
           as)))
+
+(define (alist->imapping as)
+  (alist->imapping/combinator second-arg as))
 
 (define (imapping-unfold stop? mapper successor seed)
   (assume (procedure? stop?))

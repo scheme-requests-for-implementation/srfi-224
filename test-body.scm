@@ -143,6 +143,16 @@
   (test-eqv #t (null? (imapping->alist (alist->imapping '()))))
   (test-equal mixed-seq (imapping->alist (alist->imapping mixed-seq)))
   (test-equal sparse-seq (imapping->alist (alist->imapping sparse-seq)))
+
+  (test-equal '((0 . a) (1 . b) (2 . c))
+              (imapping->alist
+               (alist->imapping '((0 . a) (1 . b) (2 . c) (2 . #t)))))
+
+  (test-equal '((0 . a) (1 . b) (2 . #t))
+              (imapping->alist
+               (alist->imapping/combinator
+                first-arg
+                '((0 . a) (1 . b) (2 . c) (2 . #t)))))
   )
 
 (test-group "Predicates"

@@ -271,7 +271,9 @@ results.</p>
 <h3>Index</h3>
 
 <ul>
-<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold, imapping-unfold-maybe, alist-&gt;imapping</code></p></li>
+<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold,
+imapping-unfold-maybe, alist-&gt;imapping,
+alist-&gt;imapping/combinator</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
 <li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default, imapping-lookup, imapping-min, imapping-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
@@ -425,11 +427,41 @@ side-effects.</p>
 
 <p>Returns a new imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
-exact integer.</p>
+exact integer.  If an integer <em>k</em> appears as the key of multiple
+associations in <em>alist</em> (i.e. as the car of multiple pairs),
+then the first association for <em>k</em> is preferred.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist (alist-&gt;imapping '((1 . b) (0 . a) (2 . c))))
  ⇒ ((0 . a) (1 . b) (2 . c))
+
+(imapping-&gt;alist (alist-&gt;imapping '((-10 . "yar") (-10 . "worf"))))
+ ⇒ ((-10 . "yar))
+</code></pre>
+
+<p><code>(alist-&gt;imapping/combinator</code>&nbsp;<em>proc alist</em><code>) → imapping</code></p>
+
+<p><em>proc</em> is a procedure of type <code>* * → *</code>.</p>
+
+<p>Returns a new imapping containing the associations of <em>alist</em>.
+It is an error if the car of any pair in <em>alist</em> is not an
+exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
+(<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
+the association
+(<em>k</em>, (<em>proc v</em>₂ <em>v</em>₁)) is
+added to the resulting imapping; in general, if <em>k</em> is associated with
+values v₁, v₂, …, vₙ in <em>alist</em>, then <em>k</em> will be associated
+with the value of</p>
+
+<pre>(<em>proc v</em>ₙ (<em>proc</em> … (<em>proc v</em>₃ (<em>proc v</em>₂ <em>v</em>₁)) … ))</pre>
+
+<p>in the resulting imapping.</p>
+
+<p>Example:</p>
+<pre class="example"><code>(imapping-&gt;alist
+ (alist-&gt;imapping/combinator (lambda (x _) x)
+                             '((1 . b) (0 . a) (1 . c))))
+ ⇒ ((0 . a) (1 . c))
 </code></pre>
 
 <h3 id="predicates">Predicates</h3>
