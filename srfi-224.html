@@ -723,7 +723,7 @@ in terms of <code>imapping-update</code>, e.g.:</p>
    ≡
   (imapping-update imap k (lambda (_) (nothing)))
 
-  (imapping-adjoin imap k v)
+  (imapping-set imap k v)
    ≡
   (imapping-update imap k (lambda (_) (just v)))
 </code></pre>
