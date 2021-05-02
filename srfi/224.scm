@@ -240,13 +240,20 @@
 
 ;; Update the association (key, value) (or lack thereof) in imap
 ;; using proc, which is an endomap on Maybes.
-(define (imapping-alter imap key proc)
+(define (%imapping-alter imap key proc with-key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
   (assume (procedure? proc))
-  (raw-imapping (trie-alter (imapping-trie imap) key proc)))
+  (raw-imapping (trie-alter (imapping-trie imap) key proc with-key)))
+
+(define (imapping-alter imap key proc)
+  (%imapping-alter imap key proc #f))
+
+(define (imapping-alter/key imap key proc)
+  (%imapping-alter imap key proc #t))
 
 (define imapping-alter! imapping-alter)
+(define imapping-alter/key! imapping-alter/key)
 
 ;; Delete the element with the least key, or return an empty
 ;; mapping if `imap' is empty.

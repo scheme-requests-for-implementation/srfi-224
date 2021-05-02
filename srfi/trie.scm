@@ -139,7 +139,7 @@
     (update trie)))
 
 ;; This is the sane person's trie-search.
-(define (trie-alter trie key proc)
+(define (trie-alter trie key proc with-key)
   (letrec
    ((update
      (lambda (t)
@@ -150,7 +150,7 @@
             (just (v) (leaf key v))))
          ((leaf ,k ,v)
           (if (fx=? key k)
-              (mmatch (proc (just v))
+              (mmatch (proc (if with-key (just k v) (just v)))
                 (nothing the-empty-trie)
                 (just (v*) (leaf k v*)))
               (mmatch (proc (nothing))
@@ -646,7 +646,8 @@
               (lambda (mv)
                 (if (nothing? mv)
                     (just value)
-                    (nothing)))))
+                    (nothing)))
+              #f))
 
 (define (trie-xor trie1 trie2)
   (letrec

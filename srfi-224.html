@@ -754,7 +754,8 @@ are the same as <code>imapping-update</code> and
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code><br>
+<code>(imapping-alter/key</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
 <p><em>proc</em> is a procedure of type <code>maybe[*] → maybe[*]</code>.</p>
 
@@ -766,6 +767,10 @@ Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
 is Just <em>v′</em>, a new association <em>(k, v′)</em> is added to the new
 imapping, replacing any old association for <em>k</em>.</p>
+
+<p><code>imapping-alter/key</code> is the same as <code>imapping-alter</code>,
+except that <em>proc</em> is called on a Just of two values: <em>k</em> and
+its associated value, in that order.</p>
 
 <p><code>imapping-alter</code> is a very general operator on imappings, and most
 of the other update operations may be defined in terms of it.  For
@@ -799,10 +804,11 @@ example:</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-alter!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code><br>
+<code>(imapping-alter/key!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
-<p><code>imapping-alter!</code> is the same as
-<code>imapping-alter</code>, except that it may
+<p><code>imapping-alter!</code> and <code>imapping-alter/key!</code> are the same as
+<code>imapping-alter</code> and <code>imapping-alter/key</code>, respectively, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 

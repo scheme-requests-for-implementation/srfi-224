@@ -35,9 +35,9 @@
    imapping-adjust/key imapping-adjoin! imapping-adjoin/combinator!
    imapping-set imapping-set!
    imapping-adjust! imapping-adjust/key! imapping-delete
-   imapping-delete-all imapping-alter imapping-update
+   imapping-delete-all imapping-alter imapping-alter/key imapping-update
    imapping-update/key imapping-delete! imapping-delete-all!
-   imapping-alter! imapping-update! imapping-update/key!
+   imapping-alter! imapping-alter/key! imapping-update! imapping-update/key!
    imapping-delete-min imapping-delete-max imapping-update-min
    imapping-update-max imapping-update-min/key imapping-update-max/key
    imapping-pop-min imapping-pop-max imapping-delete-min!
