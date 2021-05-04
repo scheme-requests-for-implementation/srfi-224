@@ -276,7 +276,8 @@ results.</p>
 imapping-unfold-maybe, alist-&gt;imapping,
 alist-&gt;imapping/combinator</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
-<li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default, imapping-lookup, imapping-min, imapping-max</code></p></li>
+<li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default,
+imapping-lookup, imapping-min, imapping-max, imapping-lookup-min, imapping-lookup-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
 imapping-adjoin!, imapping-adjoin/combinator!, imapping-set, imapping-set!,
 imapping-adjust, imapping-adjust/key,
@@ -539,7 +540,7 @@ Otherwise, returns Nothing.</p>
 (imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(imapping-lookup-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>imap</em>.
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
@@ -548,11 +549,21 @@ Nothing.</p>
 <p>Examples:</p>
 
 <pre class="example"><code>(maybe-&gt;list-truth
- (imapping-min (imapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
-(imapping-min (imapping)) ⇒ nothing
+ (imapping-lookup-min (imapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
+(imapping-lookup-min (imapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(imapping-min</code>&nbsp;<em>imap</em><code>) → [exact-integer, *]</code></p>
+
+<p>Returns two values: the least key of <em>imap</em> and its
+associated value. It is an error if <em>imap</em> is empty.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ 0 a
+</code></pre>
+
+<p><code>(imapping-lookup-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>imap</em>.
 If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
@@ -561,8 +572,18 @@ Nothing.</p>
 <p>Examples:</p>
 
 <pre class="example"><code>(maybe-&gt;list-truth
- (imapping-max (imapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
-(imapping-max (imapping)) ⇒ nothing
+ (imapping-lookup-max (imapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
+(imapping-lookup-max (imapping)) ⇒ nothing
+</code></pre>
+
+<p><code>(imapping-max</code>&nbsp;<em>imap</em><code>) → [exact-integer, *]</code></p>
+
+<p>Returns two values: the greatest key of <em>imap</em> and its
+associated value. It is an error if <em>imap</em> is empty.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ 2 c
 </code></pre>
 
 <h3 id="updaters">Updaters</h3>

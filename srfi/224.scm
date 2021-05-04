@@ -132,13 +132,21 @@
   (maybe-ref/default (trie-assoc (imapping-trie imap) key)
                      default))
 
-(define (imapping-min imap)
+(define (imapping-lookup-min imap)
   (assume (imapping? imap))
   (trie-min (imapping-trie imap)))
 
-(define (imapping-max imap)
+(define (imapping-min imap)
+  (maybe-ref (imapping-lookup-min imap)
+             (lambda () (error "imapping-min: empty imapping" imap))))
+
+(define (imapping-lookup-max imap)
   (assume (imapping? imap))
   (trie-max (imapping-trie imap)))
+
+(define (imapping-max imap)
+  (maybe-ref (imapping-lookup-max imap)
+             (lambda () (error "imapping-max: empty imapping" imap))))
 
 ;;;; Updaters
 

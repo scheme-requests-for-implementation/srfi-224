@@ -200,29 +200,43 @@
 
   ;;; min/max
 
-  (test-eqv #t (nothing? (imapping-min empty-imap)))
-  (test-equal '(0 a) (maybe-ref (imapping-min letter-imap)
+  (test-eqv #t (nothing? (imapping-lookup-min empty-imap)))
+  (test-equal '(0 a) (maybe-ref (imapping-lookup-min letter-imap)
                                 (lambda () #f)
                                 list))
-  (test-equal '(-100 -100) (maybe-ref (imapping-min mixed-imap)
+  (test-equal '(-100 -100) (maybe-ref (imapping-lookup-min mixed-imap)
                                       (lambda () #f)
                                       list))
   (test-equal '(-65536 -65536)
-              (maybe-ref (imapping-min sparse-imap)
+              (maybe-ref (imapping-lookup-min sparse-imap)
                          (lambda () #f)
                          list))
 
-  (test-eqv #t (nothing? (imapping-max empty-imap)))
-  (test-equal '(25 z) (maybe-ref (imapping-max letter-imap)
+  (test-equal '(0 a)
+              (let-values ((xs (imapping-min letter-imap)))
+                xs))
+  (test-equal '(-100 -100)
+              (let-values ((xs (imapping-min mixed-imap)))
+                xs))
+
+  (test-eqv #t (nothing? (imapping-lookup-max empty-imap)))
+  (test-equal '(25 z) (maybe-ref (imapping-lookup-max letter-imap)
                                  (lambda () #f)
                                  list))
-  (test-equal '(100 100) (maybe-ref (imapping-max mixed-imap)
+  (test-equal '(100 100) (maybe-ref (imapping-lookup-max mixed-imap)
                                     (lambda () #f)
                                     list))
   (test-equal '(65536 65536)
-              (maybe-ref (imapping-max sparse-imap)
+              (maybe-ref (imapping-lookup-max sparse-imap)
                          (lambda () #f)
                          list))
+
+  (test-equal '(25 z)
+              (let-values ((xs (imapping-max letter-imap)))
+                xs))
+  (test-equal '(100 100)
+              (let-values ((xs (imapping-max mixed-imap)))
+                xs))
   )
 
 (test-group "Updaters"
@@ -467,7 +481,7 @@
                (let-values (((k v im*)
                              (maybe-ref/default (imapping-pop-min im) #f))
                             ((test-k test-v)
-                             (maybe-ref/default (imapping-min im) #f)))
+                             (maybe-ref/default (imapping-lookup-min im) #f)))
                  (and (= k test-k)
                       (eqv? v test-v)
                       (imapping=? default-comp (imapping-delete-min im) im*))))
@@ -482,7 +496,7 @@
                (let-values (((k v im*)
                              (maybe-ref/default (imapping-pop-max im) #f))
                             ((test-k test-v)
-                             (maybe-ref/default (imapping-max im) #f)))
+                             (maybe-ref/default (imapping-lookup-max im) #f)))
                  (and (= k test-k)
                       (eqv? v test-v)
                       (imapping=? default-comp (imapping-delete-max im) im*))))
@@ -1084,7 +1098,7 @@
                 (map imapping->alist imaps)))
   (test-equal (list '() sparse-seq)
               (maybe-ref
-               (imapping-min sparse-imap)
+               (imapping-lookup-min sparse-imap)
                (constantly #f)
                (lambda (min-key _)
                  (let-values ((imaps (imapping-split sparse-imap
@@ -1092,7 +1106,7 @@
                    (map imapping->alist imaps)))))
   (test-equal (list sparse-seq '())
               (maybe-ref
-               (imapping-max sparse-imap)
+               (imapping-lookup-max sparse-imap)
                (constantly #f)
                (lambda (max-key _)
                  (let-values ((imaps (imapping-split sparse-imap

@@ -28,6 +28,7 @@
 
    ;; Accessors
    imapping-min imapping-max imapping-lookup imapping-ref
+   imapping-lookup-min imapping-lookup-max
    imapping-ref/default
 
    ;; Updaters
