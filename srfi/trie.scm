@@ -304,9 +304,10 @@
        (tmatch t
          (empty (values the-empty-trie the-empty-trie))
          ((leaf ,k ,v)
-          (ematch (if with-key (proc k v) (proc v))
-            (left (v*) (values (leaf k v*) the-empty-trie))
-            (right (v*) (values the-empty-trie (leaf k v*)))))
+          (either-ref
+           (if with-key (proc k v) (proc v))
+           (lambda (v*) (values (leaf k v*) the-empty-trie))
+           (lambda (v*) (values the-empty-trie (leaf k v*)))))
          ((branch ,p ,m ,l ,r)  ; slight naming confusion here.
           (let-values (((l-lefts l-rights) (split-map l))
                        ((r-lefts r-rights) (split-map r)))
