@@ -268,19 +268,18 @@
 (define (imapping-delete-min imap)
   (imapping-update-min/key imap (constantly (nothing))))
 
-;; Call success on the value of the element of `imap' with the least
-;; key and use the value, a Maybe, to update the mapping.
 (define (imapping-update-min imap success)
-  (imapping-update-min/key imap (lambda (_ v) (success v))))
+  (%imapping-update-min imap success #f))
 
-;; Call success on the least key and corresponding value of `imap'
-;; and use the value, a Maybe, to update the mapping.
 (define (imapping-update-min/key imap success)
+  (%imapping-update-min imap success #t))
+
+(define (%imapping-update-min imap success with-key)
   (assume (imapping? imap))
   (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
-   (trie-update-min/key (imapping-trie imap) success)))
+   (trie-update-min (imapping-trie imap) success with-key)))
 
 (define (imapping-pop-min imap)
   (assume (imapping? imap))
@@ -299,19 +298,18 @@
 (define (imapping-delete-max imap)
   (imapping-update-max/key imap (constantly (nothing))))
 
-;; Call success on the value of the element of `imap' with the
-;; greatest key and use the value, a Maybe, to update the mapping.
 (define (imapping-update-max imap success)
-  (imapping-update-max/key imap (lambda (_ v) (success v))))
+  (%imapping-update-max imap success #f))
 
-;; Call success on the greatest key and corresponding value of `imap'
-;; and use the value, a Maybe, to update the mapping.
 (define (imapping-update-max/key imap success)
+  (%imapping-update-max imap success #t))
+
+(define (%imapping-update-max imap success with-key)
   (assume (imapping? imap))
   (assume (not (imapping-empty? imap)))
   (assume (procedure? success))
   (raw-imapping
-   (trie-update-max/key (imapping-trie imap) success)))
+   (trie-update-max (imapping-trie imap) success with-key)))
 
 (define (imapping-pop-max imap)
   (assume (imapping? imap))

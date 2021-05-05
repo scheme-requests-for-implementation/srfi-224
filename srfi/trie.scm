@@ -350,15 +350,13 @@
       ((branch ? ,m ,l ,r)
        (if (fxnegative? m) (search r) (search l))))))
 
-;; Call success on the key and value of the leftmost leaf and use
-;; the resulting Maybe to update the value.
-(define (trie-update-min/key trie success)
+(define (trie-update-min trie success with-key)
   (letrec
    ((update
      (tmatch-lambda
        (empty the-empty-trie)
        ((leaf ,k ,v)
-        (mmatch (success k v)
+        (mmatch (if with-key (success k v) (success v))
           (nothing the-empty-trie)
           (just (v*) (leaf k v*))))
        ((branch ,p ,m ,l ,r) (branch p m (update l) r)))))
@@ -399,15 +397,13 @@
        (if (fxnegative? m) (search l) (search r)))
       (else (search trie)))))
 
-;; Call success on the key and value of the greatest-keyed leaf
-;; and use the resulting Maybe to update the value.
-(define (trie-update-max/key trie success)
+(define (trie-update-max trie success with-key)
   (letrec
    ((update
      (tmatch-lambda
        (empty the-empty-trie)
        ((leaf ,k ,v)
-        (mmatch (success k v)
+        (mmatch (if with-key (success k v) (success v))
           (nothing the-empty-trie)
           (just (v*) (leaf k v*))))
        ((branch ,p ,m ,l ,r) (branch p m l (update r))))))
