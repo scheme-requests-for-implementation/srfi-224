@@ -127,7 +127,7 @@
          ((leaf ,k ,v)
           (if (fx=? key k)
               (mmatch (if with-key (mproc k v) (mproc v))
-                (nothing #f)
+                (nothing the-empty-trie)
                 (just (v*) (leaf k v*)))
               t))
          ((branch ,p ,m ,l ,r)

@@ -48,7 +48,7 @@
   (raw-imapping
     (plist-fold (lambda (k v trie)
                   (trie-insert/combine trie k v second-arg))
-                #f
+                the-empty-trie
                 args)))
 
 (define (pair-or-null? x)
@@ -61,7 +61,7 @@
     (fold (lambda (p trie)
             (assume (pair? p) "alist->imapping/combinator: not a pair")
             (trie-insert/combine trie (car p) (cdr p) comb))
-          #f
+          the-empty-trie
           as)))
 
 (define (alist->imapping as)
@@ -71,7 +71,7 @@
   (assume (procedure? stop?))
   (assume (procedure? mapper))
   (assume (procedure? successor))
-  (let lp ((trie #f) (seed seed))
+  (let lp ((trie the-empty-trie) (seed seed))
     (if (stop? seed)
         (raw-imapping trie)
         (let-values (((k v) (mapper seed)))
@@ -80,7 +80,7 @@
 
 (define (imapping-unfold-maybe proc seed)
   (assume (procedure? proc))
-  (let lp ((trie #f) (seed seed))
+  (let lp ((trie the-empty-trie) (seed seed))
     (mmatch (proc seed)
       (nothing (raw-imapping trie))
       (just (k v seed*) (lp (trie-insert trie k v) seed*)))))
