@@ -33,7 +33,7 @@
 (define (second-arg _ y) y)
 
 (define (constantly x)
-  (lambda _ x))
+  (lambda (_) x))
 
 ;;;; Type
 
