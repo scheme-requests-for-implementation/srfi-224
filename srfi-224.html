@@ -1353,13 +1353,21 @@ of <em>imapping</em> are produced in decreasing order of key.</p>
 
 <h3 id="comparison">Comparison</h3>
 
+<p>Each of the following predicates takes a
+<a href="https://srfi.schemers.org/srfi-128/">SRFI 128</a> comparator
+argument which is used to compare the values of the associations of
+two imappings.  (Keys are always compared with <code>=</code>.)</p>
+
+<p>Note that none of these five predicates produces a total order on
+imappings.  In particular, <code>imapping=?</code>, <code>imapping&lt;?</code>,
+and <code>imapping&gt;?</code> do not obey the trichotomy law.</p>
+
 <p><code>(imapping=?</code>&nbsp;<em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
 
 <p>Returns <code>#t</code> if and only if all of the <em>imaps</em> contain equal
 associations.  Two associations are equal exactly when their keys are
-equal (in the sense of <code>=</code>) and if their values are equal in the sense
-of the equality predicate of <em>comp</em> (see
-<a href="https://srfi.schemers.org/srfi-128/">SRFI 128</a>).</p>
+equal (in the sense of <code>=</code>) and their values are equal in the sense
+of the equality predicate of <em>comp</em>.</p>
 
 <p>Examples:</p>
 
