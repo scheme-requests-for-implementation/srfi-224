@@ -1045,8 +1045,10 @@ numerical order of keys.</p>
 <p>The <em>proc</em> argument of <code>imapping-map</code> is of type <code>* → *</code>;
 that of <code>imapping-map/key</code> is of type <code>exact-integer * → *</code>.</p>
 
-<p>Returns a new imapping.  For each association <em>(n, v)</em> in <em>imap</em>,
-the association <em>(n, (proc v))</em> is added to the new imapping.
+<p>Returns a new imapping.  For each association
+<code>(</code><em>k, v</em><code>)</code> in <em>imap</em>, the association
+<code>(</code><em>k</em><code>, (</code><em>proc&nbsp;v</em><code>))</code>
+is added to the new imapping.
 The dynamic order
 of the applications of <em>proc</em> to the elements of <em>imap</em> is
 unspecified.</p>
