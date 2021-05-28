@@ -380,7 +380,7 @@ The arguments have the following types:
 <p>Unfold a new imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
 a Maybe value.  If this value is Nothing, then unfolding terminates.
 If it is Just <em>k v seed′</em>, then a new association
-<em>(k, v)</em> is added to the resulting imapping and unfolding continues
+<code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting imapping and unfolding continues
 with <em>seed′</em>.</p>
 
 <p>Example:</p>
@@ -507,7 +507,7 @@ type.  The optional <em>success</em> parameter is a procedure of type
 <code>* → *</code>.  <em>failure</em> defaults to a procedure which
 signals an error; <em>success</em> defaults to <code>values</code>.</p>
 
-<p>If an association <em>(k, v)</em> occurs in <em>imap</em>,
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>,
 tail-calls <em>success</em> on <em>v</em>.  Otherwise, <em>failure</em>
 is tail-called on no arguments.</p>
 
@@ -520,7 +520,7 @@ is tail-called on no arguments.</p>
 
 <p><code>(imapping-ref/default</code>&nbsp;<em>imap k obj</em><code>) → *</code></p>
 
-<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns <em>v</em>.
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>, returns <em>v</em>.
 Otherwise, returns <em>obj</em>.</p>
 
 <p>Examples:</p>
@@ -531,7 +531,7 @@ Otherwise, returns <em>obj</em>.</p>
 
 <p><code>(imapping-lookup</code>&nbsp;<em>imap k</em><code>) → maybe[*]</code></p>
 
-<p>If an association <em>(k, v)</em> occurs in <em>imap</em>, returns Just <em>v</em>.
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
 <p>Examples:</p>
 <pre class="example">(define (imapping-ref imap k failure success)
@@ -731,7 +731,7 @@ allocating a new imapping.</p>
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to the value associated with <em>k</em>.
 If it returns Nothing, the association is deleted;
-if it returns Just <em>v</em>, then <em>(k, v)</em> is added to the new imapping.
+if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the new imapping.
 If <em>k</em> has no association in <em>imap</em>, then a copy of <em>imap</em>
 is returned.</p>
 
@@ -783,7 +783,7 @@ allocating a new imapping.</p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association, or lack thereof, for <em>k</em> is updated as follows.
-If the association <em>(k, v)</em> exists in <em>imap</em>, then <em>proc</em> is called on
+If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>imap</em>, then <em>proc</em> is called on
 Just <em>v</em>; if no such association exists, then <em>proc</em> is called on
 Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
@@ -869,7 +869,7 @@ type <code>* → maybe[*]</code>; that of <code>imapping-update-min/key</code> a
 that the association for the least/greatest key <em>k</em> is updated as
 follows.  <em>mproc</em> is applied to the value associated with <em>k</em> and is
 expected to return a Maybe value.  If it returns Nothing, the
-association is deleted; if it returns Just <em>v</em>, then <em>(k, v)</em> is added
+association is deleted; if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added
 to the new imapping.  If <em>imap</em> is empty, an error is signalled.</p>
 
 <p><code>imapping-update-min/key</code> and <code>imapping-update-max/key</code> are the same
