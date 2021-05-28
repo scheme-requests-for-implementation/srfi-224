@@ -333,6 +333,39 @@
           (else
            (lp (lp acc (branch-left t)) (branch-right t))))))
 
+(define (%imapping-query pred imap with-key)
+  (assume (procedure? pred))
+  (assume (imapping? imap))
+  (letrec
+   ((mix-query
+     (lambda (low high)
+       (let ((m (trie-query pred low with-key)))
+         (if (just? m)
+             m
+             (trie-query pred high with-key))))))
+  (let ((trie (imapping-trie imap)))
+    (tmatch trie
+      ((branch ? ,m ,l ,r)
+       (if (negative? m)
+           (mix-query r l)
+           (mix-query l r)))
+      (else (trie-query pred trie with-key))))))
+
+(define (imapping-query pred imap) (%imapping-query pred imap #f))
+(define (imapping-query/key pred imap) (%imapping-query pred imap #t))
+
+(define (imapping-find pred imap failure)
+  (assume (procedure? pred))
+  (assume (imapping? imap))
+  (assume (procedure? failure))
+  (maybe-ref (imapping-query pred imap) failure))
+
+(define (imapping-find/key pred imap failure)
+  (assume (procedure? pred))
+  (assume (imapping? imap))
+  (assume (procedure? failure))
+  (maybe-ref (imapping-query/key pred imap) failure))
+
 (define (imapping-count pred imap)
   (assume (procedure? pred))
   (imapping-fold (lambda (v acc)

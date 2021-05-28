@@ -507,6 +507,58 @@
   (test-eqv 0 (imapping-size empty-imap))
   (test-eqv 26 (imapping-size letter-imap))
 
+  ;;; find
+
+  (test-eqv 'z (imapping-find even? empty-imap (constantly 'z)))
+  (test-equal '(0 a)
+              (let-values ((p (imapping-find symbol?
+                                             letter-imap
+                                             (lambda () (values #f #f)))))
+                p))
+  (let ((ss '(f r o b)))
+    (test-equal '(1 b)
+                (let-values ((p (imapping-find (lambda (s) (memv s ss))
+                                               letter-imap
+                                               (lambda ()
+                                                 (values #f #f)))))
+                  p)))
+  (test-equal '(4096 4096)
+              (let-values ((p (imapping-find positive?
+                                             sparse-imap
+                                             (lambda () (values #f #f)))))
+                p))
+  ;; Ensure negative-keyed associations are tested first.
+  (test-equal '(-65536 -65536)
+              (let-values ((p (imapping-find integer?
+                                             sparse-imap
+                                             (lambda () (values #f #f)))))
+                p))
+  (test-equal '(z z)
+              (let-values
+               ((p (imapping-find/key eqv?
+                                      letter-imap
+                                      (lambda () (values 'z 'z)))))
+                p))
+
+  ;;; query
+
+  (test-eqv 'z (maybe-ref/default (imapping-query even? empty-imap) 'z))
+  (test-equal '(0 a)
+              (maybe->list (imapping-query symbol? letter-imap)))
+  (let ((ss '(f r o b)))
+    (test-equal '(1 b)
+                (maybe->list
+                 (imapping-query (lambda (s) (memv s ss))
+                                 letter-imap))))
+  (test-equal '(4096 4096)
+              (maybe->list (imapping-query positive? sparse-imap)))
+  ;; Ensure negative-keyed associations are tested first.
+  (test-equal '(-65536 -65536)
+              (maybe->list (imapping-query integer? sparse-imap)))
+  (test-equal '() (maybe->list (imapping-query/key eqv? letter-imap)))
+
+  ;;; count
+
   (test-eqv 0 (imapping-count even? empty-imap))
   (test-eqv 26 (imapping-count symbol? letter-imap))
   (let ((ss '(f r o b)))

@@ -938,6 +938,66 @@ of allocating a new imapping.</p>
 
 <p>Returns the number of associations in <em>imap</em>.</p>
 
+<p><code>(imapping-find</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code><br>
+<code>(imapping-find/key</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
+
+<p><code>failure</code> is a procedure of no arguments returning zero
+or more values of arbitrary type.</p>
+
+<p>Returns the key and value of the association of <em>imap</em> with
+the least key whose value satisfies <em>pred</em>.  If there is no
+such association, then <em>failure</em> is tail-called with no
+arguments and its results are returned.</p>
+
+<p><code>imapping-find/key</code> is the same as
+<code>imapping-find</code>, except that <em>pred</em> is called on the
+key and value of each association, in that order.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>(imapping-find even?
+               (imapping 0 1 1 2 2 4 3 8)
+               (lambda () (values #f #f)))
+ ⇒ 1 2
+
+(imapping-find negative?
+               (imapping 0 1 1 2 2 4 3 8)
+               (lambda () (values 'nope 'nada)))
+ ⇒ nope nada
+
+(imapping-find/key (lambda (k s) (= k (string-length s)))
+                   (imapping 2 "worf" 3 "data" 4 "troi")
+                   (lambda () (error "not found")))
+ ⇒ 4 "troi"
+</code></pre>
+
+<p><code>(imapping-query</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code><br/>
+<code>(imapping-query/key</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code></p>
+
+<p>Returns Just <em>k v</em>, where (<em>k</em>, <em>v</em>) is the
+association of <em>imap</em> with the least key <em>k</em> such that
+<code>(</code><em>pred v</em><code>)</code> is true, or Nothing if
+there is no such association.</p>
+
+<p><code>imapping-query/key</code> is the same as
+<code>imapping-query</code>, except that <em>pred</em> is called on
+<em>k</em> and <em>v</em>, in that order.</p>
+
+<p>Examples:</p>
+
+<pre class="example"><code>;; Simulating imapping-lookup
+(maybe-&gt;list-truth
+ (imapping-query (lambda (s) (equal? s "guinan"))
+                 (imapping 11 "ro" 13 "guinan" 17 "barclay")))
+ ⇒ (13 "guinan")
+
+(maybe-&gt;list-truth
+ (imapping-query/key (lambda (k v)
+                       (and (positive? k) (integer? v)))
+                     (alist->imapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
+ ⇒ #f
+</code></pre>
+
 <p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code><br>
 <code>(imapping-count/key</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
 

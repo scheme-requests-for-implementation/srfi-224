@@ -48,6 +48,7 @@
 
    ;; The whole imapping
    imapping-size imapping-count imapping-count/key imapping-any?
+   imapping-find imapping-find/key imapping-query imapping-query/key
    imapping-every?
 
    ;; Traversal

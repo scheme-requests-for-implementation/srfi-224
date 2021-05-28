@@ -178,6 +178,20 @@
        (else (nothing)))))
     (search trie)))
 
+;; Return a Just of the leftmost association of trie that satisfies
+;; pred, or Nothing if no such assoc is found.
+(define (trie-query pred trie with-key)
+  (call-with-current-continuation
+   (lambda (return)
+     (let lp ((t trie))
+       (tmatch t
+         (empty (return (nothing)))
+         ((leaf ,k ,v) (guard (if with-key (pred k v) (pred v)))
+          (return (just k v)))
+         ((branch ? ? ,l ,r) (lp l) (lp r))
+         (else #f)))
+     (nothing))))
+
 (define (branching-bit-higher? mask1 mask2)
   (if (negative? (fxxor mask1 mask2))  ; signs differ
       (negative? mask1)
