@@ -1637,12 +1637,10 @@ a new imapping.</p>
 
 <p>Returns two new imappings.  The first contains all of the associations
 of <em>imap</em> whose keys are less than or equal to <em>k</em>, and the second
-contains the remaining associations.  The following are equivalent:</p>
-
-<pre><code>(imapping-split imap k)
- ≡
-(values (isubmapping&lt;= imap k) (isubmapping&gt; imap k))
-</code></pre>
+contains the remaining associations.  This is equivalent to
+<code>(values (isubmapping&lt;=</code>&nbsp;<em>imap k</em><code>)
+(isubmapping&gt;</code>&nbsp;<em>imap k</em><code>))</code>, but may be
+implemented more efficiently.</p>
 
 <p>If <em>imap</em> is empty, then both of the imappings returned by
 <code>imapping-split</code> are empty.</p>
