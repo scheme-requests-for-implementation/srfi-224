@@ -266,7 +266,7 @@
 ;; Delete the element with the least key, or return an empty
 ;; mapping if `imap' is empty.
 (define (imapping-delete-min imap)
-  (imapping-update-min/key imap (constantly (nothing))))
+  (imapping-update-min imap (constantly (nothing))))
 
 (define (imapping-update-min imap success)
   (%imapping-update-min imap success #f))
@@ -296,7 +296,7 @@
 ;; Delete the element with the greatest key, or return an empty
 ;; mapping if `imap' is empty.
 (define (imapping-delete-max imap)
-  (imapping-update-max/key imap (constantly (nothing))))
+  (imapping-update-max imap (constantly (nothing))))
 
 (define (imapping-update-max imap success)
   (%imapping-update-max imap success #f))
