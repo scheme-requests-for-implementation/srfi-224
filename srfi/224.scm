@@ -336,20 +336,14 @@
 (define (%imapping-query pred imap with-key)
   (assume (procedure? pred))
   (assume (imapping? imap))
-  (letrec
-   ((mix-query
-     (lambda (low high)
-       (let ((m (trie-query pred low with-key)))
-         (if (just? m)
-             m
-             (trie-query pred high with-key))))))
   (let ((trie (imapping-trie imap)))
     (tmatch trie
-      ((branch ? ,m ,l ,r)
-       (if (negative? m)
-           (mix-query r l)
-           (mix-query l r)))
-      (else (trie-query pred trie with-key))))))
+      ((branch ? ,m ,l ,r) (guard (negative? m))
+       (let ((m (trie-query pred r with-key)))
+         (if (just? m)
+             m
+             (trie-query pred l with-key))))
+      (else (trie-query pred trie with-key)))))
 
 (define (imapping-query pred imap) (%imapping-query pred imap #f))
 (define (imapping-query/key pred imap) (%imapping-query pred imap #t))
