@@ -102,19 +102,6 @@ traditional Scheme code.
 Where the use of Maybe values would clarify nothing, I have preferred the
 traditional &ldquo;value or <code>#f</code>&rdquo; Lisp protocol.</p>
 
-<p>This library provides &ldquo;with-key&rdquo; variants for
-many staple higher-order procedures (e.g. <code>map</code>, <code>fold</code>, etc.).
-These variants, indicated by the suffix <code>-/key</code>, call their auxiliary
-functions on both the keys and values of an imapping (possibly along
-with other parameters).  A smaller
-library proposal might eschew variant forms of a procedure; consider,
-for example, the single index-and-value form of <code>vector-map</code> from
-<a href="https://srfi.schemers.org/srfi-133/">SRFI 133</a>.  However, this creates
-unnecessary inflexibility and incompatibility between SRFIs.  In practice,
-the added complexity of providing variant higher-order forms is minimal,
-and their availability can be a boon to both the programmer and the
-standardizer.</p>
-
 <p>The specification of this SRFI depends on the Maybe and Either types
 specified in SRFI 189 and on the comparator type (used to determine the
 equality of values, not keys) described in
@@ -282,45 +269,33 @@ alist-&gt;imapping/combinator</code></p></li>
 imapping-lookup, imapping-min, imapping-max, imapping-lookup-min, imapping-lookup-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
 imapping-adjoin!, imapping-adjoin/combinator!, imapping-set, imapping-set!,
-imapping-adjust, imapping-adjust/key,
-imapping-adjust!, imapping-adjust/key!,
-imapping-delete, imapping-delete!,
-imapping-delete-all, imapping-delete-all!, imapping-alter, imapping-alter/key,
-imapping-alter!, imapping-alter/key!, imapping-update,
-imapping-update/key, imapping-update!, imapping-update/key!,
-imapping-delete-min, imapping-delete-max, imapping-delete-min!, imapping-delete-max!,
-imapping-update-min, imapping-update-max, imapping-update-min/key, imapping-update-max/key,
-imapping-update-min!, imapping-update-max!, imapping-update-min/key!, imapping-update-max/key!,
-imapping-pop-min, imapping-pop-max,
+imapping-adjust, imapping-adjust!, imapping-delete, imapping-delete!,
+imapping-delete-all, imapping-delete-all!, imapping-alter,
+imapping-alter!, imapping-update, imapping-update!, imapping-delete-min,
+imapping-delete-max, imapping-delete-min!, imapping-delete-max!,
+imapping-update-min, imapping-update-max, imapping-update-min!,
+imapping-update-max!, imapping-pop-min, imapping-pop-max,
 imapping-pop-min!, imapping-pop-max!</code></p></li>
 <li><p><a href="#whole">The whole imapping</a>: <code>imapping-size,
-imapping-find, imapping-find/key, imapping-query, imapping-query/key,
-imapping-count, imapping-count/key, imapping-any?, imapping-every?</code></p></li>
+imapping-find, imapping-query,
+imapping-count, imapping-any?, imapping-every?</code></p></li>
 <li><p><a href="#traversal">Traversal</a>: <code>imapping-fold,
-imapping-fold-right, imapping-fold/key, imapping-fold-right/key, imapping-map,
-imapping-map/key, imapping-map!, imapping-map/key!,
-imapping-map-&gt;list, imapping-map/key-&gt;list, imapping-for-each,
-imapping-for-each/key, imapping-filter-map, imapping-filter-map/key,
-imapping-filter-map!, imapping-filter-map/key!,
-imapping-map-either, imapping-map-either/key,
-imapping-map-either!, imapping-map-either/key!,
+imapping-fold-right, imapping-map, imapping-map!, imapping-map-&gt;list,
+imapping-map&gt;list, imapping-for-each, imapping-filter-map,
+imapping-filter-map!, imapping-map-either, imapping-map-either!,
 imapping-relation-map</code></p></li>
-<li><p><a href="#filter">Filter</a>: <code>imapping-filter, imapping-filter/key,
-imapping-filter!, imapping-filter/key!,
-imapping-remove, imapping-remove/key,
-imapping-remove!, imapping-remove/key!,
-imapping-partition, imapping-partition/key,
-imapping-partition!, imapping-partition/key!</code></p></li>
+<li><p><a href="#filter">Filter</a>: <code>imapping-filter,
+imapping-filter!, imapping-remove, imapping-remove!, imapping-partition,
+imapping-partition!, imapping-partition</code></p></li>
 <li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
-imapping-&gt;decreasing-alist, imapping-keys,
-imapping-values,
+imapping-&gt;decreasing-alist, imapping-keys, imapping-values,
 imapping-&gt;generator, imapping-&gt;decreasing-generator</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
 <li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
-imapping-xor,
-imapping-union!, imapping-intersection!, imapping-difference!, imapping-xor!,
-imapping-union/combinator, imapping-intersection/combinator,
-imapping-union/combinator!, imapping-intersection/combinator!</code></p></li>
+imapping-xor, imapping-union!, imapping-intersection!,
+imapping-difference!, imapping-xor!, imapping-union/combinator,
+imapping-intersection/combinator, imapping-union/combinator!,
+imapping-intersection/combinator!</code></p></li>
 <li><p><a href="#submappings">Submappings</a>: <code>imapping-open-interval, imapping-closed-interval,
 imapping-open-closed-interval, imapping-closed-open-interval,
 imapping-open-interval!, imapping-closed-interval!,
@@ -657,37 +632,29 @@ replaced.</p>
 except that it may mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-adjust imap k proc) → imapping</code><br>
-<code>(imapping-adjust/key imap k proc) → imapping</code></p>
+<p><code>(imapping-adjust imap k proc) → imapping</code></p>
 
 <p>The <em>proc</em> parameter of <code>imapping-adjust</code> is a
-procedure of type <code>* → *</code>; that of
-<code>imapping-adjust/key</code> is of type
-<code>exact-integer * → *</code>.</p>
+procedure of type <code>exact-integer * → *</code>.</p>
 
 <p>Returns a new imapping in which the association (<em>k</em>, <em>v</em>) in <em>imap</em>
-is replaced by (<em>k</em>, (<em>proc v</em>)), or by (<em>k</em>, (<em>proc k v</em>)) in the
-case of <code>imapping-adjust/key</code>.  If <em>k</em> has no association in <em>imap</em>,
+is replaced by (<em>k</em>, (<em>proc k v</em>)).  If <em>k</em> has
+no association in <em>imap</em>,
 then a copy of <em>imap</em> is returned.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-adjust (imapping 0 -200 1 -100) 0 abs))
- ⇒ '((0 . 200) (1 -100))
-
-(imapping-&gt;alist
- (imapping-adjust/key (imapping 64 "var")
-                      64
-                      (lambda (k s) (string-append s (number-&gt;string k)))))
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-adjust (imapping 64 "var")
+                  64
+                  (lambda (k s) (string-append s (number-&gt;string k)))))
  ⇒ ((64 . "var64"))
 </code></pre>
 
-<p><code>(imapping-adjust! imap k proc) → imapping</code><br>
-<code>(imapping-adjust/key! imap k proc) → imapping</code></p>
+<p><code>(imapping-adjust! imap k proc) → imapping</code></p>
 
-<p><code>imapping-adjust!</code> and <code>imapping-adjust/key!</code>
-are the same as <code>imapping-adjust</code> and
-<code>imapping-adjust/key</code>, respectively, except that they may
+<p><code>imapping-adjust!</code> is the same as
+<code>imapping-adjust</code>, except that is may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
@@ -727,30 +694,26 @@ those for keys equal to an element of <em>list</em>.</p>
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-update</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code><br>
-<code>(imapping-update/key</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
-applied to the value associated with <em>k</em>.
+applied to <em>k</em> and its associated value.
 If it returns Nothing, the association is deleted;
 if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the new imapping.
 If <em>k</em> has no association in <em>imap</em>, then a copy of <em>imap</em>
 is returned.</p>
-
-<p><code>imapping-update/key</code> is the same as <code>imapping-update</code>, except that
-<em>mproc</em> is called on <em>k</em> and its associated value, in that order.</p>
 
 <p>Simple versions of several other update operations may be defined
 in terms of <code>imapping-update</code>, e.g.:</p>
 
 <pre><code>  (imapping-delete imap k)
    ≡
-  (imapping-update imap k (lambda (_) (nothing)))
+  (imapping-update imap k (lambda (_k _v) (nothing)))
 
   (imapping-set imap k v)
    ≡
-  (imapping-update imap k (lambda (_) (just v)))
+  (imapping-update imap k (lambda (_k _v) (just v)))
 </code></pre>
 <p>Examples:</p>
 
@@ -758,7 +721,7 @@ in terms of <code>imapping-update</code>, e.g.:</p>
 (imapping-&gt;alist
  (imapping-update (imapping 0 'a 1 'b 2 'c)
                   1
-                  (lambda (v)
+                  (lambda (_k v)
                     (if (symbol? v)
                         (nothing)
                         (just v)))))
@@ -766,36 +729,30 @@ in terms of <code>imapping-update</code>, e.g.:</p>
 
 ;; Replace the value associated with 1.
 (imapping-&gt;alist
- (imapping-update/key (imapping 0 'a 1 'b 2 'c) 1 (lambda (k _v) (just k))))
+ (imapping-update (imapping 0 'a 1 'b 2 'c) 1 (lambda (k _v) (just k))))
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
-<p><code>(imapping-update!</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code><br>
-<code>(imapping-update/key!</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
+<p><code>(imapping-update!</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
 
-<p><code>imapping-update!</code> and <code>imapping-update/key!</code>
-are the same as <code>imapping-update</code> and
-<code>imapping-update/key</code>, respectively, except that they may
+<p><code>imapping-update!</code>
+is the same as <code>imapping-update</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code><br>
-<code>(imapping-alter/key</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
-<p><em>proc</em> is a procedure of type <code>maybe[*] → maybe[*]</code>.</p>
+<p><em>proc</em> is a procedure of type
+<code>maybe[exact-integer, *] → maybe[*]</code>.</p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association, or lack thereof, for <em>k</em> is updated as follows.
 If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>imap</em>, then <em>proc</em> is called on
-Just <em>v</em>; if no such association exists, then <em>proc</em> is called on
+Just <em>k v</em>; if no such association exists, then <em>proc</em> is called on
 Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
 is Just <em>v′</em>, a new association <em>(k, v′)</em> is added to the new
 imapping, replacing any old association for <em>k</em>.</p>
-
-<p><code>imapping-alter/key</code> is the same as <code>imapping-alter</code>,
-except that <em>proc</em> is called on a Just of two values: <em>k</em> and
-its associated value, in that order.</p>
 
 <p><code>imapping-alter</code> is a very general operator on imappings, and most
 of the other update operations may be defined in terms of it.  For
@@ -822,18 +779,17 @@ example:</p>
  (imapping-alter (imapping 0 'a 1 'b)
                  1
                  (lambda (m)
-                   (maybe-bind m (lambda (v)
+                   (maybe-bind m (lambda (_ v)
                                    (if (symbol? v)
                                        (nothing)
                                        (just v)))))))
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-alter!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code><br>
-<code>(imapping-alter/key!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(imapping-alter!</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
 
-<p><code>imapping-alter!</code> and <code>imapping-alter/key!</code> are the same as
-<code>imapping-alter</code> and <code>imapping-alter/key</code>, respectively, except that it may
+<p><code>imapping-alter!</code> is the same as
+<code>imapping-alter</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
@@ -860,52 +816,42 @@ allocating a new imapping.</p>
 </code></pre>
 
 <p><code>(imapping-update-min</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-min/key</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max/key</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
+<code>(imapping-update-max</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
 
 <p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
-type <code>* → maybe[*]</code>; that of <code>imapping-update-min/key</code> and of
-<code>-max/key</code> is of type <code>exact-integer * → maybe[*]</code>.</p>
+type <code>exact-integer * → maybe[*]</code>.</p>
 
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association for the least/greatest key <em>k</em> is updated as
-follows.  <em>mproc</em> is applied to the value associated with <em>k</em> and is
+follows.  <em>mproc</em> is applied to <em>k</em> and its associated value and is
 expected to return a Maybe value.  If it returns Nothing, the
 association is deleted; if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added
 to the new imapping.  If <em>imap</em> is empty, an error is signalled.</p>
-
-<p><code>imapping-update-min/key</code> and <code>imapping-update-max/key</code> are the same
-as <code>imapping-update-min</code> and <code>imapping-update-max</code>, respectively,
-except that <em>mproc</em> is called on <em>k</em> and its associated value, in that
-order.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
  (imapping-update-min (imapping -5 "phaser" -1 "tricorder")
-                      (lambda (v)
+                      (lambda (_ v)
                         (if (symbol? v)
                             (just v)
                             (nothing)))))
  ⇒ ((-1 . "tricorder"))
 
 (imapping-&gt;alist
- (imapping-update-max/key (imapping -5 "phaser" -1 "tricorder")
-                          (lambda (k v)
-                            (if (and (negative? k) (string? v))
-                                (just (string-length v))
-                                (nothing)))))
+ (imapping-update-max (imapping -5 "phaser" -1 "tricorder")
+                      (lambda (k v)
+                        (if (and (negative? k) (string? v))
+                            (just (string-length v))
+                            (nothing)))))
  ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
 <p><code>(imapping-update-min!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-min/key!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max/key!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
+<code>(imapping-update-max!</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
 
 <p>These are linear-update variants of
-<code>imapping-update-min</code>, etc..  They may
+<code>imapping-update-min</code> and <code>imapping-update-max</code>.  They may
 mutate and return the <em>imap</em> argument instead of allocating
 a new imapping.</p>
 
@@ -941,232 +887,200 @@ of allocating a new imapping.</p>
 
 <p>Returns the number of associations in <em>imap</em>.</p>
 
-<p><code>(imapping-find</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code><br>
-<code>(imapping-find/key</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
+<p><code>(imapping-find</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
 
 <p><code>failure</code> is a procedure of no arguments returning zero
 or more values of arbitrary type.</p>
 
-<p>Returns the key and value of the association of <em>imap</em> with
-the least key whose value satisfies <em>pred</em>.  If there is no
+<p>Returns two values, <em>k</em> and <em>v</em>, where
+(<em>k</em>, <em>v</em>) is the association of <em>imap</em> with the
+least key such that <code>(</code><em>pred k v</em><code>)</code> is true.
+If there is no
 such association, then <em>failure</em> is tail-called with no
 arguments and its results are returned.</p>
 
-<p><code>imapping-find/key</code> is the same as
-<code>imapping-find</code>, except that <em>pred</em> is called on the
-key and value of each association, in that order.</p>
-
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-find even?
+<pre class="example"><code>(imapping-find (lambda (_ v) (even? v))
                (imapping 0 1 1 2 2 4 3 8)
                (lambda () (values #f #f)))
  ⇒ 1 2
 
-(imapping-find negative?
+(imapping-find (lambda (_ v) (negative? v))
                (imapping 0 1 1 2 2 4 3 8)
                (lambda () (values 'nope 'nada)))
  ⇒ nope nada
 
-(imapping-find/key (lambda (k s) (= k (string-length s)))
-                   (imapping 2 "worf" 3 "data" 4 "troi")
-                   (lambda () (error "not found")))
+(imapping-find (lambda (k s) (= k (string-length s)))
+               (imapping 2 "worf" 3 "data" 4 "troi")
+               (lambda () (error "not found")))
  ⇒ 4 "troi"
 </code></pre>
 
-<p><code>(imapping-query</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code><br/>
-<code>(imapping-query/key</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(imapping-query</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p>Returns Just <em>k v</em>, where (<em>k</em>, <em>v</em>) is the
 association of <em>imap</em> with the least key <em>k</em> such that
-<code>(</code><em>pred v</em><code>)</code> is true, or Nothing if
+<code>(</code><em>pred k v</em><code>)</code> is true, or Nothing if
 there is no such association.</p>
-
-<p><code>imapping-query/key</code> is the same as
-<code>imapping-query</code>, except that <em>pred</em> is called on
-<em>k</em> and <em>v</em>, in that order.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>;; Simulating imapping-lookup
 (maybe-&gt;list-truth
- (imapping-query (lambda (s) (equal? s "guinan"))
+ (imapping-query (lambda (_ s) (equal? s "guinan"))
                  (imapping 11 "ro" 13 "guinan" 17 "barclay")))
  ⇒ (13 "guinan")
 
 (maybe-&gt;list-truth
- (imapping-query/key (lambda (k v)
-                       (and (positive? k) (integer? v)))
-                     (alist->imapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
+ (imapping-query (lambda (k v)
+                   (and (positive? k) (integer? v)))
+                 (alist->imapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
  ⇒ #f
 </code></pre>
 
-<p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code><br>
-<code>(imapping-count/key</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
+<p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
 
-<p>Returns the number of associations in <em>imap</em> whose values satisfy
-<em>pred</em>.</p>
-
-<p><code>imapping-count/key</code> is the same, except that <em>pred</em> is called on
-the key and value of each association.</p>
+<p>Returns the number of associations in <em>imap</em> that satisfy
+<em>pred</em> (in the sense of <code>imapping-find</code>).</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-count even? (imapping 0 1 1 2 2 4 3 8)) ⇒ 3
-(imapping-count/key (lambda (k s) (= k (string-length s)))
-                    (imapping 0 "x" 1 "y" 2 "z"))
+<pre class="example"><code>(imapping-count (lambda (_ v) (even? v))
+                (imapping 0 1 1 2 2 4 3 8)) ⇒ 3
+(imapping-count (lambda (k s) (= k (string-length s)))
+                (imapping 0 "x" 1 "y" 2 "z"))
  ⇒ 1
 </code></pre>
 
 <p><code>(imapping-any?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if there exists an association in <em>imap</em> whose value
-satisfies <em>pred</em>.  <em>imap</em> is traversed in ascending numerical order
-of keys.</p>
-
-<p>Example:</p>
-
-<pre class="example"><code>(imapping-any? odd? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
-</code></pre>
-
-<p><code>(imapping-every?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
-
-<p>Returns <code>#t</code> if and only if the value of every association in <em>imap</em> satisfies
-<em>pred</em>, or if <em>imap</em> is empty.  <em>imap</em> is traversed in ascending
+<p>Returns <code>#t</code> if and only if there exists an association
+in <em>imap</em> that satisfies <em>pred</em> (in the sense of
+<code>imapping-find</code>).  <em>imap</em> is traversed in ascending
 numerical order of keys.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-every? integer? (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+<pre class="example"><code>(imapping-any? (lambda (_ v) (odd? v))
+               (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+</code></pre>
+
+<p><code>(imapping-every?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
+
+<p>Returns <code>#t</code> if and only every association in
+<em>imap</em> satisfies <em>pred</em> (in the sense of
+<code>imapping-find</code>), or if <em>imap</em> is empty.
+<em>imap</em> is traversed in ascending numerical order of keys.</p>
+
+<p>Example:</p>
+
+<pre class="example"><code>(imapping-every? (lambda (_ v) (integer? v))
+                 (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
 
 <h3 id="traversal">Traversal</h3>
 
-<p><code>(imapping-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-map/key</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
-<p>The <em>proc</em> argument of <code>imapping-map</code> is of type <code>* → *</code>;
-that of <code>imapping-map/key</code> is of type <code>exact-integer * → *</code>.</p>
+<p>The <em>proc</em> argument of <code>imapping-map</code> is of type
+<code>exact-integer * → *</code>.</p>
 
 <p>Returns a new imapping.  For each association
 <code>(</code><em>k, v</em><code>)</code> in <em>imap</em>, the association
-<code>(</code><em>k</em><code>, (</code><em>proc&nbsp;v</em><code>))</code>
+<code>(</code><em>k</em><code>, (</code><em>proc k v</em><code>))</code>
 is added to the new imapping.
 The dynamic order
 of the applications of <em>proc</em> to the elements of <em>imap</em> is
 unspecified.</p>
 
-<p><code>imapping-map/key</code> is the same, except that <em>proc</em> is called on
-the key and value of each association.</p>
-
 <p>Examples:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
- (imapping-map string-length
+ (imapping-map (lambda (_ s) (string-length s))
                (imapping 0 "picard" 1 "riker" 2 "troi")))
  ⇒ ((0 . 6) (1 . 5) (2 . 4))
 
 (imapping-&gt;alist
- (imapping-map/key (lambda (k s)
-                     (string-append s (number-&gt;string k)))
-                   (imapping 256 "x" 512 "y" 1024 "z")))
+ (imapping-map (lambda (k s)
+                 (string-append s (number-&gt;string k)))
+               (imapping 256 "x" 512 "y" 1024 "z")))
  ⇒ ((256 . "x256") (512 . "y512") (1024 . "z1024"))
 </code></pre>
 
-<p>Note that, in contrast to SRFI 146&rsquo;s map procedures, these procedures
-transform the values of <em>imap</em> only; that is, the set of keys of the
-resulting imapping is the same as that of <em>imap</em>.</p>
+<p>Note that, in contrast to SRFI 146&rsquo;s <code>mapping-map</code>
+procedure, this procedure transforms the values of <em>imap</em> only;
+that is, the set of keys of the resulting imapping is the same as that
+of <em>imap</em>.</p>
 
-<p><code>(imapping-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-map/key!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
-<p><code>imapping-map!</code> and <code>imapping-map/key!</code>
-are the same as <code>imapping-map</code> and
-<code>imapping-map/key</code>, respectively, except that they may
+<p><code>imapping-map!</code>
+is the same as <code>imapping-map</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-for-each</code>&nbsp;<em>proc imap</em><code>) → unspecified</code><br>
-<code>(imapping-for-each/key</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
+<p><code>(imapping-for-each</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
 
-<p>Calls <em>proc</em> on the value of each association in <em>imap</em> and returns
+<p>Calls <em>proc</em> on the key and value of each association in <em>imap</em> and returns
 an unspecified value.  <em>imap</em> is traversed in ascending numerical
 order of keys.</p>
-
-<p><code>imapping-for-each/key</code> is the same, except that <em>proc</em> is called on
-the key and value of each association.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(let ((sum 0))
-  (imapping-for-each (lambda (v) (set! sum (+ sum v)))
+  (imapping-for-each (lambda (_ v) (set! sum (+ sum v)))
                      (imapping 0 1 1 2 2 4 3 8))
   sum)
  ⇒ 15
 </code></pre>
 
 <p><code>(imapping-fold</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-right</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold/key</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-right/key</code>&nbsp;<em>kons knil imap</em><code>) → *</code></p>
+<code>(imapping-fold-right</code>&nbsp;<em>kons knil imap</em><code>) → *</code></p>
 
 <p>The <em>kons</em> argument of <code>imapping-fold</code> and <code>imapping-fold-right</code> is a
-procedure of type <code>* * → *</code>; that of <code>imapping-fold/key</code>
-and of <code>imapping-fold-right/key</code> is of type <code>exact-integer * * → *</code>.
+procedure of type <code>exact-integer * * → *</code>.
 <em>knil</em> can be any object.</p>
 
 <p>Folds <em>kons</em> over <em>imap</em>, using <em>knil</em> as the base value.  At
-each step, <em>kons</em> is applied to the value of an association and to
-the result of the last application.
+each step, <em>kons</em> is applied to the key of an association, its
+associated value, and to the result of the last application.
 <code>imapping-fold</code> folds in ascending numerical order of keys;
 <code>imapping-fold-right</code> folds in descending order.</p>
 
-<p><code>imapping-fold/key</code> and <code>imapping-fold-right/key</code> are the same
-as <code>imapping-fold</code> and <code>imapping-fold-right</code>, respectively,
-except that <em>kons</em> is also passed the key of each association as its first
-argument.</p>
-
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-fold-right cons '() (imapping 0 "worf" 1 "data" 2 "crusher"))
+<pre class="example"><code>(imapping-fold-right (lambda (_ v vs) (cons v vs))
+                     '()
+                     (imapping 0 "worf" 1 "data" 2 "crusher"))
  ⇒ ("worf" "data" "crusher")
 
-(imapping-fold/key (lambda (k _ ks) (cons k ks))
-                   '()
-                   (imapping 0 "worf" 1 "data" 2 "crusher"))
+(imapping-fold (lambda (k _ ks) (cons k ks))
+               '()
+               (imapping 0 "worf" 1 "data" 2 "crusher"))
  ⇒ (2 1 0)
 </code></pre>
 
-<p><code>(imapping-map-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code><br>
-<code>(imapping-map/key-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code></p>
+<p><code>(imapping-map-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code></p>
 
 <p>Efficient fusion of <code>(imapping-values (imapping-map</code>&nbsp;<em>proc imap</em><code>))</code>.</p>
-
-<p><code>imapping-map/key-&gt;list</code> is the same, except that <em>proc</em> is called on
-the key and value of each association.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(imapping-&gt;alist
- (imapping-map-&gt;list string-length
+ (imapping-map-&gt;list (lambda (_ v) (string-length v))
                      (imapping 0 "picard" 1 "riker" 2 "troi")))
  ⇒ (6 5 4)
 </code></pre>
 
-<p><code>(imapping-filter-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-filter-map/key</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
 <p>The <em>proc</em> parameter of <code>imapping-filter-map</code> is a
-procedure of type <code>* → *-or-#f</code>; that of
-<code>imapping-filter-map/key</code> is of type
-<code>exact-integer * → *-or-#f</code>.</p>
+procedure of type <code>exact-integer * → *-or-#f</code>.</p>
 
 <p><code>imapping-filter-map</code> is similar to <code>imapping-map</code>,
 but only associations for which <em>proc</em> returns a true value are
 added to the new imapping.</p>
-
-<p><code>imapping-filter-map/key</code> is the same, except that <em>proc</em>
-is called on the key and value of each association.</p>
 
 <p>Example:</p>
 
@@ -1177,41 +1091,34 @@ is called on the key and value of each association.</p>
  ⇒ ((0 . 4) (2 . 64))
 </code></pre>
 
-<p><code>(imapping-filter-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code><br>
-<code>(imapping-filter-map/key!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter-map!</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
-<p><code>imapping-filter-map!</code> and <code>imapping-filter-map/key!</code>
-are the same as <code>imapping-filter-map</code> and
-<code>imapping-filter-map/key</code>, respectively, except that they may
+<p><code>imapping-filter-map!</code> is the same as
+<code>imapping-filter-map</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code><br>
-<code>(imapping-map-either/key</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code></p>
+<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code></p>
 
-<p>The <em>proc</em> of <code>imapping-map-either</code> is a procedure
-of type <code>* → either[*]</code>, where <code>either[*]</code> denotes
-a SRFI 189 Either containing a single value.  The <em>proc</em> parameter
-of <code>imapping-map-either/key</code> is of type
-<code>exact-integer * → either[*]</code>.</p>
+<p>The <em>proc</em> of <code>imapping-map-either</code> is a
+procedure of type <code>exact-integer * → either[*]</code>, where
+<code>either[*]</code> denotes a SRFI 189 Either containing a single
+value.</p>
 
-<p><code>imapping-map-either</code> maps <em>proc</em> over the values
+<p><code>imapping-map-either</code> maps <em>proc</em> over the associations
 of <em>imap</em> and returns imappings of the Left and of the Right
 results.  For each association (<em>k</em>, <em>v</em>) in
-<em>imap</em>, (<em>proc v</em>) is evaluated.  If the result is a
+<em>imap</em>, (<em>proc k v</em>) is evaluated.  If the result is a
 Left of a value <em>v</em>₁, then the association (<em>k</em>,
 <em>v</em>₁) is added to the first new imapping.  If it is instead a
 Right of <em>v</em>₂, then the association (<em>k</em>, <em>v</em>₂)
 is added to the second new imapping.</p>
 
-<p><code>imapping-map-either/key</code> is the same, except that <em>proc</em>
-is called on the key and value of each association.</p>
-
 <p>Example:</p>
 
 <pre class="example"><code>(let-values (((lefts rights)
               (imapping-map-either
-               (lambda (v)
+               (lambda (_ v)
                  (if (&gt;= v 0)
                      (right v)
                      (left v)))
@@ -1222,13 +1129,11 @@ is called on the key and value of each association.</p>
    ((8 . 25) (12 . 50))
 </code></pre>
 
-<p><code>(imapping-map-either!</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code><br>
-<code>(imapping-map-either/key!</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code></p>
+<p><code>(imapping-map-either!</code>&nbsp;<em>proc imap</em><code>) → imapping imapping</code></p>
 
-<p><code>imapping-map-either!</code> and <code>imapping-map-either/key!</code>
-are the same as <code>imapping-map-either</code> and
-<code>imapping-map-either/key</code>, respectively, except that they may
-mutate the <em>imap</em> parameter to produce their results.</p>
+<p><code>imapping-map-either!</code> is the same as
+<code>imapping-map-either</code>, except that it may mutate the
+<em>imap</em> parameter to produce their results.</p>
 
 <p><code>(imapping-relation-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
@@ -1250,7 +1155,7 @@ elements of <em>imap</em> is unspecified.</p>
 <p><strong>Rationale:</strong> <code>imapping-relation-map</code>
 corresponds to <code>mapping-map</code> from SRFI 146 and is specified
 primarily for compatibility with that SRFI.  It generalizes
-<code>imapping-map</code> and <code>imapping-map/key</code>, and can
+<code>imapping-map</code>, and can
 be used to produce a wide range of transformations on imappings.  This
 generality comes at a price, however.  Certain familiar laws that hold
 of <code>imapping-map</code> and other Scheme "map" functions do not
@@ -1259,89 +1164,75 @@ the input imapping <em>imap</em> may not be preserved, and a key with an
 association in <em>imap</em> may not have an association in the
 transformed imapping.</p>
 
-<p>As such, <code>imapping-map</code> and <code>imapping-map/key</code>
-likely conform better to the familiar pattern of Scheme "map" functions,
+<p>As such, <code>imapping-map</code>
+likely conforms better to the familiar pattern of Scheme "map" functions,
 while being sufficiently general for most purposes.</p>
 
 <h3 id="filter">Filter</h3>
 
-<p><code>(imapping-filter</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-filter/key</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
 <p>Returns a new imapping containing all of the associations of <em>imap</em>
-whose values satisfy <em>pred</em>.</p>
-
-<p><code>imapping-filter/key</code> is the same, except that <em>pred</em> is applied to
-the key and value of each association.</p>
+that satisfy <em>pred</em> (in the sense of <code>imapping-find</code>).</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-filter positive?
-                                  (imapping 0 2 1 -4 2 8 3 -16)))
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-filter (lambda (_ v) (positive? v))
+                  (imapping 0 2 1 -4 2 8 3 -16)))
  ⇒ ((0 . 2) (2 . 8))
 </code></pre>
 
-<p><code>(imapping-filter!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-filter/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-filter!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p><code>imapping-filter!</code> and <code>imapping-filter/key!</code>
-are the same as <code>imapping-filter</code> and
-<code>imapping-filter/key</code>, respectively, except that they may
-mutate and return the <em>imap</em> parameter instead of
-allocating a new imapping.</p>
+<p><code>imapping-filter!</code> is the same as
+<code>imapping-filter</code>, except that it may mutate and return the
+<em>imap</em> parameter instead of allocating a new imapping.</p>
 
-<p><code>(imapping-remove</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-remove/key</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-remove</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping containing all of the associations of <em>imap</em>
-whose values do not satisfy <em>pred</em>.</p>
-
-<p><code>imapping-remove/key</code> is the same, except that <em>pred</em> is applied to
-the key and value of each association.</p>
+<p>Returns a new imapping containing all of the associations of
+<em>imap</em> that do not satisfy <em>pred</em> (in the sense of
+<code>imapping-find</code>).</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-remove positive?
-                                  (imapping 0 2 1 -4 2 8 3 -16)))
+<pre class="example"><code>(imapping-&gt;alist
+ (imapping-remove (lambda (_ v) (positive? v))
+                  (imapping 0 2 1 -4 2 8 3 -16)))
  ⇒ ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-remove!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-remove/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-remove!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p><code>imapping-remove!</code> and <code>imapping-remove/key!</code>
-are the same as <code>imapping-remove</code> and
-<code>imapping-remove/key</code>, respectively, except that they may
+<p><code>imapping-remove!</code>
+is the same as <code>imapping-remove</code>, except that it may
 mutate and return the <em>imap</em> parameter instead of
 allocating a new imapping.</p>
 
-<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code><br>
-<code>(imapping-partition/key</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
+<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
 
 <p>Returns two new imappings: the first contains all associations of
-<em>imap</em> whose values satisfy <em>pred</em>, and the second contains those
-whose values do not.</p>
-
-<p><code>imapping-partition/key</code> is the same, except that <em>pred</em> is applied to
-the key and value of each association.</p>
+<em>imap</em> that satisfy <em>pred</em> (in the sense of
+<code>imapping-find</code>), and the second contains those
+that do not.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(let-values (((pos ~pos) (imapping-partition positive?
-                                             (imapping 0 2 1 -4 2 8 3 -16))))
+<pre class="example"><code>(let-values (((pos ~pos)
+              (imapping-partition (lambda (_ v) (positive? v))
+                                  (imapping 0 2 1 -4 2 8 3 -16))))
   (values (imapping-&gt;alist pos)
           (imapping-&gt;alist ~pos)))
  ⇒ ((0 . 2) (2 . 8))
    ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-partition!</code>&nbsp;<em>pred imap</em><code>) → imapping</code><br>
-<code>(imapping-partition/key!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-partition!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p><code>imapping-partition!</code> and <code>imapping-partition/key!</code>
-are the same as <code>imapping-partition</code> and
-<code>imapping-partition/key</code>, respectively, except that they may
-mutate the <em>imap</em> parameter to produce their results.</p>
+<p><code>imapping-partition!</code>
+is the same as <code>imapping-partition</code>, except that it may
+mutate the <em>imap</em> parameter to produce its results.</p>
 
 <h3 id="conversion">Copying and conversion</h3>
 
