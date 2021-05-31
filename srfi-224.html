@@ -443,6 +443,12 @@ with the value of</p>
  (alist-&gt;imapping/combinator (lambda (_k x _y) x)
                              '((1 . b) (0 . a) (1 . c))))
  ⇒ ((0 . a) (1 . c))
+
+(imapping-&gt;alist
+ (alist-&gt;imapping/combinator
+  (lambda (_k s t) (string-append s " " t))
+  '((1 . "riker") (2 . "yar") (2 . "tasha"))))
+ ⇒ ((1 . "riker") (2 . "tasha yar"))
 </code></pre>
 
 <h3 id="predicates">Predicates</h3>
