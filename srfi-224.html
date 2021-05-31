@@ -654,7 +654,7 @@ then a copy of <em>imap</em> is returned.</p>
 <p><code>(imapping-adjust! imap k proc) → imapping</code></p>
 
 <p><code>imapping-adjust!</code> is the same as
-<code>imapping-adjust</code>, except that is may
+<code>imapping-adjust</code>, except that it may
 mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
@@ -826,7 +826,7 @@ that the association for the least/greatest key <em>k</em> is updated as
 follows.  <em>mproc</em> is applied to <em>k</em> and its associated value and is
 expected to return a Maybe value.  If it returns Nothing, the
 association is deleted; if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added
-to the new imapping.  If <em>imap</em> is empty, an error is signalled.</p>
+to the new imapping.  If <em>imap</em> is empty, an error is signaled.</p>
 
 <p>Examples:</p>
 
@@ -1228,7 +1228,7 @@ that do not.</p>
    ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-partition!</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(imapping-partition!</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
 
 <p><code>imapping-partition!</code>
 is the same as <code>imapping-partition</code>, except that it may
