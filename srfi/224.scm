@@ -29,8 +29,8 @@
        (loop (proc k v b) ps*))
       (else (error "plist-fold: invalid plist")))))
 
-(define (first-arg x _) x)
-(define (second-arg _ y) y)
+(define (first-arg _k x _y) x)
+(define (second-arg _k _x y) y)
 
 (define (constantly x)
   (lambda (_) x))

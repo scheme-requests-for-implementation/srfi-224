@@ -13,8 +13,8 @@
 
 ;;;; Utility
 
-(define (swap-args proc)
-  (lambda (x y) (proc y x)))
+(define (swap-last-args proc)
+  (lambda (k x y) (proc k y x)))
 
 (define the-empty-trie #f)
 
@@ -68,11 +68,11 @@
 ;; Insert the association (key, value) into trie, replacing any old
 ;; association.
 (define (trie-insert trie key value)
-  (trie-insert/combine trie key value (lambda (new _) new)))
+  (trie-insert/combine trie key value (lambda (_k new _) new)))
 
 ;; Insert (key, value) into trie if key doesn't already have an
 ;; association.  If it does, add a new association for key and
-;; the result of calling combine on the new and old values.
+;; the result of calling combine on the key, new, and old values.
 (define (trie-insert/combine trie key value combine)
   (letrec
    ((new-leaf (leaf key value))
@@ -82,7 +82,7 @@
          (empty (leaf key value))
          ((leaf ,k ,v)
           (if (fx=? key k)
-              (leaf k (combine value v))
+              (leaf k (combine k value v))
               (trie-join key 0 new-leaf k 0 t)))
          ((branch ,p ,m ,l ,r)
           (if (match-prefix? key p m)
@@ -208,7 +208,7 @@
                (trie-insert/combine s
                                     (leaf-key t)
                                     (leaf-value t)
-                                    (swap-args combine)))
+                                    (swap-last-args combine)))
               ((and (branch? s) (branch? t)) (merge-branches s t)))))
      (merge-branches
       (lambda (s t)
@@ -545,10 +545,10 @@
                 ((leaf ,sk ,sv)
                  (tmatch t
                    ((leaf ,tk ,tv) (guard (fx=? sk tk))
-                    (leaf sk (combine sv tv)))
+                    (leaf sk (combine sk sv tv)))
                    (else the-empty-trie)))))
              ((leaf? s) (insert-leaf combine s t))
-             ((leaf? t) (insert-leaf (swap-args combine) t s))
+             ((leaf? t) (insert-leaf (swap-last-args combine) t s))
              (else (intersect-branches s t)))))
     (insert-leaf
      (lambda (comb lf t)
@@ -556,7 +556,8 @@
          ((leaf ,k ,v)
           (let lp ((t t))
             (tmatch t
-              ((leaf ,tk ,tv) (guard (fx=? k tk)) (leaf k (comb v tv)))
+              ((leaf ,tk ,tv) (guard (fx=? k tk))
+               (leaf k (comb k v tv)))
               ((leaf ? ?) the-empty-trie)
               ((branch ,p ,m ,l ,r)
                (and (match-prefix? k p m)

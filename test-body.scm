@@ -4,8 +4,8 @@
 
 (define (constantly x) (lambda _ x))
 
-(define (first-arg x _) x)
-(define (second-arg _ y) y)
+(define (first-arg _k x _y) x)
+(define (second-arg _k _x y) y)
 (define (nth n) (lambda args (list-ref args n)))
 
 (define (square x) (* x x))
@@ -913,7 +913,8 @@
     (test-eqv #t (imapping=?
                   default-comp
                   (imapping 0 "abc")
-                  (imapping-union/combinator string-append
+                  (imapping-union/combinator (lambda (_ s t)
+                                               (string-append s t))
                                              (imapping 0 "a")
                                              (imapping 0 "b")
                                              (imapping 0 "c"))))
@@ -937,7 +938,8 @@
     (test-eqv #t (imapping=?
                   default-comp
                   (imapping 0 "abc")
-                  (imapping-intersection/combinator string-append
+                  (imapping-intersection/combinator (lambda (_ s t)
+                                                      (string-append s t))
                                                     (imapping 0 "a")
                                                     (imapping 0 "b")
                                                     (imapping 0 "c"))))
