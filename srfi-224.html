@@ -761,7 +761,7 @@ imapping, replacing any old association for <em>k</em>.</p>
 of the other update operations may be defined in terms of it.  For
 example:</p>
 
-<pre><code>  (imapping-update imap k f)
+<pre class="example"><code>  (imapping-update imap k f)
    ≡
   (imapping-alter imap k (lambda (m)
                            (maybe-ref m nothing f))
