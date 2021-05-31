@@ -33,38 +33,37 @@
 
    ;; Updaters
    imapping-adjoin imapping-adjoin/combinator imapping-adjust
-   imapping-adjust/key imapping-adjoin! imapping-adjoin/combinator!
+   imapping-adjoin! imapping-adjoin/combinator!
    imapping-set imapping-set!
-   imapping-adjust! imapping-adjust/key! imapping-delete
-   imapping-delete-all imapping-alter imapping-alter/key imapping-update
-   imapping-update/key imapping-delete! imapping-delete-all!
-   imapping-alter! imapping-alter/key! imapping-update! imapping-update/key!
+   imapping-adjust! imapping-delete
+   imapping-delete-all imapping-alter imapping-update
+   imapping-delete! imapping-delete-all!
+   imapping-alter! imapping-update!
    imapping-delete-min imapping-delete-max imapping-update-min
-   imapping-update-max imapping-update-min/key imapping-update-max/key
+   imapping-update-max
    imapping-pop-min imapping-pop-max imapping-delete-min!
    imapping-delete-max! imapping-update-min! imapping-update-max!
-   imapping-update-min/key! imapping-update-max/key!
    imapping-pop-min! imapping-pop-max!
 
    ;; The whole imapping
-   imapping-size imapping-count imapping-count/key imapping-any?
-   imapping-find imapping-find/key imapping-query imapping-query/key
+   imapping-size imapping-count imapping-any?
+   imapping-find  imapping-query
    imapping-every?
 
    ;; Traversal
-   imapping-fold imapping-fold-right imapping-fold/key
-   imapping-fold-right/key imapping-map imapping-map/key imapping-map->list
-   imapping-map/key->list imapping-for-each imapping-for-each/key
-   imapping-filter-map imapping-filter-map/key imapping-filter-map!
-   imapping-filter-map/key! imapping-map-either imapping-map-either/key
-   imapping-map-either! imapping-map-either/key!
+   imapping-fold imapping-fold-right
+   imapping-map imapping-map->list
+   imapping-for-each
+   imapping-filter-map imapping-filter-map!
+   imapping-map-either
+   imapping-map-either!
    imapping-relation-map
 
    ;; Filter
-   imapping-filter imapping-filter/key imapping-remove imapping-remove/key
-   imapping-partition imapping-partition/key
-   imapping-filter! imapping-filter/key! imapping-remove!
-   imapping-remove/key! imapping-partition! imapping-partition/key!
+   imapping-filter imapping-remove
+   imapping-partition
+   imapping-filter! imapping-remove!
+   imapping-partition!
 
    ;; Copying and conversion
    imapping-keys imapping-values imapping-copy
