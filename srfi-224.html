@@ -696,6 +696,9 @@ allocating a new imapping.</p>
 
 <p><code>(imapping-update</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
 
+<p><em>mproc</em> is a procedure of type
+<code>exact-integer * → maybe[*]</code>.</p>
+
 <p>Returns a new imapping with the same associations as <em>imap</em>, except
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to <em>k</em> and its associated value.
@@ -889,7 +892,8 @@ of allocating a new imapping.</p>
 
 <p><code>(imapping-find</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
 
-<p><code>failure</code> is a procedure of no arguments returning zero
+<p><em>pred</em> is a predicate of type <code>exact-integer * → boolean</code>.
+<code>failure</code> is a procedure of no arguments returning zero
 or more values of arbitrary type.</p>
 
 <p>Returns two values, <em>k</em> and <em>v</em>, where
@@ -919,6 +923,9 @@ arguments and its results are returned.</p>
 
 <p><code>(imapping-query</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code></p>
 
+<p><em>pred</em> is a predicate of type
+<code>exact-integer * → boolean</code>.</p>
+
 <p>Returns Just <em>k v</em>, where (<em>k</em>, <em>v</em>) is the
 association of <em>imap</em> with the least key <em>k</em> such that
 <code>(</code><em>pred k v</em><code>)</code> is true, or Nothing if
@@ -941,6 +948,9 @@ there is no such association.</p>
 
 <p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
 
+<p><em>pred</em> is a predicate of type
+<code>exact-integer * → boolean</code>.</p>
+
 <p>Returns the number of associations in <em>imap</em> that satisfy
 <em>pred</em> (in the sense of <code>imapping-find</code>).</p>
 
@@ -955,6 +965,9 @@ there is no such association.</p>
 
 <p><code>(imapping-any?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
 
+<p><em>pred</em> is a predicate of type
+<code>exact-integer * → boolean</code>.</p>
+
 <p>Returns <code>#t</code> if and only if there exists an association
 in <em>imap</em> that satisfies <em>pred</em> (in the sense of
 <code>imapping-find</code>).  <em>imap</em> is traversed in ascending
@@ -967,6 +980,9 @@ numerical order of keys.</p>
 </code></pre>
 
 <p><code>(imapping-every?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
+
+<p><em>pred</em> is a predicate of type
+<code>exact-integer * → boolean</code>.</p>
 
 <p>Returns <code>#t</code> if and only every association in
 <em>imap</em> satisfies <em>pred</em> (in the sense of
@@ -1021,6 +1037,8 @@ mutate and return the <em>imap</em> argument instead of
 allocating a new imapping.</p>
 
 <p><code>(imapping-for-each</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
+
+<p><em>proc</em> is a procedure of type <code>exact-integer * → *</code>.
 
 <p>Calls <em>proc</em> on the key and value of each association in <em>imap</em> and returns
 an unspecified value.  <em>imap</em> is traversed in ascending numerical
