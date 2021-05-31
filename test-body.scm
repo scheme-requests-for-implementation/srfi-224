@@ -356,7 +356,7 @@
                  (imapping-alter mixed-imap
                                  100
                                  (lambda (m)
-                                   (maybe-map (lambda (n) (+ n 1)) m)))
+                                   (maybe-map (lambda (_k n) (+ n 1)) m)))
                  100
                  #f))
   (test-eqv 'z (imapping-ref/default
@@ -369,7 +369,7 @@
                     (imapping-alter sparse-imap
                                     -16384
                                     (lambda (m)
-                                      (maybe-map (lambda (n) (+ n 1)) m)))
+                                      (maybe-map (lambda (_k n) (+ n 1)) m)))
                     -16384
                     #f))
   (test-eqv 'z (imapping-ref/default
