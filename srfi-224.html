@@ -422,25 +422,25 @@ then the first association for <em>k</em> is preferred.</p>
 
 <p><code>(alist-&gt;imapping/combinator</code>&nbsp;<em>proc alist</em><code>) → imapping</code></p>
 
-<p><em>proc</em> is a procedure of type <code>* * → *</code>.</p>
+<p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
 <p>Returns a new imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
 the association
-(<em>k</em>, (<em>proc v</em>₂ <em>v</em>₁)) is
+(<em>k</em>, (<em>proc k v</em>₂ <em>v</em>₁)) is
 added to the resulting imapping; in general, if <em>k</em> is associated with
-values v₁, v₂, …, vₙ in <em>alist</em>, then <em>k</em> will be associated
+values v₁, …, vₙ in <em>alist</em>, then <em>k</em> will be associated
 with the value of</p>
 
-<pre>(<em>proc v</em>ₙ (<em>proc</em> … (<em>proc v</em>₃ (<em>proc v</em>₂ <em>v</em>₁)) … ))</pre>
+<pre>(<em>proc k v</em>ₙ (<em>proc k</em> … (<em>proc k v</em>₂ <em>v</em>₁)))</pre>
 
 <p>in the resulting imapping.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist
- (alist-&gt;imapping/combinator (lambda (x _) x)
+ (alist-&gt;imapping/combinator (lambda (_k x _y) x)
                              '((1 . b) (0 . a) (1 . c))))
  ⇒ ((0 . a) (1 . c))
 </code></pre>
@@ -591,7 +591,7 @@ allocating a new imapping.</p>
 <p><code>(imapping-adjoin/combinator</code>&nbsp;<em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
 
 <p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
-are combined with <em>proc</em>, which is a procedure of type <code>* * → *</code>.
+are combined with <em>proc</em>, which is a procedure of type <code>exact-integer * * → *</code>.
 <em>proc</em> is called on the new and old values (in that order) associated
 with a duplicated key and is expected to return a value for the key.</p>
 
@@ -599,7 +599,7 @@ with a duplicated key and is expected to return a value for the key.</p>
 
 <pre class="example"><code>(imapping-&gt;alist
  (imapping-adjoin/combinator (imapping 0 "geordi" 1 "reginald")
-                             (lambda (last first)
+                             (lambda (_ last first)
                                (string-append first " " last))
                              0 "laforge"
                              1 "barclay"))
@@ -1460,20 +1460,21 @@ produce their results.</p>
 <p><code>(imapping-union/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-intersection/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
 
-<p><em>proc</em> is a procedure of type <code>* * → *</code>.</p>
+<p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
 <p>Return a new imapping whose set of keys is the union/intersection of
 the sets of keys of the <em>imaps</em>.  The values associated with duplicate
-keys are combined left-associatively with <em>proc</em>; that is, if an integer <em>k</em> is associated
+keys are combined left-associatively with <em>proc</em>, which is also passed
+the duplicated key as its first argument; that is, if an integer <em>k</em> is associated
 with values <em>v</em>₁, <em>v</em>₂, …, <em>v</em>ₙ in <em>imap</em>₁, <em>imap</em>₂, …, <em>imap</em>ₙ,
 respectively, then the resulting imapping will contain the association
-(<em>k</em>, (<em>proc</em> … (<em>proc v</em>₁ <em>v</em>₂) … <em>v</em>ₙ)).</p>
+(<em>k</em>, (<em>proc k</em> … (<em>proc k v</em>₁ <em>v</em>₂) … <em>v</em>ₙ)).</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>;; Right-biased union.
 (imapping-&gt;alist
- (imapping-union/combinator (lambda (_l r) r)
+ (imapping-union/combinator (lambda (_k _l r) r)
                             (imapping 1 'b 2 'c)
                             (imapping 2 "data" 3 "picard")))
 
@@ -1481,7 +1482,7 @@ respectively, then the resulting imapping will contain the association
 
 (imapping-&gt;alist
  (imapping-intersection/combinator
-  (lambda (l r) (string-append l " " r))
+  (lambda (_ l r) (string-append l " " r))
   (imapping 1 "q" 3 "jean-luc" 5 "miles" 7 "quark")
   (imapping 3 "picard" 5 "o'brien")))
 
