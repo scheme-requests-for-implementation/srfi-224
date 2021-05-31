@@ -436,9 +436,9 @@
                       (imapping=? default-comp (imapping-delete-min im) im*))))
              (list mixed-imap letter-imap sparse-imap)))  ; non-empty only
 
-  ;;; pop-min
+  ;;; pop-max
 
-  (test-eqv #t (nothing? (imapping-pop-min empty-imap)))
+  (test-eqv #t (nothing? (imapping-pop-max empty-imap)))
   (test-eqv #t
             (every
              (lambda (im)
