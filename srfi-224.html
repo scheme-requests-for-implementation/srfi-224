@@ -754,7 +754,7 @@ If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in 
 Just <em>k v</em>; if no such association exists, then <em>proc</em> is called on
 Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
-is Just <em>v′</em>, a new association <em>(k, v′)</em> is added to the new
+is Just <em>v′</em>, the association <em>(k, v′)</em> is added to the new
 imapping, replacing any old association for <em>k</em>.</p>
 
 <p><code>imapping-alter</code> is a very general operator on imappings, and most
@@ -1058,7 +1058,8 @@ order of keys.</p>
 
 <p>The <em>kons</em> argument of <code>imapping-fold</code> and <code>imapping-fold-right</code> is a
 procedure of type <code>exact-integer * * → *</code>.
-<em>knil</em> can be any object.</p>
+<em>knil</em> is an object of any type which can be passed to <em>kons</em>
+as its third argument.</p>
 
 <p>Folds <em>kons</em> over <em>imap</em>, using <em>knil</em> as the base value.  At
 each step, <em>kons</em> is applied to the key of an association, its
@@ -1081,7 +1082,9 @@ associated value, and to the result of the last application.
 
 <p><code>(imapping-map-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code></p>
 
-<p>Efficient fusion of <code>(imapping-values (imapping-map</code>&nbsp;<em>proc imap</em><code>))</code>.</p>
+<p>Equivalent to
+<code>(imapping-values (imapping-map</code>&nbsp;<em>proc imap</em><code>))</code>,
+but may be implemented more efficiently.</p>
 
 <p>Example:</p>
 
@@ -1093,12 +1096,16 @@ associated value, and to the result of the last application.
 
 <p><code>(imapping-filter-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
 
-<p>The <em>proc</em> parameter of <code>imapping-filter-map</code> is a
+<p><em>proc</em> is a
 procedure of type <code>exact-integer * → *-or-#f</code>.</p>
 
-<p><code>imapping-filter-map</code> is similar to <code>imapping-map</code>,
-but only associations for which <em>proc</em> returns a true value are
-added to the new imapping.</p>
+<p>Returns a new imapping.  For each association (<em>k</em>, <em>v</em>)
+in imapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
+If the result is a true value, then the association
+<code>(</code><em>k</em>, <code>(</code><em>proc k v</em><code>))</code>
+is added to the new imapping.  If the result is false, then no association
+is added <em>k</em>.  The dynamic order of the applications of
+<em>proc</em> to the elements of <em>imap</em> is unspecified.</p>
 
 <p>Example:</p>
 
@@ -1264,8 +1271,15 @@ may simply return <em>imap</em>.</p>
 
 <p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
-<p>Returns a car/cdr alist containing the associations of <em>imap</em> in
-ascending numerical order of keys.</p>
+<p>Returns a newly-allocated alist containing the associations of
+<em>imap</em> in increasing numerical order of key.
+That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
+<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then
+<code>(imapping-&gt;alist</code> <em>imap</em><code>)</code>
+produces the list <code>((</code><em>k</em>₁ <code>.</code>
+<em>v</em>₁<code>)</code> … <code>(</code><em>k</em>ₙ
+<code>.</code> <em>v</em>ₙ<code>))</code>.</p>
 
 <p>Example:</p>
 
@@ -1274,8 +1288,9 @@ ascending numerical order of keys.</p>
 
 <p><code>(imapping-&gt;decreasing-alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
-<p>Returns a car/cdr alist containing the associations of <em>imap</em> in
-decreasing numerical order of keys.</p>
+<p>Identical to <code>imapping-&gt;alist</code>, except that the
+resulting alist contains the associations of <em>imap</em> in
+decreasing numerical order of key.</p>
 
 <p>Example:</p>
 
@@ -1293,8 +1308,14 @@ decreasing numerical order of keys.</p>
 
 <p><code>(imapping-values</code>&nbsp;<em>imap</em><code>) → list[*]</code></p>
 
-<p>Returns the elements of <em>imap</em> as a list in ascending numerical
-order of key.</p>
+<p>Returns the values of <em>imap</em> as a list in ascending numerical
+order of key.
+That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
+<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then
+<code>(imapping-values</code> <em>imap</em><code>)</code>
+produces the list
+<code>(</code><em>v</em>₁ … <em>v</em>ₙ<code>)</code>.</p>
 
 <p>Example:</p>
 
@@ -1306,7 +1327,13 @@ order of key.</p>
 
 <p>Returns a <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generator which
 produces the associations of <em>imapping</em> as key/value pairs in increasing
-order of key.</p>
+order of key.  That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
+<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then the generator returned by
+<code>(imapping-&gt;generator</code> <em>imap</em><code>)</code>
+produces the pairs <code>(</code><em>k</em>₁ <code>.</code>
+<em>v</em>₁<code>)</code>, …, <code>(</code><em>k</em>ₙ
+<code>.</code> <em>v</em>ₙ<code>)</code>, in that order.</p>
 
 <p>Example:</p>
 
