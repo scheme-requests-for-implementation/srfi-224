@@ -251,13 +251,6 @@ potentially side-effected parameters passed to these functions — there's
 no linear type checker or run-time mechanism for detecting
 violations.</p>
 
-<p>If integer mappings are implemented by immutable structures, then
-procedures which return "newly allocated" imappings may
-return existing imappings, or imappings which share structure with
-existing imappings.  Such an implementation must ensure that
-this reuse cannot cause the forms of this library to return incorrect
-results.</p>
-
 <h3>Index</h3>
 
 <ul>
@@ -310,8 +303,8 @@ isubmapping&gt;!, imapping-split</code></p></li>
 
 <p><code>(imapping</code>&nbsp;<em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
-<p>Returns a new imapping.  The arguments alternate between keys (which
-must be exact integers) and values (which are arbitrary Scheme objects); the
+<p>Constructs an imapping from the given arguments, which alternate between keys
+and values (which are arbitrary Scheme objects); the
 resulting imapping contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
@@ -331,7 +324,7 @@ The arguments have the following types:
 <li><em>seed</em> : <code>*</code></li>
 </ul>
 
-<p>Unfold a new imapping from the initial seed value <em>seed</em>.
+<p>Unfold an imapping from the initial seed value <em>seed</em>.
 <em>mapper</em> is applied to each seed and returns two values, a key
 and an associated value, which are adjoined to the new imapping.
 <em>successor</em> maps each seed to a new seed.
@@ -355,7 +348,7 @@ The arguments have the following types:
 <li><em>seed</em> : <code>*</code></li>
 </ul>
 
-<p>Unfold a new imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
+<p>Unfold an imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
 a Maybe value.  If this value is Nothing, then unfolding terminates.
 If it is Just <em>k v seed′</em>, then a new association
 <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting imapping and unfolding continues
@@ -424,7 +417,7 @@ then the first association for <em>k</em> is preferred.</p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Returns a new imapping containing the associations of <em>alist</em>.
+<p>Returns an imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
@@ -575,7 +568,7 @@ associated value. It is an error if <em>imap</em> is empty.</p>
 
 <p><code>(imapping-adjoin</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
-<p>Returns a new imapping containing all of the associations of
+<p>Returns an imapping containing all of the associations of
 <em>imap</em> as well as the associations (<em>k</em>₁, <em>obj</em>₁),
 (<em>k</em>₂, <em>obj</em>₂), ….
 The number of key/value arguments must be even.</p>
@@ -643,7 +636,7 @@ allocating a new imapping.</p>
 <p>The <em>proc</em> parameter of <code>imapping-adjust</code> is a
 procedure of type <code>exact-integer * → *</code>.</p>
 
-<p>Returns a new imapping in which the association (<em>k</em>, <em>v</em>) in <em>imap</em>
+<p>Returns an imapping in which the association (<em>k</em>, <em>v</em>) in <em>imap</em>
 is replaced by (<em>k</em>, (<em>proc k v</em>)).  If <em>k</em> has
 no association in <em>imap</em>,
 then a copy of <em>imap</em> is returned.</p>
@@ -666,7 +659,7 @@ allocating a new imapping.</p>
 
 <p><code>(imapping-delete imap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
 association in <em>imap</em>, it is ignored.</p>
 
@@ -684,7 +677,7 @@ allocating a new imapping.</p>
 
 <p><code>(imapping-delete-all</code>&nbsp;<em>imap list</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
 
 <p>Example:</p>
@@ -705,7 +698,7 @@ allocating a new imapping.</p>
 <p><em>mproc</em> is a procedure of type
 <code>exact-integer * → maybe[*]</code>.</p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to <em>k</em> and its associated value.
 If it returns Nothing, the association is deleted;
@@ -754,14 +747,14 @@ allocating a new imapping.</p>
 <p><em>proc</em> is a procedure of type
 <code>maybe[exact-integer, *] → maybe[*]</code>.</p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 that the association, or lack thereof, for <em>k</em> is updated as follows.
 If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>imap</em>, then <em>proc</em> is called on
 Just <em>k v</em>; if no such association exists, then <em>proc</em> is called on
 Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
-is Just <em>v′</em>, the association <em>(k, v′)</em> is added to the new
-imapping, replacing any old association for <em>k</em>.</p>
+is Just <em>v′</em>, the association <em>(k, v′)</em> is added to the
+resulting imapping, replacing any old association for <em>k</em>.</p>
 
 <p><code>imapping-alter</code> is a very general operator on imappings, and most
 of the other update operations may be defined in terms of it.  For
@@ -805,7 +798,7 @@ allocating a new imapping.</p>
 <p><code>(imapping-delete-min</code>&nbsp;<em>imap</em><code>) → imapping</code><br>
 <code>(imapping-delete-max</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 for the association with the least/greatest key.  If <em>imap</em> is empty,
 an error is signalled.</p>
 
@@ -830,7 +823,7 @@ allocating a new imapping.</p>
 <p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
 type <code>exact-integer * → maybe[*]</code>.</p>
 
-<p>Returns a new imapping with the same associations as <em>imap</em>, except
+<p>Returns an imapping with the same associations as <em>imap</em>, except
 that the association for the least/greatest key <em>k</em> is updated as
 follows.  <em>mproc</em> is applied to <em>k</em> and its associated value and is
 expected to return a Maybe value.  If it returns Nothing, the
@@ -868,7 +861,7 @@ a new imapping.</p>
 <code>(imapping-pop-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
 
 <p>Returns Just <em>k v imap′</em>, where (<em>k</em>, <em>v</em>) is the association of
-<em>imap</em> with the least/greatest key and <em>imap′</em> is a newly-allocated
+<em>imap</em> with the least/greatest key and <em>imap′</em> is an
 imapping containing all of the associations of <em>imap</em> except for
 (<em>k</em>, <em>v</em>).  If <em>imap</em> is empty, returns Nothing.</p>
 
@@ -1008,10 +1001,12 @@ numerical order of keys.</p>
 <p>The <em>proc</em> argument of <code>imapping-map</code> is of type
 <code>exact-integer * → *</code>.</p>
 
-<p>Returns a new imapping.  For each association
+<p>Returns an imapping with the same keys as <em>imap</em> whose values
+are the result of transforming the values of <em>imap</em> with <em>proc</em>.
+For each association
 <code>(</code><em>k, v</em><code>)</code> in <em>imap</em>, the association
 <code>(</code><em>k</em><code>, (</code><em>proc k v</em><code>))</code>
-is added to the new imapping.
+is added to the resulting imapping.
 The dynamic order
 of the applications of <em>proc</em> to the elements of <em>imap</em> is
 unspecified.</p>
@@ -1105,11 +1100,13 @@ but may be implemented more efficiently.</p>
 <p><em>proc</em> is a
 procedure of type <code>exact-integer * → *-or-#f</code>.</p>
 
-<p>Returns a new imapping.  For each association (<em>k</em>, <em>v</em>)
+<p>Returns an imapping with the same keys as <em>imap</em> whose values
+are the result of transforming the values of <em>imap</em> with <em>proc</em>.
+For each association (<em>k</em>, <em>v</em>)
 in imapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
 If the result is a true value, then the association
 <code>(</code><em>k</em>, <code>(</code><em>proc k v</em><code>))</code>
-is added to the new imapping.  If the result is false, then no association
+is added to the resulting imapping.  If the result is false, then no association
 is added <em>k</em>.  The dynamic order of the applications of
 <em>proc</em> to the elements of <em>imap</em> is unspecified.</p>
 
@@ -1141,9 +1138,9 @@ of <em>imap</em> and returns imappings of the Left and of the Right
 results.  For each association (<em>k</em>, <em>v</em>) in
 <em>imap</em>, (<em>proc k v</em>) is evaluated.  If the result is a
 Left of a value <em>v</em>₁, then the association (<em>k</em>,
-<em>v</em>₁) is added to the first new imapping.  If it is instead a
+<em>v</em>₁) is added to the first resulting imapping.  If it is instead a
 Right of <em>v</em>₂, then the association (<em>k</em>, <em>v</em>₂)
-is added to the second new imapping.</p>
+is added to the second resulting imapping.</p>
 
 <p>Example:</p>
 
@@ -1171,7 +1168,7 @@ is added to the second new imapping.</p>
 <p><em>proc</em> must be a procedure of type
 <code>exact-integer * → [exact-integer, *]</code>.</p>
 
-<p>Returns a new imapping whose associations are the results of
+<p>Returns an imapping whose associations are the results of
 transforming both the keys and the values of <em>imap</em> with
 <em>proc</em>.  For each association (<em>k</em>,
 <em>v</em>) in <em>imap</em>, (<em>proc k v</em>) is evaluated to
@@ -1203,7 +1200,7 @@ while being sufficiently general for most purposes.</p>
 
 <p><code>(imapping-filter</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping containing all of the associations of <em>imap</em>
+<p>Returns an imapping containing all of the associations of <em>imap</em>
 that satisfy <em>pred</em> (in the sense of <code>imapping-find</code>).</p>
 
 <p>Example:</p>
@@ -1222,7 +1219,7 @@ that satisfy <em>pred</em> (in the sense of <code>imapping-find</code>).</p>
 
 <p><code>(imapping-remove</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping containing all of the associations of
+<p>Returns an imapping containing all of the associations of
 <em>imap</em> that do not satisfy <em>pred</em> (in the sense of
 <code>imapping-find</code>).</p>
 
@@ -1243,7 +1240,7 @@ allocating a new imapping.</p>
 
 <p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
 
-<p>Returns two new imappings: the first contains all associations of
+<p>Returns two imappings: the first contains all associations of
 <em>imap</em> that satisfy <em>pred</em> (in the sense of
 <code>imapping-find</code>), and the second contains those
 that do not.</p>
@@ -1269,7 +1266,7 @@ mutate the <em>imap</em> parameter to produce its results.</p>
 
 <p><code>(imapping-copy</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
 
-<p>Returns a newly allocated imapping containing the associations of
+<p>Returns an imapping containing the associations of
 <em>imap</em>.</p>
 
 <p>In an implementation with immutable imappings, <code>imapping-copy</code>
@@ -1277,7 +1274,7 @@ may simply return <em>imap</em>.</p>
 
 <p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
-<p>Returns a newly-allocated alist containing the associations of
+<p>Returns an alist containing the associations of
 <em>imap</em> in increasing numerical order of key.
 That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
 <em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
@@ -1425,7 +1422,7 @@ compared using the equality predicate of <em>comp</em>.</p>
 <code>(imapping-difference</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
 <code>(imapping-xor</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
 
-<p>Return a newly allocated imapping whose set of associations is the
+<p>Return an imapping whose set of associations is the
 union, intersection, asymmetric difference, or symmetric difference of
 the sets of associations of the <em>imaps</em>.  Asymmetric difference is
 extended to more than two imappings by taking the difference between
@@ -1468,7 +1465,7 @@ produce their results.</p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Return a new imapping whose set of keys is the union/intersection of
+<p>Return an imapping whose set of keys is the union/intersection of
 the sets of keys of the <em>imaps</em>.  The values associated with duplicate
 keys are combined left-associatively with <em>proc</em>, which is also passed
 the duplicated key as its first argument; that is, if an integer <em>k</em> is associated
@@ -1581,7 +1578,7 @@ a new imapping.</p>
 
 <p><code>(imapping-split</code> <em>imap k</em><code>) → [imapping, imapping]</code></p>
 
-<p>Returns two new imappings.  The first contains all of the associations
+<p>Returns two imappings.  The first contains all of the associations
 of <em>imap</em> whose keys are less than or equal to <em>k</em>, and the second
 contains the remaining associations.  This is equivalent to
 <code>(values (isubmapping&lt;=</code>&nbsp;<em>imap k</em><code>)
