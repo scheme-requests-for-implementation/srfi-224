@@ -1271,7 +1271,9 @@ mutate the <em>imap</em> parameter to produce its results.</p>
 <em>imap</em>.</p>
 
 <p>In an implementation with immutable imappings, <code>imapping-copy</code>
-may simply return <em>imap</em>.</p>
+may simply return <em>imap</em>.  If imappings may be mutated,
+however, then the resulting imapping must be newly allocated
+and must not share structure with <em>imap</em>.</p>
 
 <p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
 
