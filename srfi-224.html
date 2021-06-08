@@ -233,15 +233,6 @@ must additionally be sure that, when the procedure is called, there
 are no other live references to the potentially-modified imapping
 (hence the term "linear update").</p>
 
-<p>There are two benefits to this convention:</p>
-
-<ul><li><p>Implementations are free to provide the most efficient
-possible implementation, either functional or side-effecting.</p></li>
-
-<li><p>Programmers may nonetheless continue to assume that imappings are
-purely functional data structures: they may be reliably shared without
-needing to be copied, uniquified, and so forth.</p></li></ul>
-
 <p>In practice, these procedures are most useful for efficiently
 constructing imappings in a side-effecting manner, in some limited local
 context, before passing the imapping outside the local construction scope
@@ -250,7 +241,21 @@ to be used in a functional manner.</p>
 <p>Scheme provides no assistance in checking the linearity of the
 potentially side-effected parameters passed to these functions — there's
 no linear type checker or run-time mechanism for detecting
-violations.</p>
+violations.  Thus, implementations which provide side-effecting
+versions of the linear update procedures should clearly indicate
+when the use of these forms in tandem with functional forms could
+result in unexpected behavior.  For example, an implementation of
+the (functional) form <code>imapping-adjoin</code> might return
+an imapping value which shares structure with its imapping
+parameter; combining this behavior with linear update forms can
+cause bugs:
+<pre class="example">(let* ((imap1 (imapping 1 'b 2 'c))
+      (imap2 (imapping-adjoin imap1 3 'd)))
+  (imapping-delete! imap2 1)   ; Oops, imap2 references imap1!
+  imap1)                       ; Contents unpredictable.
+</pre>
+Implementors of SRFI 224 are thus urged to clarify what
+"live references" means for their particular implementation.</p>
 
 <h3>Index</h3>
 
