@@ -306,7 +306,7 @@ isubmapping&gt;!, imapping-split</code></p></li>
 
 <p>Constructs an imapping from the given arguments, which alternate between keys
 and values (which are arbitrary Scheme objects); the
-resulting imapping contains these (<em>k</em>, <em>obj</em>) associations.
+resulting imapping is newly allocated and contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
 
@@ -330,7 +330,8 @@ The arguments have the following types:
 and an associated value, which are adjoined to the new imapping.
 <em>successor</em> maps each seed to a new seed.
 Unfolding terminates when the predicate <em>stop?</em> returns a true
-value when applied to the current seed.</p>
+value when applied to the current seed.  The resulting imapping is
+newly allocated.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist
@@ -353,7 +354,7 @@ The arguments have the following types:
 a Maybe value.  If this value is Nothing, then unfolding terminates.
 If it is Just <em>k v seed′</em>, then a new association
 <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting imapping and unfolding continues
-with <em>seed′</em>.</p>
+with <em>seed′</em>  The resulting imapping is newly allocated.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(imapping-&gt;alist
@@ -400,7 +401,7 @@ side-effects.</p>
 
 <p><code>(alist-&gt;imapping</code>&nbsp;<em>alist</em><code>) → imapping</code></p>
 
-<p>Returns a new imapping containing the associations of <em>alist</em>.
+<p>Returns a newly allocated imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If an integer <em>k</em> appears as the key of multiple
 associations in <em>alist</em> (i.e. as the car of multiple pairs),
@@ -418,7 +419,7 @@ then the first association for <em>k</em> is preferred.</p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Returns an imapping containing the associations of <em>alist</em>.
+<p>Returns a newly allocated imapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
