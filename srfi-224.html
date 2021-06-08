@@ -250,7 +250,7 @@ an imapping value which shares structure with its imapping
 parameter; combining this behavior with linear update forms can
 cause bugs:
 <pre class="example">(let* ((imap1 (imapping 1 'b 2 'c))
-      (imap2 (imapping-adjoin imap1 3 'd)))
+       (imap2 (imapping-adjoin imap1 3 'd)))
   (imapping-delete! imap2 1)   ; Oops, imap2 references imap1!
   imap1)                       ; Contents unpredictable.
 </pre>
