@@ -421,12 +421,13 @@ with the value of</p>
 
 <h3 id="accessors">Accessors</h3>
 
-<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → *</code></p>
+<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → * …</code></p>
 
 <p>If the optional <em>failure</em> parameter is supplied, then it must
 be a procedure of no arguments returning zero or more values of arbitrary
-type.  The optional <em>success</em> parameter is a procedure of type
-<code>* → *</code>.  <em>failure</em> defaults to a procedure which
+type.  The optional <em>success</em> parameter is a procedure taking one
+argument of arbitrary type and returning zero or more values of arbitrary
+type.  <em>failure</em> defaults to a procedure which
 signals an error; <em>success</em> defaults to <code>values</code>.</p>
 
 <p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>,
