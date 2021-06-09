@@ -28,38 +28,30 @@
 
    ;; Accessors
    imapping-min imapping-max imapping-lookup imapping-ref
-   imapping-lookup-min imapping-lookup-max
-   imapping-ref/default
+   imapping-lookup-min imapping-lookup-max imapping-ref/default
 
    ;; Updaters
    imapping-adjoin imapping-adjoin/combinator imapping-adjust
-   imapping-set
-   imapping-delete
-   imapping-delete-all imapping-alter imapping-update
-   imapping-delete-min imapping-delete-max imapping-update-min
-   imapping-update-max
-   imapping-pop-min imapping-pop-max
+   imapping-set imapping-delete imapping-delete-all imapping-alter
+   imapping-update imapping-delete-min imapping-delete-max
+   imapping-update-min imapping-update-max imapping-pop-min
+   imapping-pop-max
 
    ;; The whole imapping
-   imapping-size imapping-count imapping-any?
-   imapping-find  imapping-query
-   imapping-every?
+   imapping-size imapping-count imapping-any? imapping-find
+   imapping-query imapping-every?
 
    ;; Traversal
-   imapping-fold imapping-fold-right
-   imapping-map imapping-map->list
-   imapping-for-each
-   imapping-filter-map
-   imapping-map-either
+   imapping-fold imapping-fold-right imapping-map imapping-map->list
+   imapping-for-each imapping-filter-map imapping-map-either
    imapping-relation-map
 
    ;; Filter
-   imapping-filter imapping-remove
-   imapping-partition
+   imapping-filter imapping-remove imapping-partition
 
    ;; Copying and conversion
-   imapping-keys imapping-values imapping-copy
-   imapping->alist imapping->decreasing-alist imapping->generator
+   imapping-keys imapping-values imapping-copy imapping->alist
+   imapping->decreasing-alist imapping->generator
    imapping->decreasing-generator
 
    ;; Comparison
