@@ -33,17 +33,12 @@
 
    ;; Updaters
    imapping-adjoin imapping-adjoin/combinator imapping-adjust
-   imapping-adjoin! imapping-adjoin/combinator!
-   imapping-set imapping-set!
-   imapping-adjust! imapping-delete
+   imapping-set
+   imapping-delete
    imapping-delete-all imapping-alter imapping-update
-   imapping-delete! imapping-delete-all!
-   imapping-alter! imapping-update!
    imapping-delete-min imapping-delete-max imapping-update-min
    imapping-update-max
-   imapping-pop-min imapping-pop-max imapping-delete-min!
-   imapping-delete-max! imapping-update-min! imapping-update-max!
-   imapping-pop-min! imapping-pop-max!
+   imapping-pop-min imapping-pop-max
 
    ;; The whole imapping
    imapping-size imapping-count imapping-any?
@@ -54,16 +49,13 @@
    imapping-fold imapping-fold-right
    imapping-map imapping-map->list
    imapping-for-each
-   imapping-filter-map imapping-filter-map!
+   imapping-filter-map
    imapping-map-either
-   imapping-map-either!
    imapping-relation-map
 
    ;; Filter
    imapping-filter imapping-remove
    imapping-partition
-   imapping-filter! imapping-remove!
-   imapping-partition!
 
    ;; Copying and conversion
    imapping-keys imapping-values imapping-copy
@@ -75,18 +67,12 @@
 
    ;; Set theory operations
    imapping-union imapping-intersection imapping-difference imapping-xor
-   imapping-union! imapping-intersection! imapping-difference! imapping-xor!
    imapping-union/combinator imapping-intersection/combinator
-   imapping-union/combinator! imapping-intersection/combinator!
 
    ;; Submappings
    imapping-open-interval imapping-closed-interval
    imapping-open-closed-interval imapping-closed-open-interval
-   imapping-open-interval! imapping-closed-interval!
-   imapping-open-closed-interval! imapping-closed-open-interval!
    isubmapping= isubmapping< isubmapping<= isubmapping>= isubmapping>
-   isubmapping=! isubmapping<! isubmapping<=! isubmapping>=!
-   isubmapping>!
    imapping-split
    )
 

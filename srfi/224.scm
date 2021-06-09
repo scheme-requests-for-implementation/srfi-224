@@ -175,9 +175,6 @@
                   (imapping-trie imap)
                   ps)))))
 
-(define imapping-adjoin/combinator! imapping-adjoin/combinator)
-(define imapping-adjoin! imapping-adjoin)
-
 ;; Replace existing associations for keys.
 (define imapping-set
   (case-lambda
@@ -190,15 +187,11 @@
                   (imapping-trie imap)
                   ps)))))
 
-(define imapping-set! imapping-set)
-
 (define (imapping-adjust imap key proc)
   (assume (imapping? imap))
   (assume (valid-integer? key))
   (assume (procedure? proc))
   (raw-imapping (trie-adjust (imapping-trie imap) key proc)))
-
-(define imapping-adjust! imapping-adjust)
 
 (define imapping-delete
   (case-lambda
@@ -209,16 +202,12 @@
     ((imap . keys)
      (imapping-delete-all imap keys))))
 
-(define imapping-delete! imapping-delete)
-
 (define (imapping-delete-all imap keys)
   (assume (imapping? imap))
   (assume (or (pair? keys) (null? keys)))
   (let ((key-set (list->iset keys)))
     (imapping-remove (lambda (k _) (iset-contains? key-set k))
                      imap)))
-
-(define imapping-delete-all! imapping-delete-all)
 
 ;; Update the association (key, value) in trie with the result of
 ;; (mproc value), which is a Maybe value.
@@ -228,8 +217,6 @@
   (assume (procedure? mproc))
   (raw-imapping (trie-update (imapping-trie imap) key mproc)))
 
-(define imapping-update! imapping-update)
-
 ;; Update the association (key, value) (or lack thereof) in imap
 ;; using proc, which is an endomap on Maybes.
 (define (imapping-alter imap key proc)
@@ -237,8 +224,6 @@
   (assume (valid-integer? key))
   (assume (procedure? proc))
   (raw-imapping (trie-alter (imapping-trie imap) key proc)))
-
-(define imapping-alter! imapping-alter)
 
 ;; Delete the element with the least key, or return an empty
 ;; mapping if `imap' is empty.
@@ -259,10 +244,6 @@
       (let-values (((k v trie) (trie-pop-min (imapping-trie imap))))
         (just k v (raw-imapping trie)))))
 
-(define imapping-delete-min! imapping-delete-min)
-(define imapping-update-min! imapping-update-min)
-(define imapping-pop-min! imapping-pop-min)
-
 ;; Delete the element with the greatest key, or return an empty
 ;; mapping if `imap' is empty.
 (define (imapping-delete-max imap)
@@ -281,10 +262,6 @@
       (nothing)
       (let-values (((k v trie) (trie-pop-max (imapping-trie imap))))
         (just k v (raw-imapping trie)))))
-
-(define imapping-delete-max! imapping-delete-max)
-(define imapping-update-max! imapping-update-max)
-(define imapping-pop-max! imapping-pop-max)
 
 ;;;; The whole imapping
 
@@ -349,8 +326,6 @@
   (assume (imapping? imap))
   (raw-imapping (trie-map proc (imapping-trie imap))))
 
-(define imapping-map! imapping-map)
-
 (define (unspecified)
   (if #f #f))
 
@@ -402,8 +377,6 @@
                   the-empty-trie
                   imap)))
 
-(define imapping-filter-map! imapping-filter-map)
-
 (define (imapping-map-either proc imap)
   (assume (procedure? proc))
   (assume (imapping? imap))
@@ -411,19 +384,13 @@
                 (trie-map-either proc (imapping-trie imap))))
     (values (raw-imapping trie-left) (raw-imapping trie-right))))
 
-(define imapping-map-either! imapping-map-either)
-
 (define (imapping-filter pred imap)
   (assume (procedure? pred))
   (assume (imapping? imap))
   (raw-imapping (trie-filter pred (imapping-trie imap))))
 
-(define imapping-filter! imapping-filter)
-
 (define (imapping-remove pred imap)
   (imapping-filter (lambda (k v) (not (pred k v))) imap))
-
-(define imapping-remove! imapping-remove)
 
 (define (imapping-partition pred imap)
   (assume (procedure? pred))
@@ -431,8 +398,6 @@
   (let-values (((tin tout)
                 (trie-partition pred (imapping-trie imap))))
     (values (raw-imapping tin) (raw-imapping tout))))
-
-(define imapping-partition! imapping-partition)
 
 ;;;; Copying & Conversion
 
@@ -563,11 +528,6 @@
   (raw-imapping
    (trie-xor (imapping-trie imap1) (imapping-trie imap2))))
 
-(define imapping-union! imapping-union)
-(define imapping-intersection! imapping-intersection)
-(define imapping-difference! imapping-difference)
-(define imapping-xor! imapping-xor)
-
 (define (imapping-union/combinator proc imap . rest)
   (assume (procedure? proc))
   (assume (imapping? imap))
@@ -590,9 +550,6 @@
          (imapping-trie imap)
          rest)))
 
-(define imapping-union/combinator! imapping-union/combinator)
-(define imapping-intersection/combinator! imapping-intersection/combinator)
-
 ;;;; Subsets
 
 (define (isubmapping= imap key)
@@ -601,8 +558,6 @@
   (mmatch (imapping-lookup imap key)
           (nothing (imapping))
           (just (v) (imapping key v))))
-
-(define isubmapping=! isubmapping=)
 
 (define (imapping-open-interval imap low high)
   (assume (imapping? imap))
@@ -636,11 +591,6 @@
   (raw-imapping
    (subtrie-interval (imapping-trie imap) low high #t #f)))
 
-(define imapping-open-interval! imapping-open-interval)
-(define imapping-closed-interval! imapping-closed-interval)
-(define imapping-open-closed-interval! imapping-open-closed-interval)
-(define imapping-closed-open-interval! imapping-closed-open-interval)
-
 (define (isubmapping< imap key)
   (assume (imapping? imap))
   (assume (valid-integer? key))
@@ -660,12 +610,6 @@
   (assume (imapping? imap))
   (assume (valid-integer? key))
   (raw-imapping (subtrie> (imapping-trie imap) key #t)))
-
-(define isubmapping=! isubmapping=)
-(define isubmapping<! isubmapping<)
-(define isubmapping<=! isubmapping<=)
-(define isubmapping>=! isubmapping>=)
-(define isubmapping>! isubmapping>)
 
 (define (imapping-split imap k)
   (assume (imapping? imap))
