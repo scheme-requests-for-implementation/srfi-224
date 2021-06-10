@@ -34,17 +34,17 @@
 
 <h2>Abstract</h2>
 
-<p>Integer maps, or <em>imappings</em>, are finite sets, where each element is
-an association between an exact-integer key and an arbitrary Scheme
+<p>Integer maps, or <em>fxmappings</em>, are finite sets, where each element is
+an association between a fixnum (exact integer) key and an arbitrary Scheme
 object.  They are similar to the general mappings of
 <a href="https://srfi.schemers.org/srfi-146/">SRFI
 146</a>, but the restricted key-type allows implementations of
-imappings to benefit from optimized structures and algorithms.  This
-library provides a rich set of operations on imappings, including
-analogues of most of the forms provided by SRFI 146.  Imappings have
+fxmappings to benefit from optimized structures and algorithms.  This
+library provides a rich set of operations on fxmappings, including
+analogues of most of the forms provided by SRFI 146.  Fxmappings have
 no intrinsic order, but may be treated as ordered sets, using the
 natural ordering on keys; a substantial sublibrary for working with
-imappings in this fashion is included.</p>
+fxmappings in this fashion is included.</p>
 
 <h2>Issues</h2>
 
@@ -81,13 +81,15 @@ Okasaki-Gill radix tree model used in this SRFI&rsquo;s sample implementation,
 are unsuitable for representing general mappings.</p>
 
 <p>The integer mappings we describe restrict the type of keys to
-exact integers.  This is a ubiquitous type in computing,
-and broadly useful as a key-type for mappings; its use opens up a
-range of implementation options.</p>
+fixnums, an implementation-dependent subrange of the exact integers provided
+by most Schemes (See the R⁶RS § 3.3 and
+<a href="https://srfi.schemers.org/srfi-143/">SRFI 143</a>).
+The fixnum subset is broadly useful as a key-type for mappings; its use
+opens up a range of implementation options.</p>
 
 <p>This library provides an interface similar to that used by
 SRFI 146, although it diverges in some areas.  In addition,
-<code>imapping-adjust</code>, <code>imapping-alter</code>, and
+<code>fxmapping-adjust</code>, <code>fxmapping-alter</code>, and
 several other forms derive from Haskell&rsquo;s
 <a href="https://hackage.haskell.org/package/containers/docs/Data-IntMap-Strict.html">IntMap</a>
 library.</p>
@@ -96,8 +98,8 @@ library.</p>
 instrumental use of <a href="https://srfi.schemers.org/srfi-189/">SRFI 189&rsquo;s</a>
 Maybe type; I believe that this choice results in simpler,
 more compositional definitions.  (Compare, for instance, the
-conventional <code>imapping-ref</code> form with
-<code>imapping-lookup</code>.)  Using the protocol conversions of
+conventional <code>fxmapping-ref</code> form with
+<code>fxmapping-lookup</code>.)  Using the protocol conversions of
 SRFI 189 (<code>maybe-&gt;truth</code>, <code>maybe-&gt;generation</code>, etc.),
 procedures that operate on Maybe values can be easily integrated with
 traditional Scheme code.
@@ -107,7 +109,7 @@ traditional &ldquo;value or <code>#f</code>&rdquo; Lisp protocol.</p>
 <p>The specification of this SRFI depends on the Maybe and Either types
 specified in SRFI 189 and on the comparator type (used to determine the
 equality of values, not keys) described in
-SRFI 128.  Conversions from imappings to
+SRFI 128.  Conversions from fxmappings to
 <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generators
 are provided.
 The sample implementation has further dependencies; see the
@@ -115,26 +117,13 @@ The sample implementation has further dependencies; see the
 
 <h2>Specification</h2>
 
-<p>Imappings form a new type, as if created by <code>define-record-type</code>
-(see R7RS § 5.5). The effects of using record-type inspection or inheritance
-for the imapping type are unspecified.</p>
+<p>Fxmappings (pronounced "fix-mappings") form a new type, as if
+created by <code>define-record-type</code> (see R7RS § 5.5).  The
+effects of using record-type inspection or inheritance for the
+fxmapping type are unspecified.</p>
 
-<p>It is an error to add or remove an association of an imapping while
+<p>It is an error to add or remove an association of an fxmapping while
 iterating over it.</p>
-
-<h3>Exact integers</h3>
-
-<p>Scheme implementations that provide arbitrarily large exact integers
-usually divide these numbers into two classes: <em>fixnums</em> and
-<em>bignums</em>.  (See the R⁶RS § 3.3 and
-<a href="https://srfi.schemers.org/srfi-143/">SRFI 143</a>.)  The former
-are integers "within a certain implementation-dependent subrange",
-typically those that fit in a single word of memory.
-
-<p>Implementations of this SRFI must support fixnum keys, and may restrict
-the set of valid keys to the fixnums.</p>
-
-<p>Implementations may support bignum keys.</p>
 
 <h3>Notation</h3>
 
@@ -150,8 +139,8 @@ in the R7RS Scheme standard.</p>
 <table>
 <tr><td><em>obj</em></td><td>Any Scheme object.</td></tr>
 <tr><td><em>boolean</em></td><td>A boolean.</td></tr>
-<tr><td><em>imap</em></td><td>An integer map (imapping).</td></tr>
-<tr><td><em>k</em></td><td>An exact integer.</td></tr>
+<tr><td><em>fxmap</em></td><td>A fxmapping.</td></tr>
+<tr><td><em>k</em></td><td>A fixnum.</td></tr>
 <tr><td><em>list</em></td><td>A proper list.</td></tr>
 <tr><td><em>alist</em></td><td>An association list.</td></tr>
 <tr><td><em>proc</em></td><td>A procedure.</td></tr>
@@ -165,11 +154,11 @@ in the R7RS Scheme standard.</p>
 that do not have the type implied by the argument names.</p>
 
 <p>The pair notation (<em>k</em>,<em>v</em>) is often used to describe
-an association of an imapping.  Here, <em>k</em> is the key and
-<em>v</em> its associated value.  If an imapping <em>imap</em> is said
+an association of an fxmapping.  Here, <em>k</em> is the key and
+<em>v</em> its associated value.  If an fxmapping <em>fxmap</em> is said
 to "contain the association (<em>k</em>,<em>v</em>)", then this is to
-be understood in the sense that looking up <em>k</em> in <em>imap</em>
-(via <code>(imapping-ref</code> <em>imap k</em><code>)</code>, for
+be understood in the sense that looking up <em>k</em> in <em>fxmap</em>
+(via <code>(fxmapping-ref</code> <em>fxmap k</em><code>)</code>, for
 example) will produce the value <em>v</em>.</p>
 
 <p>Each procedure is written in the form</p>
@@ -205,60 +194,60 @@ would have the type signature <code>* list[*] → list[*]-or-false</code>.</p>
 <h3>Index</h3>
 
 <ul>
-<li><p><a href="#constructors">Constructors</a>: <code>imapping, imapping-unfold,
-imapping-unfold-maybe, alist-&gt;imapping,
-alist-&gt;imapping/combinator</code></p></li>
-<li><p><a href="#predicates">Predicates</a>: <code>imapping?, imapping-contains?, imapping-empty?, imapping-disjoint?</code></p></li>
-<li><p><a href="#accessors">Accessors</a>: <code>imapping-ref, imapping-ref/default,
-imapping-lookup, imapping-min, imapping-max, imapping-lookup-min, imapping-lookup-max</code></p></li>
-<li><p><a href="#updaters">Updaters</a>: <code>imapping-adjoin, imapping-adjoin/combinator,
-imapping-set, imapping-adjust, imapping-delete,
-imapping-delete-all, imapping-alter,
-imapping-update, imapping-delete-min,
-imapping-delete-max,
-imapping-update-min, imapping-update-max,
-imapping-pop-min, imapping-pop-max</code></p></li>
-<li><p><a href="#whole">The whole imapping</a>: <code>imapping-size,
-imapping-find, imapping-query,
-imapping-count, imapping-any?, imapping-every?</code></p></li>
-<li><p><a href="#traversal">Traversal</a>: <code>imapping-fold,
-imapping-fold-right, imapping-map, imapping-map-&gt;list,
-imapping-map&gt;list, imapping-for-each, imapping-filter-map,
-imapping-map-either,
-imapping-relation-map</code></p></li>
-<li><p><a href="#filter">Filter</a>: <code>imapping-filter,
-imapping-remove, imapping-partition</code></p></li>
-<li><p><a href="#conversion">Copying and conversion</a>: <code>imapping-copy, imapping-&gt;alist,
-imapping-&gt;decreasing-alist, imapping-keys, imapping-values,
-imapping-&gt;generator, imapping-&gt;decreasing-generator</code></p></li>
-<li><p><a href="#comparison">Comparison</a>: <code>imapping=?, imapping&lt;?, imapping&gt;?, imapping&lt;=?, imapping&gt;=?</code></p></li>
-<li><p><a href="#settheory">Set theory operations</a>: <code>imapping-union, imapping-intersection, imapping-difference,
-imapping-xor,
-imapping-union/combinator,
-imapping-intersection/combinator</code></p></li>
-<li><p><a href="#submappings">Submappings</a>: <code>imapping-open-interval, imapping-closed-interval,
-imapping-open-closed-interval, imapping-closed-open-interval,
-isubmapping=, isubmapping&lt;, isubmapping&lt;=, isubmapping&gt;=,
-isubmapping&gt;,
-imapping-split</code></p></li>
+<li><p><a href="#constructors">Constructors</a>: <code>fxmapping, fxmapping-unfold,
+fxmapping-unfold-maybe, alist-&gt;fxmapping,
+alist-&gt;fxmapping/combinator</code></p></li>
+<li><p><a href="#predicates">Predicates</a>: <code>fxmapping?, fxmapping-contains?, fxmapping-empty?, fxmapping-disjoint?</code></p></li>
+<li><p><a href="#accessors">Accessors</a>: <code>fxmapping-ref, fxmapping-ref/default,
+fxmapping-lookup, fxmapping-min, fxmapping-max, fxmapping-lookup-min, fxmapping-lookup-max</code></p></li>
+<li><p><a href="#updaters">Updaters</a>: <code>fxmapping-adjoin, fxmapping-adjoin/combinator,
+fxmapping-set, fxmapping-adjust, fxmapping-delete,
+fxmapping-delete-all, fxmapping-alter,
+fxmapping-update, fxmapping-delete-min,
+fxmapping-delete-max,
+fxmapping-update-min, fxmapping-update-max,
+fxmapping-pop-min, fxmapping-pop-max</code></p></li>
+<li><p><a href="#whole">The whole fxmapping</a>: <code>fxmapping-size,
+fxmapping-find, fxmapping-query,
+fxmapping-count, fxmapping-any?, fxmapping-every?</code></p></li>
+<li><p><a href="#traversal">Traversal</a>: <code>fxmapping-fold,
+fxmapping-fold-right, fxmapping-map, fxmapping-map-&gt;list,
+fxmapping-map&gt;list, fxmapping-for-each, fxmapping-filter-map,
+fxmapping-map-either,
+fxmapping-relation-map</code></p></li>
+<li><p><a href="#filter">Filter</a>: <code>fxmapping-filter,
+fxmapping-remove, fxmapping-partition</code></p></li>
+<li><p><a href="#conversion">Copying and conversion</a>: <code>fxmapping-copy, fxmapping-&gt;alist,
+fxmapping-&gt;decreasing-alist, fxmapping-keys, fxmapping-values,
+fxmapping-&gt;generator, fxmapping-&gt;decreasing-generator</code></p></li>
+<li><p><a href="#comparison">Comparison</a>: <code>fxmapping=?, fxmapping&lt;?, fxmapping&gt;?, fxmapping&lt;=?, fxmapping&gt;=?</code></p></li>
+<li><p><a href="#settheory">Set theory operations</a>: <code>fxmapping-union, fxmapping-intersection, fxmapping-difference,
+fxmapping-xor,
+fxmapping-union/combinator,
+fxmapping-intersection/combinator</code></p></li>
+<li><p><a href="#submappings">Submappings</a>: <code>fxmapping-open-interval, fxmapping-closed-interval,
+fxmapping-open-closed-interval, fxmapping-closed-open-interval,
+fxsubmapping=, fxsubmapping&lt;, fxsubmapping&lt;=, fxsubmapping&gt;=,
+fxsubmapping&gt;,
+fxmapping-split</code></p></li>
 </ul>
 
 <h3 id="constructors">Constructors</h3>
 
-<p><code>(imapping</code>&nbsp;<em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(fxmapping</code>&nbsp;<em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Constructs an imapping from the given arguments, which alternate between keys
+<p>Constructs an fxmapping from the given arguments, which alternate between keys
 and values (which are arbitrary Scheme objects); the
-resulting imapping is newly allocated and contains these (<em>k</em>, <em>obj</em>) associations.
+resulting fxmapping is newly allocated and contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
 
 <p>Examples:</p>
-<pre class="example"><code>(imapping-&gt;alist (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b) (2 . c))
-(imapping-&gt;alist (imapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b) (2 . c))
+(fxmapping-&gt;alist (fxmapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
 </code></pre>
 
-<p><code>(imapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em><code>) → imapping</code></p>
+<p><code>(fxmapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em><code>) → fxmapping</code></p>
 
 The arguments have the following types:
 <ul>
@@ -268,24 +257,24 @@ The arguments have the following types:
 <li><em>seed</em> : <code>*</code></li>
 </ul>
 
-<p>Unfold an imapping from the initial seed value <em>seed</em>.
+<p>Unfold an fxmapping from the initial seed value <em>seed</em>.
 <em>mapper</em> is applied to each seed and returns two values, a key
-and an associated value, which are adjoined to the new imapping.
+and an associated value, which are adjoined to the new fxmapping.
 <em>successor</em> maps each seed to a new seed.
 Unfolding terminates when the predicate <em>stop?</em> returns a true
-value when applied to the current seed.  The resulting imapping is
+value when applied to the current seed.  The resulting fxmapping is
 newly allocated.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-unfold (lambda (i) (= i 4))
-                  (lambda (i) (values i (make-string i #\a)))
-                  (lambda (i) (+ i 1))
-                  0))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-unfold (lambda (i) (= i 4))
+                   (lambda (i) (values i (make-string i #\a)))
+                   (lambda (i) (+ i 1))
+                   0))
  ⇒ ((0 . "") (1 . "a") (2 . "aa") (3 . "aaa"))
 </code></pre>
 
-<p><code>(imapping-unfold-maybe</code>&nbsp;<em>mproc seed</em><code>) → imapping</code></p>
+<p><code>(fxmapping-unfold-maybe</code>&nbsp;<em>mproc seed</em><code>) → fxmapping</code></p>
 
 The arguments have the following types:
 <ul>
@@ -293,97 +282,97 @@ The arguments have the following types:
 <li><em>seed</em> : <code>*</code></li>
 </ul>
 
-<p>Unfold an imapping.  <em>mproc</em> is applied to <em>seed</em> and returns
+<p>Unfold an fxmapping.  <em>mproc</em> is applied to <em>seed</em> and returns
 a Maybe value.  If this value is Nothing, then unfolding terminates.
 If it is Just <em>k v seed′</em>, then a new association
-<code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting imapping and unfolding continues
-with <em>seed′</em>  The resulting imapping is newly allocated.</p>
+<code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting fxmapping and unfolding continues
+with <em>seed′</em>  The resulting fxmapping is newly allocated.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-unfold-maybe (lambda (i)
-                          (if (&lt; i -3)
-                              (nothing)
-                              (just i (square i) (- i 1))))
-                        -1))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-unfold-maybe (lambda (i)
+                           (if (&lt; i -3)
+                               (nothing)
+                               (just i (square i) (- i 1))))
+                         -1))
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
 </code></pre>
 
 <p><strong>Rationale:</strong> As well as sometimes leading to more compact
 expressions than the
-traditional "three procedure" unfold, <code>imapping-unfold-maybe</code>
+traditional "three procedure" unfold, <code>fxmapping-unfold-maybe</code>
 is also more efficient when the programmer wants the value of each new seed
 to depend on the computed key and value.  For example,
 assume that we apply some procedure <em>f</em> to a seed <em>s</em> to get a
 key <em>k</em> and a value <em>v</em>, and that we also want to compute a new
-seed from <em>k</em> and <em>v</em>.  Using <em>imapping-unfold</em>, we'd
+seed from <em>k</em> and <em>v</em>.  Using <em>fxmapping-unfold</em>, we'd
 have no choice other than to compute <em>k</em> and <em>v</em> twice:</p>
 
-<pre class="example"><code>(imapping-unfold stop?
-                 f
-                 (lambda (s)
-                   (let-values (((k v) (f s)))
-                     (let ((s* …))
-                       s*)))
-                 seed)</code></pre>
+<pre class="example"><code>(fxmapping-unfold stop?
+                  f
+                  (lambda (s)
+                    (let-values (((k v) (f s)))
+                      (let ((s* …))
+                        s*)))
+                  seed)</code></pre>
 
-<p>Using <code>imapping-unfold-maybe</code>, however, it's easy to write an
+<p>Using <code>fxmapping-unfold-maybe</code>, however, it's easy to write an
 equivalent unfold which computes <em>k</em> and <em>v</em> only once for
 each step:</p>
 
-<pre class="example"><code>(imapping-unfold-maybe (lambda (s)
-                         (if (stop? s)
-                             (nothing)
-                             (let-values (((k v) (f s)))
-                               (let ((s* …))
-                                 (just k v s*)))))
-                       seed)</code></pre>
+<pre class="example"><code>(fxmapping-unfold-maybe (lambda (s)
+                          (if (stop? s)
+                              (nothing)
+                              (let-values (((k v) (f s)))
+                                (let ((s* …))
+                                  (just k v s*)))))
+                        seed)</code></pre>
 
 <p>This may be preferable when <em>f</em> is expensive to apply or entails
 side-effects.</p>
 
-<p><code>(alist-&gt;imapping</code>&nbsp;<em>alist</em><code>) → imapping</code></p>
+<p><code>(alist-&gt;fxmapping</code>&nbsp;<em>alist</em><code>) → fxmapping</code></p>
 
-<p>Returns a newly allocated imapping containing the associations of <em>alist</em>.
+<p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If an integer <em>k</em> appears as the key of multiple
 associations in <em>alist</em> (i.e. as the car of multiple pairs),
 then the first association for <em>k</em> is preferred.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(imapping-&gt;alist (alist-&gt;imapping '((1 . b) (0 . a) (2 . c))))
+<pre class="example"><code>(fxmapping-&gt;alist (alist-&gt;fxmapping '((1 . b) (0 . a) (2 . c))))
  ⇒ ((0 . a) (1 . b) (2 . c))
 
-(imapping-&gt;alist (alist-&gt;imapping '((-10 . "yar") (-10 . "worf"))))
+(fxmapping-&gt;alist (alist-&gt;fxmapping '((-10 . "yar") (-10 . "worf"))))
  ⇒ ((-10 . "yar))
 </code></pre>
 
-<p><code>(alist-&gt;imapping/combinator</code>&nbsp;<em>proc alist</em><code>) → imapping</code></p>
+<p><code>(alist-&gt;fxmapping/combinator</code>&nbsp;<em>proc alist</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Returns a newly allocated imapping containing the associations of <em>alist</em>.
+<p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not an
 exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
 the association
 (<em>k</em>, (<em>proc k v</em>₂ <em>v</em>₁)) is
-added to the resulting imapping; in general, if <em>k</em> is associated with
+added to the resulting fxmapping; in general, if <em>k</em> is associated with
 values v₁, …, vₙ in <em>alist</em>, then <em>k</em> will be associated
 with the value of</p>
 
 <pre>(<em>proc k v</em>ₙ (<em>proc k</em> … (<em>proc k v</em>₂ <em>v</em>₁)))</pre>
 
-<p>in the resulting imapping.</p>
+<p>in the resulting fxmapping.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(imapping-&gt;alist
- (alist-&gt;imapping/combinator (lambda (_k x _y) x)
-                             '((1 . b) (0 . a) (1 . c))))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (alist-&gt;fxmapping/combinator (lambda (_k x _y) x)
+                              '((1 . b) (0 . a) (1 . c))))
  ⇒ ((0 . a) (1 . c))
 
-(imapping-&gt;alist
- (alist-&gt;imapping/combinator
+(fxmapping-&gt;alist
+ (alist-&gt;fxmapping/combinator
   (lambda (_k s t) (string-append s " " t))
   '((1 . "riker") (2 . "yar") (2 . "tasha"))))
  ⇒ ((1 . "riker") (2 . "tasha yar"))
@@ -391,37 +380,37 @@ with the value of</p>
 
 <h3 id="predicates">Predicates</h3>
 
-<p><code>(imapping?</code>&nbsp;<em>obj</em><code>) → boolean</code></p>
+<p><code>(fxmapping?</code>&nbsp;<em>obj</em><code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if <em>obj</em> is an imapping.</p>
+<p>Returns <code>#t</code> if and only if <em>obj</em> is an fxmapping.</p>
 
-<p><code>(imapping-contains?</code>&nbsp;<em>imap k</em><code>) → boolean</code></p>
+<p><code>(fxmapping-contains?</code>&nbsp;<em>fxmap k</em><code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if <em>imap</em> contains an association for key <em>k</em>.</p>
+<p>Returns <code>#t</code> if and only if <em>fxmap</em> contains an association for key <em>k</em>.</p>
 <p>Examples:</p>
-<pre class="example"><code>(imapping-contains? (imapping 1 'b) 1) ⇒ #t
-(imapping-contains? (imapping 1 'b) 0) ⇒ #f
+<pre class="example"><code>(fxmapping-contains? (fxmapping 1 'b) 1) ⇒ #t
+(fxmapping-contains? (fxmapping 1 'b) 0) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-empty?</code>&nbsp;<em>imap</em><code>) → boolean</code></p>
+<p><code>(fxmapping-empty?</code>&nbsp;<em>fxmap</em><code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if <em>imap</em> contains no associations.</p>
+<p>Returns <code>#t</code> if and only if <em>fxmap</em> contains no associations.</p>
 <p>Examples:</p>
-<pre class="example"><code>(imapping-empty? (alist-&gt;imapping '())) ⇒ #t
-(imapping-empty? (alist-&gt;imapping '((0 . a)))) ⇒ #f
+<pre class="example"><code>(fxmapping-empty? (alist-&gt;fxmapping '())) ⇒ #t
+(fxmapping-empty? (alist-&gt;fxmapping '((0 . a)))) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-disjoint?</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → boolean</code></p>
+<p><code>(fxmapping-disjoint?</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂<code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if <em>imap</em>₁ and <em>imap</em>₂ have no keys in common.</p>
+<p>Returns <code>#t</code> if and only if <em>fxmap</em>₁ and <em>fxmap</em>₂ have no keys in common.</p>
 <p>Examples:</p>
-<pre class="example"><code>(imapping-disjoint? (imapping 0 'a) (imapping 1 'b)) ⇒ #t
-(imapping-disjoint? (imapping 1 '(b)) (imapping 1 'b)) ⇒ #f
+<pre class="example"><code>(fxmapping-disjoint? (fxmapping 0 'a) (fxmapping 1 'b)) ⇒ #t
+(fxmapping-disjoint? (fxmapping 1 '(b)) (fxmapping 1 'b)) ⇒ #f
 </code></pre>
 
 <h3 id="accessors">Accessors</h3>
 
-<p><code>(imapping-ref</code>&nbsp;<em>imap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → * …</code></p>
+<p><code>(fxmapping-ref</code>&nbsp;<em>fxmap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → * …</code></p>
 
 <p>If the optional <em>failure</em> parameter is supplied, then it must
 be a procedure of no arguments returning zero or more values of arbitrary
@@ -430,339 +419,339 @@ argument of arbitrary type and returning zero or more values of arbitrary
 type.  <em>failure</em> defaults to a procedure which
 signals an error; <em>success</em> defaults to <code>values</code>.</p>
 
-<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>,
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>,
 tail-calls <em>success</em> on <em>v</em>.  Otherwise, <em>failure</em>
 is tail-called on no arguments.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-ref (imapping 36864 'zap) 36864) ⇒ zap
-(imapping-ref (imapping 0 'a) 36864) ⇒ ; error
-(imapping-ref (imapping 0 "worf") 0 (lambda () #f) string-length) ⇒ 4
+<pre class="example"><code>(fxmapping-ref (fxmapping 36864 'zap) 36864) ⇒ zap
+(fxmapping-ref (fxmapping 0 'a) 36864) ⇒ ; error
+(fxmapping-ref (fxmapping 0 "worf") 0 (lambda () #f) string-length) ⇒ 4
 </code></pre>
 
-<p><code>(imapping-ref/default</code>&nbsp;<em>imap k obj</em><code>) → *</code></p>
+<p><code>(fxmapping-ref/default</code>&nbsp;<em>fxmap k obj</em><code>) → *</code></p>
 
-<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>, returns <em>v</em>.
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>, returns <em>v</em>.
 Otherwise, returns <em>obj</em>.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-ref/default (imapping 36864 'zap) 36864 #f) ⇒ zap
-(imapping-ref/default (imapping 0 'a) 36864 #f) ⇒ #f
+<pre class="example"><code>(fxmapping-ref/default (fxmapping 36864 'zap) 36864 #f) ⇒ zap
+(fxmapping-ref/default (fxmapping 0 'a) 36864 #f) ⇒ #f
 </code></pre>
 
-<p><code>(imapping-lookup</code>&nbsp;<em>imap k</em><code>) → maybe[*]</code></p>
+<p><code>(fxmapping-lookup</code>&nbsp;<em>fxmap k</em><code>) → maybe[*]</code></p>
 
-<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>imap</em>, returns Just <em>v</em>.
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>, returns Just <em>v</em>.
 Otherwise, returns Nothing.</p>
 <p>Examples:</p>
-<pre class="example">(define (imapping-ref imap k failure success)
-  (maybe-ref (imapping-lookup imap k) failure success))
+<pre class="example">(define (fxmapping-ref fxmap k failure success)
+  (maybe-ref (fxmapping-lookup fxmap k) failure success))
 
-<code>(imapping-lookup (imapping 36864 'zap) 36864) ⇒ just[zap]
-(imapping-lookup (imapping 0 'a) 36864) ⇒ nothing
+<code>(fxmapping-lookup (fxmapping 36864 'zap) 36864) ⇒ just[zap]
+(fxmapping-lookup (fxmapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-lookup-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-lookup-min</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *]</code></p>
 
-<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>imap</em>.
-If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
+<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>fxmap</em>.
+If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
 Nothing.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>(maybe-&gt;list-truth
- (imapping-lookup-min (imapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
-(imapping-lookup-min (imapping)) ⇒ nothing
+ (fxmapping-lookup-min (fxmapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
+(fxmapping-lookup-min (fxmapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-min</code>&nbsp;<em>imap</em><code>) → [exact-integer, *]</code></p>
+<p><code>(fxmapping-min</code>&nbsp;<em>fxmap</em><code>) → [exact-integer, *]</code></p>
 
-<p>Returns two values: the least key of <em>imap</em> and its
-associated value. It is an error if <em>imap</em> is empty.</p>
+<p>Returns two values: the least key of <em>fxmap</em> and its
+associated value. It is an error if <em>fxmap</em> is empty.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-min (imapping 0 'a 1 'b 2 'c)) ⇒ 0 a
+<pre class="example"><code>(fxmapping-min (fxmapping 0 'a 1 'b 2 'c)) ⇒ 0 a
 </code></pre>
 
-<p><code>(imapping-lookup-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-lookup-max</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *]</code></p>
 
-<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>imap</em>.
-If <em>imap</em> is empty in the sense of <code>imapping-empty?</code>, returns
+<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>fxmap</em>.
+If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
 Nothing.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>(maybe-&gt;list-truth
- (imapping-lookup-max (imapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
-(imapping-lookup-max (imapping)) ⇒ nothing
+ (fxmapping-lookup-max (fxmapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
+(fxmapping-lookup-max (fxmapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(imapping-max</code>&nbsp;<em>imap</em><code>) → [exact-integer, *]</code></p>
+<p><code>(fxmapping-max</code>&nbsp;<em>fxmap</em><code>) → [exact-integer, *]</code></p>
 
-<p>Returns two values: the greatest key of <em>imap</em> and its
-associated value. It is an error if <em>imap</em> is empty.</p>
+<p>Returns two values: the greatest key of <em>fxmap</em> and its
+associated value. It is an error if <em>fxmap</em> is empty.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-max (imapping 0 'a 1 'b 2 'c)) ⇒ 2 c
+<pre class="example"><code>(fxmapping-max (fxmapping 0 'a 1 'b 2 'c)) ⇒ 2 c
 </code></pre>
 
 <h3 id="updaters">Updaters</h3>
 
-<p><code>(imapping-adjoin</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(fxmapping-adjoin</code>&nbsp;<em>fxmap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Returns an imapping containing all of the associations of
-<em>imap</em> as well as the associations (<em>k</em>₁, <em>obj</em>₁),
+<p>Returns an fxmapping containing all of the associations of
+<em>fxmap</em> as well as the associations (<em>k</em>₁, <em>obj</em>₁),
 (<em>k</em>₂, <em>obj</em>₂), ….
 The number of key/value arguments must be even.</p>
 
-<p>If any of the keys already have associations in <em>imap</em>, the old
+<p>If any of the keys already have associations in <em>fxmap</em>, the old
 associations are preserved.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-adjoin (imapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-adjoin (fxmapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(imapping-adjoin/combinator</code>&nbsp;<em>imap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
+<p><code>(fxmapping-adjoin/combinator</code>&nbsp;<em>fxmap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
 
-<p>Similar to <code>imapping-adjoin</code>, except that duplicate associations
+<p>Similar to <code>fxmapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>exact-integer * * → *</code>.
 <em>proc</em> is called on the new and old values (in that order) associated
 with a duplicated key and is expected to return a value for the key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-adjoin/combinator (imapping 0 "geordi" 1 "reginald")
-                             (lambda (_ last first)
-                               (string-append first " " last))
-                             0 "laforge"
-                             1 "barclay"))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-adjoin/combinator (fxmapping 0 "geordi" 1 "reginald")
+                              (lambda (_ last first)
+                                (string-append first " " last))
+                              0 "laforge"
+                              1 "barclay"))
  ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
-<p><code>(imapping-set</code>&nbsp;<em>imap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(fxmapping-set</code>&nbsp;<em>fxmap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p><code>imapping-set</code> is the same as <code>imapping-adjoin</code>,
+<p><code>fxmapping-set</code> is the same as <code>fxmapping-adjoin</code>,
 except that any existing associations for <em>k</em>₁, <em>k</em>₂, … are
 replaced.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-set (imapping 0 "geordi" 1 "reginald") 1 "tasha"))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-set (fxmapping 0 "geordi" 1 "reginald") 1 "tasha"))
  ⇒ ((0 . "geordi") (1 . "tasha"))
 </code></pre>
 
-<p><code>(imapping-adjust imap k proc) → imapping</code></p>
+<p><code>(fxmapping-adjust fxmap k proc) → fxmapping</code></p>
 
-<p>The <em>proc</em> parameter of <code>imapping-adjust</code> is a
+<p>The <em>proc</em> parameter of <code>fxmapping-adjust</code> is a
 procedure of type <code>exact-integer * → *</code>.</p>
 
-<p>Returns an imapping in which the association (<em>k</em>, <em>v</em>) in <em>imap</em>
+<p>Returns an fxmapping in which the association (<em>k</em>, <em>v</em>) in <em>fxmap</em>
 is replaced by (<em>k</em>, (<em>proc k v</em>)).  If <em>k</em> has
-no association in <em>imap</em>,
-then a copy of <em>imap</em> is returned.</p>
+no association in <em>fxmap</em>,
+then a copy of <em>fxmap</em> is returned.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-adjust (imapping 64 "var")
-                  64
-                  (lambda (k s) (string-append s (number-&gt;string k)))))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-adjust (fxmapping 64 "var")
+                   64
+                   (lambda (k s) (string-append s (number-&gt;string k)))))
  ⇒ ((64 . "var64"))
 </code></pre>
 
-<p><code>(imapping-delete imap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → imapping</code></p>
+<p><code>(fxmapping-delete fxmap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
 those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
-association in <em>imap</em>, it is ignored.</p>
+association in <em>fxmap</em>, it is ignored.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-delete (imapping 0 -200 1 -100) 0)) ⇒ ((1 . -100))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-delete (fxmapping 0 -200 1 -100) 0)) ⇒ ((1 . -100))
 </code></pre>
 
-<p><code>(imapping-delete-all</code>&nbsp;<em>imap list</em><code>) → imapping</code></p>
+<p><code>(fxmapping-delete-all</code>&nbsp;<em>fxmap list</em><code>) → fxmapping</code></p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-delete-all (imapping 0 'a 1 'b 2 'c) '(1 2)))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-delete-all (fxmapping 0 'a 1 'b 2 'c) '(1 2)))
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-update</code>&nbsp;<em>imap k mproc</em><code>) → imapping</code></p>
+<p><code>(fxmapping-update</code>&nbsp;<em>fxmap k mproc</em><code>) → fxmapping</code></p>
 
 <p><em>mproc</em> is a procedure of type
 <code>exact-integer * → maybe[*]</code>.</p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
 that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to <em>k</em> and its associated value.
 If it returns Nothing, the association is deleted;
-if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the new imapping.
-If <em>k</em> has no association in <em>imap</em>, then a copy of <em>imap</em>
+if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the new fxmapping.
+If <em>k</em> has no association in <em>fxmap</em>, then a copy of <em>fxmap</em>
 is returned.</p>
 
 <p>Simple versions of several other update operations may be defined
-in terms of <code>imapping-update</code>, e.g.:</p>
+in terms of <code>fxmapping-update</code>, e.g.:</p>
 
-<pre><code>  (imapping-delete imap k)
+<pre><code>  (fxmapping-delete fxmap k)
    ≡
-  (imapping-update imap k (lambda (_k _v) (nothing)))
+  (fxmapping-update fxmap k (lambda (_k _v) (nothing)))
 
-  (imapping-set imap k v)
+  (fxmapping-set fxmap k v)
    ≡
-  (imapping-update imap k (lambda (_k _v) (just v)))
+  (fxmapping-update fxmap k (lambda (_k _v) (just v)))
 </code></pre>
 <p>Examples:</p>
 
 <pre class="example"><code>;; Delete the association for 1 if its value is a symbol.
-(imapping-&gt;alist
- (imapping-update (imapping 0 'a 1 'b 2 'c)
-                  1
-                  (lambda (_k v)
-                    (if (symbol? v)
-                        (nothing)
-                        (just v)))))
+(fxmapping-&gt;alist
+ (fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
+                   1
+                   (lambda (_k v)
+                     (if (symbol? v)
+                         (nothing)
+                         (just v)))))
  ⇒ ((0 . a) (2 . c))
 
 ;; Replace the value associated with 1.
-(imapping-&gt;alist
- (imapping-update (imapping 0 'a 1 'b 2 'c) 1 (lambda (k _v) (just k))))
+(fxmapping-&gt;alist
+ (fxmapping-update (fxmapping 0 'a 1 'b 2 'c) 1 (lambda (k _v) (just k))))
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
-<p><code>(imapping-alter</code>&nbsp;<em>imap k proc</em><code>) → imapping</code></p>
+<p><code>(fxmapping-alter</code>&nbsp;<em>fxmap k proc</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> is a procedure of type
 <code>maybe[exact-integer, *] → maybe[*]</code>.</p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
 that the association, or lack thereof, for <em>k</em> is updated as follows.
-If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>imap</em>, then <em>proc</em> is called on
+If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>fxmap</em>, then <em>proc</em> is called on
 Just <em>k v</em>; if no such association exists, then <em>proc</em> is called on
 Nothing.  If the result of this application is Nothing, the
 association is deleted (or no new association is added); if the result
 is Just <em>v′</em>, the association <em>(k, v′)</em> is added to the
-resulting imapping, replacing any old association for <em>k</em>.</p>
+resulting fxmapping, replacing any old association for <em>k</em>.</p>
 
-<p><code>imapping-alter</code> is a very general operator on imappings, and most
+<p><code>fxmapping-alter</code> is a very general operator on fxmappings, and most
 of the other update operations may be defined in terms of it.  For
 example:</p>
 
-<pre class="example"><code>  (imapping-update imap k f)
+<pre class="example"><code>  (fxmapping-update fxmap k f)
    ≡
-  (imapping-alter imap k (lambda (m)
+  (fxmapping-alter fxmap k (lambda (m)
                            (maybe-ref m nothing f))
 </code></pre>
 
 <p>Examples:</p>
 
 <pre class="example"><code>;; Insert an association for 4 if it's not present.
-(imapping-&gt;alist
- (imapping-alter (imapping 0 'a 1 'b)
-                 4
-                 (lambda (m)
-                   (if (nothing? m) (just 'e) m))))
+(fxmapping-&gt;alist
+ (fxmapping-alter (fxmapping 0 'a 1 'b)
+                  4
+                  (lambda (m)
+                    (if (nothing? m) (just 'e) m))))
  ⇒ ((0 . a) (1 . b) (4 . e))
 
 ;; Delete an association for 1 if its value is a symbol.
-(imapping-&gt;alist
- (imapping-alter (imapping 0 'a 1 'b)
-                 1
-                 (lambda (m)
-                   (maybe-bind m (lambda (_ v)
-                                   (if (symbol? v)
-                                       (nothing)
-                                       (just v)))))))
+(fxmapping-&gt;alist
+ (fxmapping-alter (fxmapping 0 'a 1 'b)
+                  1
+                  (lambda (m)
+                    (maybe-bind m (lambda (_ v)
+                                    (if (symbol? v)
+                                        (nothing)
+                                        (just v)))))))
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-delete-min</code>&nbsp;<em>imap</em><code>) → imapping</code><br>
-<code>(imapping-delete-max</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-delete-min</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code><br>
+<code>(fxmapping-delete-max</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
-for the association with the least/greatest key.  If <em>imap</em> is empty,
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
+for the association with the least/greatest key.  If <em>fxmap</em> is empty,
 an error is signalled.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-delete-min (imapping 0 'a 1 'b 2 'c)) ⇒ ((1 . b) (2 . c))
-(imapping-delete-max (imapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
+<pre class="example"><code>(fxmapping-delete-min (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((1 . b) (2 . c))
+(fxmapping-delete-max (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(imapping-update-min</code>&nbsp;<em>imap mproc</em><code>) → imapping</code><br>
-<code>(imapping-update-max</code>&nbsp;<em>imap mproc</em><code>) → imapping</code></p>
+<p><code>(fxmapping-update-min</code>&nbsp;<em>fxmap mproc</em><code>) → fxmapping</code><br>
+<code>(fxmapping-update-max</code>&nbsp;<em>fxmap mproc</em><code>) → fxmapping</code></p>
 
-<p>The <em>mproc</em> argument of <code>imapping-update-min</code> and <code>-max</code> is of
+<p>The <em>mproc</em> argument of <code>fxmapping-update-min</code> and <code>-max</code> is of
 type <code>exact-integer * → maybe[*]</code>.</p>
 
-<p>Returns an imapping with the same associations as <em>imap</em>, except
+<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
 that the association for the least/greatest key <em>k</em> is updated as
 follows.  <em>mproc</em> is applied to <em>k</em> and its associated value and is
 expected to return a Maybe value.  If it returns Nothing, the
 association is deleted; if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added
-to the new imapping.  If <em>imap</em> is empty, an error is signaled.</p>
+to the new fxmapping.  If <em>fxmap</em> is empty, an error is signaled.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-update-min (imapping -5 "phaser" -1 "tricorder")
-                      (lambda (_ v)
-                        (if (symbol? v)
-                            (just v)
-                            (nothing)))))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-update-min (fxmapping -5 "phaser" -1 "tricorder")
+                       (lambda (_ v)
+                         (if (symbol? v)
+                             (just v)
+                             (nothing)))))
  ⇒ ((-1 . "tricorder"))
 
-(imapping-&gt;alist
- (imapping-update-max (imapping -5 "phaser" -1 "tricorder")
-                      (lambda (k v)
-                        (if (and (negative? k) (string? v))
-                            (just (string-length v))
-                            (nothing)))))
+(fxmapping-&gt;alist
+ (fxmapping-update-max (fxmapping -5 "phaser" -1 "tricorder")
+                       (lambda (k v)
+                         (if (and (negative? k) (string? v))
+                             (just (string-length v))
+                             (nothing)))))
  ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
-<p><code>(imapping-pop-min</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code><br>
-<code>(imapping-pop-max</code>&nbsp;<em>imap</em><code>) → maybe[exact-integer, *, imapping]</code></p>
+<p><code>(fxmapping-pop-min</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *, fxmapping]</code><br>
+<code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *, fxmapping]</code></p>
 
-<p>Returns Just <em>k v imap′</em>, where (<em>k</em>, <em>v</em>) is the association of
-<em>imap</em> with the least/greatest key and <em>imap′</em> is an
-imapping containing all of the associations of <em>imap</em> except for
-(<em>k</em>, <em>v</em>).  If <em>imap</em> is empty, returns Nothing.</p>
+<p>Returns Just <em>k v fxmap′</em>, where (<em>k</em>, <em>v</em>) is the association of
+<em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is an
+fxmapping containing all of the associations of <em>fxmap</em> except for
+(<em>k</em>, <em>v</em>).  If <em>fxmap</em> is empty, returns Nothing.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(maybe-&gt;list-truth
- (maybe-let*-values (((k v imap)
-                      (imapping-pop-min (imapping 0 'a 1 'b 2 'c))))
-   (values k v (imapping-&gt;alist imap))))
+ (maybe-let*-values (((k v fxmap)
+                      (fxmapping-pop-min (fxmapping 0 'a 1 'b 2 'c))))
+   (values k v (fxmapping-&gt;alist fxmap))))
  ⇒ (0 a ((1 . b) (2 . c)))
 </code></pre>
 
-<h3 id="whole">The whole imapping</h3>
+<h3 id="whole">The whole fxmapping</h3>
 
-<p><code>(imapping-size</code>&nbsp;<em>imap</em><code>) → exact-integer</code></p>
+<p><code>(fxmapping-size</code>&nbsp;<em>fxmap</em><code>) → exact-integer</code></p>
 
-<p>Returns the number of associations in <em>imap</em>.</p>
+<p>Returns the number of associations in <em>fxmap</em>.</p>
 
-<p><code>(imapping-find</code>&nbsp;<em>pred imap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
+<p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
 
 <p><em>pred</em> is a predicate of type <code>exact-integer * → boolean</code>.
 <code>failure</code> is a procedure of no arguments returning zero
 or more values of arbitrary type.</p>
 
 <p>Returns two values, <em>k</em> and <em>v</em>, where
-(<em>k</em>, <em>v</em>) is the association of <em>imap</em> with the
+(<em>k</em>, <em>v</em>) is the association of <em>fxmap</em> with the
 least key such that <code>(</code><em>pred k v</em><code>)</code> is true.
 If there is no
 such association, then <em>failure</em> is tail-called with no
@@ -770,417 +759,417 @@ arguments and its results are returned.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-find (lambda (_ v) (even? v))
-               (imapping 0 1 1 2 2 4 3 8)
-               (lambda () (values #f #f)))
+<pre class="example"><code>(fxmapping-find (lambda (_ v) (even? v))
+                (fxmapping 0 1 1 2 2 4 3 8)
+                (lambda () (values #f #f)))
  ⇒ 1 2
 
-(imapping-find (lambda (_ v) (negative? v))
-               (imapping 0 1 1 2 2 4 3 8)
-               (lambda () (values 'nope 'nada)))
+(fxmapping-find (lambda (_ v) (negative? v))
+                (fxmapping 0 1 1 2 2 4 3 8)
+                (lambda () (values 'nope 'nada)))
  ⇒ nope nada
 
-(imapping-find (lambda (k s) (= k (string-length s)))
-               (imapping 2 "worf" 3 "data" 4 "troi")
-               (lambda () (error "not found")))
+(fxmapping-find (lambda (k s) (= k (string-length s)))
+                (fxmapping 2 "worf" 3 "data" 4 "troi")
+                (lambda () (error "not found")))
  ⇒ 4 "troi"
 </code></pre>
 
-<p><code>(imapping-query</code>&nbsp;<em>pred imap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-query</code>&nbsp;<em>pred fxmap</em><code>) → maybe[exact-integer, *]</code></p>
 
 <p><em>pred</em> is a predicate of type
 <code>exact-integer * → boolean</code>.</p>
 
 <p>Returns Just <em>k v</em>, where (<em>k</em>, <em>v</em>) is the
-association of <em>imap</em> with the least key <em>k</em> such that
+association of <em>fxmap</em> with the least key <em>k</em> such that
 <code>(</code><em>pred k v</em><code>)</code> is true, or Nothing if
 there is no such association.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>;; Simulating imapping-lookup
+<pre class="example"><code>;; Simulating fxmapping-lookup
 (maybe-&gt;list-truth
- (imapping-query (lambda (_ s) (equal? s "guinan"))
-                 (imapping 11 "ro" 13 "guinan" 17 "barclay")))
+ (fxmapping-query (lambda (_ s) (equal? s "guinan"))
+                  (fxmapping 11 "ro" 13 "guinan" 17 "barclay")))
  ⇒ (13 "guinan")
 
 (maybe-&gt;list-truth
- (imapping-query (lambda (k v)
-                   (and (positive? k) (integer? v)))
-                 (alist->imapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
+ (fxmapping-query (lambda (k v)
+                    (and (positive? k) (integer? v)))
+                  (alist->fxmapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
  ⇒ #f
 </code></pre>
 
-<p><code>(imapping-count</code>&nbsp;<em>pred imap</em><code>) → exact-integer</code></p>
+<p><code>(fxmapping-count</code>&nbsp;<em>pred fxmap</em><code>) → exact-integer</code></p>
 
 <p><em>pred</em> is a predicate of type
 <code>exact-integer * → boolean</code>.</p>
 
-<p>Returns the number of associations in <em>imap</em> that satisfy
-<em>pred</em> (in the sense of <code>imapping-find</code>).</p>
+<p>Returns the number of associations in <em>fxmap</em> that satisfy
+<em>pred</em> (in the sense of <code>fxmapping-find</code>).</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-count (lambda (_ v) (even? v))
-                (imapping 0 1 1 2 2 4 3 8)) ⇒ 3
-(imapping-count (lambda (k s) (= k (string-length s)))
-                (imapping 0 "x" 1 "y" 2 "z"))
+<pre class="example"><code>(fxmapping-count (lambda (_ v) (even? v))
+                 (fxmapping 0 1 1 2 2 4 3 8)) ⇒ 3
+(fxmapping-count (lambda (k s) (= k (string-length s)))
+                 (fxmapping 0 "x" 1 "y" 2 "z"))
  ⇒ 1
 </code></pre>
 
-<p><code>(imapping-any?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
+<p><code>(fxmapping-any?</code>&nbsp;<em>pred fxmap</em><code>) → boolean</code></p>
 
 <p><em>pred</em> is a predicate of type
 <code>exact-integer * → boolean</code>.</p>
 
 <p>Returns <code>#t</code> if and only if there exists an association
-in <em>imap</em> that satisfies <em>pred</em> (in the sense of
-<code>imapping-find</code>).  <em>imap</em> is traversed in ascending
+in <em>fxmap</em> that satisfies <em>pred</em> (in the sense of
+<code>fxmapping-find</code>).  <em>fxmap</em> is traversed in ascending
 numerical order of keys.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-any? (lambda (_ v) (odd? v))
-               (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+<pre class="example"><code>(fxmapping-any? (lambda (_ v) (odd? v))
+                (fxmapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
 
-<p><code>(imapping-every?</code>&nbsp;<em>pred imap</em><code>) → boolean</code></p>
+<p><code>(fxmapping-every?</code>&nbsp;<em>pred fxmap</em><code>) → boolean</code></p>
 
 <p><em>pred</em> is a predicate of type
 <code>exact-integer * → boolean</code>.</p>
 
 <p>Returns <code>#t</code> if and only every association in
-<em>imap</em> satisfies <em>pred</em> (in the sense of
-<code>imapping-find</code>), or if <em>imap</em> is empty.
-<em>imap</em> is traversed in ascending numerical order of keys.</p>
+<em>fxmap</em> satisfies <em>pred</em> (in the sense of
+<code>fxmapping-find</code>), or if <em>fxmap</em> is empty.
+<em>fxmap</em> is traversed in ascending numerical order of keys.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-every? (lambda (_ v) (integer? v))
-                 (imapping 0 1 1 2 2 4 3 8)) ⇒ #t
+<pre class="example"><code>(fxmapping-every? (lambda (_ v) (integer? v))
+                  (fxmapping 0 1 1 2 2 4 3 8)) ⇒ #t
 </code></pre>
 
 <h3 id="traversal">Traversal</h3>
 
-<p><code>(imapping-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
-<p>The <em>proc</em> argument of <code>imapping-map</code> is of type
+<p>The <em>proc</em> argument of <code>fxmapping-map</code> is of type
 <code>exact-integer * → *</code>.</p>
 
-<p>Returns an imapping with the same keys as <em>imap</em> whose values
-are the result of transforming the values of <em>imap</em> with <em>proc</em>.
+<p>Returns an fxmapping with the same keys as <em>fxmap</em> whose values
+are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
 For each association
-<code>(</code><em>k, v</em><code>)</code> in <em>imap</em>, the association
+<code>(</code><em>k, v</em><code>)</code> in <em>fxmap</em>, the association
 <code>(</code><em>k</em><code>, (</code><em>proc k v</em><code>))</code>
-is added to the resulting imapping.
+is added to the resulting fxmapping.
 The dynamic order
-of the applications of <em>proc</em> to the elements of <em>imap</em> is
+of the applications of <em>proc</em> to the elements of <em>fxmap</em> is
 unspecified.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-map (lambda (_ s) (string-length s))
-               (imapping 0 "picard" 1 "riker" 2 "troi")))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-map (lambda (_ s) (string-length s))
+                (fxmapping 0 "picard" 1 "riker" 2 "troi")))
  ⇒ ((0 . 6) (1 . 5) (2 . 4))
 
-(imapping-&gt;alist
- (imapping-map (lambda (k s)
-                 (string-append s (number-&gt;string k)))
-               (imapping 256 "x" 512 "y" 1024 "z")))
+(fxmapping-&gt;alist
+ (fxmapping-map (lambda (k s)
+                  (string-append s (number-&gt;string k)))
+                (fxmapping 256 "x" 512 "y" 1024 "z")))
  ⇒ ((256 . "x256") (512 . "y512") (1024 . "z1024"))
 </code></pre>
 
 <p>Note that, in contrast to SRFI 146&rsquo;s <code>mapping-map</code>
-procedure, this procedure transforms the values of <em>imap</em> only;
-that is, the set of keys of the resulting imapping is the same as that
-of <em>imap</em>.</p>
+procedure, this procedure transforms the values of <em>fxmap</em> only;
+that is, the set of keys of the resulting fxmapping is the same as that
+of <em>fxmap</em>.</p>
 
-<p><code>(imapping-for-each</code>&nbsp;<em>proc imap</em><code>) → unspecified</code></p>
+<p><code>(fxmapping-for-each</code>&nbsp;<em>proc fxmap</em><code>) → unspecified</code></p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * → *</code>.
 
-<p>Calls <em>proc</em> on the key and value of each association in <em>imap</em> and returns
-an unspecified value.  <em>imap</em> is traversed in ascending numerical
+<p>Calls <em>proc</em> on the key and value of each association in <em>fxmap</em> and returns
+an unspecified value.  <em>fxmap</em> is traversed in ascending numerical
 order of keys.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(let ((sum 0))
-  (imapping-for-each (lambda (_ v) (set! sum (+ sum v)))
-                     (imapping 0 1 1 2 2 4 3 8))
+  (fxmapping-for-each (lambda (_ v) (set! sum (+ sum v)))
+                      (fxmapping 0 1 1 2 2 4 3 8))
   sum)
  ⇒ 15
 </code></pre>
 
-<p><code>(imapping-fold</code>&nbsp;<em>kons knil imap</em><code>) → *</code><br>
-<code>(imapping-fold-right</code>&nbsp;<em>kons knil imap</em><code>) → *</code></p>
+<p><code>(fxmapping-fold</code>&nbsp;<em>kons knil fxmap</em><code>) → *</code><br>
+<code>(fxmapping-fold-right</code>&nbsp;<em>kons knil fxmap</em><code>) → *</code></p>
 
-<p>The <em>kons</em> argument of <code>imapping-fold</code> and <code>imapping-fold-right</code> is a
+<p>The <em>kons</em> argument of <code>fxmapping-fold</code> and <code>fxmapping-fold-right</code> is a
 procedure of type <code>exact-integer * * → *</code>.
 <em>knil</em> is an object of any type which can be passed to <em>kons</em>
 as its third argument.</p>
 
-<p>Folds <em>kons</em> over <em>imap</em>, using <em>knil</em> as the base value.  At
+<p>Folds <em>kons</em> over <em>fxmap</em>, using <em>knil</em> as the base value.  At
 each step, <em>kons</em> is applied to the key of an association, its
 associated value, and to the result of the last application.
-<code>imapping-fold</code> folds in ascending numerical order of keys;
-<code>imapping-fold-right</code> folds in descending order.</p>
+<code>fxmapping-fold</code> folds in ascending numerical order of keys;
+<code>fxmapping-fold-right</code> folds in descending order.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-fold-right (lambda (_ v vs) (cons v vs))
-                     '()
-                     (imapping 0 "worf" 1 "data" 2 "crusher"))
+<pre class="example"><code>(fxmapping-fold-right (lambda (_ v vs) (cons v vs))
+                      '()
+                      (fxmapping 0 "worf" 1 "data" 2 "crusher"))
  ⇒ ("worf" "data" "crusher")
 
-(imapping-fold (lambda (k _ ks) (cons k ks))
-               '()
-               (imapping 0 "worf" 1 "data" 2 "crusher"))
+(fxmapping-fold (lambda (k _ ks) (cons k ks))
+                '()
+                (fxmapping 0 "worf" 1 "data" 2 "crusher"))
  ⇒ (2 1 0)
 </code></pre>
 
-<p><code>(imapping-map-&gt;list</code>&nbsp;<em>proc imap</em><code>) → list</code></p>
+<p><code>(fxmapping-map-&gt;list</code>&nbsp;<em>proc fxmap</em><code>) → list</code></p>
 
 <p>Equivalent to
-<code>(imapping-values (imapping-map</code>&nbsp;<em>proc imap</em><code>))</code>,
+<code>(fxmapping-values (fxmapping-map</code>&nbsp;<em>proc fxmap</em><code>))</code>,
 but may be implemented more efficiently.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-map-&gt;list (lambda (_ v) (string-length v))
-                     (imapping 0 "picard" 1 "riker" 2 "troi")))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-map-&gt;list (lambda (_ v) (string-length v))
+                      (fxmapping 0 "picard" 1 "riker" 2 "troi")))
  ⇒ (6 5 4)
 </code></pre>
 
-<p><code>(imapping-filter-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-filter-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> is a
 procedure of type <code>exact-integer * → *-or-#f</code>.</p>
 
-<p>Returns an imapping with the same keys as <em>imap</em> whose values
-are the result of transforming the values of <em>imap</em> with <em>proc</em>.
+<p>Returns an fxmapping with the same keys as <em>fxmap</em> whose values
+are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
 For each association (<em>k</em>, <em>v</em>)
-in imapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
+in fxmapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
 If the result is a true value, then the association
 <code>(</code><em>k</em>, <code>(</code><em>proc k v</em><code>))</code>
-is added to the resulting imapping.  If the result is false, then no association
+is added to the resulting fxmapping.  If the result is false, then no association
 is added for <em>k</em>.  The dynamic order of the applications of
-<em>proc</em> to the elements of <em>imap</em> is unspecified.</p>
+<em>proc</em> to the elements of <em>fxmap</em> is unspecified.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-filter-map (lambda (v)
-                        (and (positive? v) (square v)))
-                      (imapping 0 2 1 -4 2 8)))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-filter-map (lambda (v)
+                         (and (positive? v) (square v)))
+                       (fxmapping 0 2 1 -4 2 8)))
  ⇒ ((0 . 4) (2 . 64))
 </code></pre>
 
-<p><code>(imapping-map-either</code>&nbsp;<em>proc imap</em><code>) → [imapping, imapping]</code></p>
+<p><code>(fxmapping-map-either</code>&nbsp;<em>proc fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
 
-<p>The <em>proc</em> of <code>imapping-map-either</code> is a
+<p>The <em>proc</em> of <code>fxmapping-map-either</code> is a
 procedure of type <code>exact-integer * → either[*]</code>, where
 <code>either[*]</code> denotes a SRFI 189 Either containing a single
 value.</p>
 
-<p><code>imapping-map-either</code> maps <em>proc</em> over the associations
-of <em>imap</em> and returns imappings of the Left and of the Right
+<p><code>fxmapping-map-either</code> maps <em>proc</em> over the associations
+of <em>fxmap</em> and returns fxmappings of the Left and of the Right
 results.  For each association (<em>k</em>, <em>v</em>) in
-<em>imap</em>, (<em>proc k v</em>) is evaluated.  If the result is a
+<em>fxmap</em>, (<em>proc k v</em>) is evaluated.  If the result is a
 Left of a value <em>v</em>₁, then the association (<em>k</em>,
-<em>v</em>₁) is added to the first resulting imapping.  If it is instead a
+<em>v</em>₁) is added to the first resulting fxmapping.  If it is instead a
 Right of <em>v</em>₂, then the association (<em>k</em>, <em>v</em>₂)
-is added to the second resulting imapping.</p>
+is added to the second resulting fxmapping.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(let-values (((lefts rights)
-              (imapping-map-either
+              (fxmapping-map-either
                (lambda (_ v)
                  (if (&gt;= v 0)
                      (right v)
                      (left v)))
-               (imapping 0 -50 4 -25 8 25 12 50))))
-  (values (imapping-&gt;alist lefts)
-          (imapping-&gt;alist rights)))
+               (fxmapping 0 -50 4 -25 8 25 12 50))))
+  (values (fxmapping-&gt;alist lefts)
+          (fxmapping-&gt;alist rights)))
  ⇒ ((0 . -50) (4 . -25))
    ((8 . 25) (12 . 50))
 </code></pre>
 
-<p><code>(imapping-relation-map</code>&nbsp;<em>proc imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> must be a procedure of type
 <code>exact-integer * → [exact-integer, *]</code>.</p>
 
-<p>Returns an imapping whose associations are the results of
-transforming both the keys and the values of <em>imap</em> with
+<p>Returns an fxmapping whose associations are the results of
+transforming both the keys and the values of <em>fxmap</em> with
 <em>proc</em>.  For each association (<em>k</em>,
-<em>v</em>) in <em>imap</em>, (<em>proc k v</em>) is evaluated to
+<em>v</em>) in <em>fxmap</em>, (<em>proc k v</em>) is evaluated to
 return a new key and a new value which are associated in the new
-imapping.  Duplicate keys are replaced, but the results in this case
+fxmapping.  Duplicate keys are replaced, but the results in this case
 are unpredictable; if <em>proc</em> is not injective, that is, if it
 produces multiple associations with the same key, then it is unspecified
 which one of these associations will be present in the resulting
-imapping. The dynamic order of the applications of <em>proc</em> to the
-elements of <em>imap</em> is unspecified.</p>
+fxmapping. The dynamic order of the applications of <em>proc</em> to the
+elements of <em>fxmap</em> is unspecified.</p>
 
-<p><strong>Rationale:</strong> <code>imapping-relation-map</code>
+<p><strong>Rationale:</strong> <code>fxmapping-relation-map</code>
 corresponds to <code>mapping-map</code> from SRFI 146 and is specified
 primarily for compatibility with that SRFI.  It generalizes
-<code>imapping-map</code>, and can
-be used to produce a wide range of transformations on imappings.  This
+<code>fxmapping-map</code>, and can
+be used to produce a wide range of transformations on fxmappings.  This
 generality comes at a price, however.  Certain familiar laws that hold
-of <code>imapping-map</code> and other Scheme "map" functions do not
-hold of <code>imapping-relation-map</code>; in particular, the size of
-the <em>imap</em> may not be preserved, and a key with an
-association in <em>imap</em> may not have an association in the
-resulting imapping.</p>
+of <code>fxmapping-map</code> and other Scheme "map" functions do not
+hold of <code>fxmapping-relation-map</code>; in particular, the size of
+the <em>fxmap</em> may not be preserved, and a key with an
+association in <em>fxmap</em> may not have an association in the
+resulting fxmapping.</p>
 
-<p>As such, <code>imapping-map</code>
+<p>As such, <code>fxmapping-map</code>
 likely conforms better to the familiar pattern of Scheme "map" functions,
 while being sufficiently general for most purposes.</p>
 
 <h3 id="filter">Filter</h3>
 
-<p><code>(imapping-filter</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-filter</code>&nbsp;<em>pred fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an imapping containing all of the associations of <em>imap</em>
-that satisfy <em>pred</em> (in the sense of <code>imapping-find</code>).</p>
+<p>Returns an fxmapping containing all of the associations of <em>fxmap</em>
+that satisfy <em>pred</em> (in the sense of <code>fxmapping-find</code>).</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-filter (lambda (_ v) (positive? v))
-                  (imapping 0 2 1 -4 2 8 3 -16)))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-filter (lambda (_ v) (positive? v))
+                   (fxmapping 0 2 1 -4 2 8 3 -16)))
  ⇒ ((0 . 2) (2 . 8))
 </code></pre>
 
-<p><code>(imapping-remove</code>&nbsp;<em>pred imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-remove</code>&nbsp;<em>pred fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an imapping containing all of the associations of
-<em>imap</em> that do not satisfy <em>pred</em> (in the sense of
-<code>imapping-find</code>).</p>
+<p>Returns an fxmapping containing all of the associations of
+<em>fxmap</em> that do not satisfy <em>pred</em> (in the sense of
+<code>fxmapping-find</code>).</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-remove (lambda (_ v) (positive? v))
-                  (imapping 0 2 1 -4 2 8 3 -16)))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-remove (lambda (_ v) (positive? v))
+                   (fxmapping 0 2 1 -4 2 8 3 -16)))
  ⇒ ((1 . -4) (3 . -16))
 </code></pre>
 
-<p><code>(imapping-partition</code>&nbsp;<em>pred imap</em><code>) → [imapping, imapping]</code></p>
+<p><code>(fxmapping-partition</code>&nbsp;<em>pred fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
 
-<p>Returns two imappings: the first contains all associations of
-<em>imap</em> that satisfy <em>pred</em> (in the sense of
-<code>imapping-find</code>), and the second contains those
+<p>Returns two fxmappings: the first contains all associations of
+<em>fxmap</em> that satisfy <em>pred</em> (in the sense of
+<code>fxmapping-find</code>), and the second contains those
 that do not.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(let-values (((pos ~pos)
-              (imapping-partition (lambda (_ v) (positive? v))
-                                  (imapping 0 2 1 -4 2 8 3 -16))))
-  (values (imapping-&gt;alist pos)
-          (imapping-&gt;alist ~pos)))
+              (fxmapping-partition (lambda (_ v) (positive? v))
+                                   (fxmapping 0 2 1 -4 2 8 3 -16))))
+  (values (fxmapping-&gt;alist pos)
+          (fxmapping-&gt;alist ~pos)))
  ⇒ ((0 . 2) (2 . 8))
    ((1 . -4) (3 . -16))
 </code></pre>
 
 <h3 id="conversion">Copying and conversion</h3>
 
-<p><code>(imapping-copy</code>&nbsp;<em>imap</em><code>) → imapping</code></p>
+<p><code>(fxmapping-copy</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an imapping containing the associations of
-<em>imap</em>.</p>
+<p>Returns an fxmapping containing the associations of
+<em>fxmap</em>.</p>
 
-<p>In an implementation with immutable imappings, <code>imapping-copy</code>
-may simply return <em>imap</em>.  If imappings may be mutated,
-however, then the resulting imapping must be newly allocated
-and must not share structure with <em>imap</em>.</p>
+<p>In an implementation with immutable fxmappings, <code>fxmapping-copy</code>
+may simply return <em>fxmap</em>.  If fxmappings may be mutated,
+however, then the resulting fxmapping must be newly allocated
+and must not share structure with <em>fxmap</em>.</p>
 
-<p><code>(imapping-&gt;alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(fxmapping-&gt;alist</code>&nbsp;<em>fxmap</em><code>) → alist[exact-integer, *]</code></p>
 
 <p>Returns an alist containing the associations of
-<em>imap</em> in increasing numerical order of key.
+<em>fxmap</em> in increasing numerical order of key.
 That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
-<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>v</em>ₙ) are the associations of <em>fxmap</em> ordered so that
 <em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then
-<code>(imapping-&gt;alist</code> <em>imap</em><code>)</code>
+<code>(fxmapping-&gt;alist</code> <em>fxmap</em><code>)</code>
 produces the list <code>((</code><em>k</em>₁ <code>.</code>
 <em>v</em>₁<code>)</code> … <code>(</code><em>k</em>ₙ
 <code>.</code> <em>v</em>ₙ<code>))</code>.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
 </code></pre>
 
-<p><code>(imapping-&gt;decreasing-alist</code>&nbsp;<em>imap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(fxmapping-&gt;decreasing-alist</code>&nbsp;<em>fxmap</em><code>) → alist[exact-integer, *]</code></p>
 
-<p>Identical to <code>imapping-&gt;alist</code>, except that the
-resulting alist contains the associations of <em>imap</em> in
+<p>Identical to <code>fxmapping-&gt;alist</code>, except that the
+resulting alist contains the associations of <em>fxmap</em> in
 decreasing numerical order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
 </code></pre>
 
-<p><code>(imapping-keys</code>&nbsp;<em>imap</em><code>) → list[exact-integer]</code></p>
+<p><code>(fxmapping-keys</code>&nbsp;<em>fxmap</em><code>) → list[exact-integer]</code></p>
 
-<p>Returns the keys of <em>imap</em> as a list in ascending numerical order.</p>
+<p>Returns the keys of <em>fxmap</em> as a list in ascending numerical order.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-keys (imapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
+<pre class="example"><code>(fxmapping-keys (fxmapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
 </code></pre>
 
-<p><code>(imapping-values</code>&nbsp;<em>imap</em><code>) → list[*]</code></p>
+<p><code>(fxmapping-values</code>&nbsp;<em>fxmap</em><code>) → list[*]</code></p>
 
-<p>Returns the values of <em>imap</em> as a list in ascending numerical
+<p>Returns the values of <em>fxmap</em> as a list in ascending numerical
 order of key.
 That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
-<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>v</em>ₙ) are the associations of <em>fxmap</em> ordered so that
 <em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then
-<code>(imapping-values</code> <em>imap</em><code>)</code>
+<code>(fxmapping-values</code> <em>fxmap</em><code>)</code>
 produces the list
 <code>(</code><em>v</em>₁ … <em>v</em>ₙ<code>)</code>.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(imapping-values (imapping 0 "picard" 1 "riker" 2 "troi"))
+<pre class="example"><code>(fxmapping-values (fxmapping 0 "picard" 1 "riker" 2 "troi"))
  ⇒ ("picard" "riker" "troi")
 </code></pre>
 
-<p><code>(imapping-&gt;generator</code> <em>imapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+<p><code>(fxmapping-&gt;generator</code> <em>fxmapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
 
 <p>Returns a <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generator which
-produces the associations of <em>imapping</em> as key/value pairs in increasing
+produces the associations of <em>fxmapping</em> as key/value pairs in increasing
 order of key.  That is, if (<em>k</em>₁, <em>v</em>₁), …, (<em>k</em>ₙ,
-<em>v</em>ₙ) are the associations of <em>imap</em> ordered so that
+<em>v</em>ₙ) are the associations of <em>fxmap</em> ordered so that
 <em>k</em>₁ ≤ … ≤ <em>k</em>ₙ, then the generator returned by
-<code>(imapping-&gt;generator</code> <em>imap</em><code>)</code>
+<code>(fxmapping-&gt;generator</code> <em>fxmap</em><code>)</code>
 produces the pairs <code>(</code><em>k</em>₁ <code>.</code>
 <em>v</em>₁<code>)</code>, …, <code>(</code><em>k</em>ₙ
 <code>.</code> <em>v</em>ₙ<code>)</code>, in that order.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator-&gt;list (imapping-&gt;generator (imapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list (fxmapping-&gt;generator (fxmapping 3 "yar" 2 "troi")))
  ⇒ ((2 . "troi") (3 . "yar"))
 </code></pre>
 
-<p><code>(imapping-&gt;decreasing-generator</code> <em>imapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+<p><code>(fxmapping-&gt;decreasing-generator</code> <em>fxmapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
 
-<p>This is the same as <code>imapping-&gt;generator</code>, except that the associations
-of <em>imapping</em> are produced in decreasing order of key.</p>
+<p>This is the same as <code>fxmapping-&gt;generator</code>, except that the associations
+of <em>fxmapping</em> are produced in decreasing order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator-&gt;list (imapping-&gt;decreasing-generator (imapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list (fxmapping-&gt;decreasing-generator (fxmapping 3 "yar" 2 "troi")))
  ⇒ ((3 . "yar") (2 . "troi"))
 </code></pre>
 
@@ -1189,199 +1178,199 @@ of <em>imapping</em> are produced in decreasing order of key.</p>
 <p>Each of the following predicates takes a
 <a href="https://srfi.schemers.org/srfi-128/">SRFI 128</a> comparator
 argument which is used to compare the values of the associations of
-two imappings.  (Keys are always compared with <code>=</code>.)</p>
+two fxmappings.  (Keys are always compared with <code>=</code>.)</p>
 
 <p>Note that none of these five predicates produces a total order on
-imappings.  In particular, <code>imapping=?</code>, <code>imapping&lt;?</code>,
-and <code>imapping&gt;?</code> do not obey the trichotomy law.</p>
+fxmappings.  In particular, <code>fxmapping=?</code>, <code>fxmapping&lt;?</code>,
+and <code>fxmapping&gt;?</code> do not obey the trichotomy law.</p>
 
-<p><code>(imapping=?</code>&nbsp;<em>comp imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+<p><code>(fxmapping=?</code>&nbsp;<em>comp fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ <code>…) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if all of the <em>imaps</em> contain equal
+<p>Returns <code>#t</code> if and only if all of the <em>fxmaps</em> contain equal
 associations.  Two associations are equal exactly when their keys are
 equal (in the sense of <code>=</code>) and their values are equal in the sense
 of the equality predicate of <em>comp</em>.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping=? (make-default-comparator)
-            (imapping 1 'a 2 'b)
-            (imapping 2 'b 1 'a))
+<pre class="example"><code>(fxmapping=? (make-default-comparator)
+             (fxmapping 1 'a 2 'b)
+             (fxmapping 2 'b 1 'a))
  ⇒ #t
 
-(imapping=? (make-default-comparator)
-            (imapping 1 'a 2 'b 3 'c)
-            (imapping 2 'b 1 'a))
+(fxmapping=? (make-default-comparator)
+             (fxmapping 1 'a 2 'b 3 'c)
+             (fxmapping 2 'b 1 'a))
  ⇒ #f
 </code></pre>
 
-<p><code>(imapping&lt;?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&lt;=?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&gt;?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code><br>
-<code>(imapping&gt;=?</code>&nbsp;<em>comp</em> <em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ <code>…) → boolean</code></p>
+<p><code>(fxmapping&lt;?</code>&nbsp;<em>comp</em> <em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ <code>…) → boolean</code><br>
+<code>(fxmapping&lt;=?</code>&nbsp;<em>comp</em> <em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ <code>…) → boolean</code><br>
+<code>(fxmapping&gt;?</code>&nbsp;<em>comp</em> <em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ <code>…) → boolean</code><br>
+<code>(fxmapping&gt;=?</code>&nbsp;<em>comp</em> <em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ <code>…) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if each <em>imap</em> other than the last is a proper
-subset/subset/proper superset/superset of the following <em>imap</em>.  Values are
+<p>Returns <code>#t</code> if and only if each <em>fxmap</em> other than the last is a proper
+subset/subset/proper superset/superset of the following <em>fxmap</em>.  Values are
 compared using the equality predicate of <em>comp</em>.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping&lt;? (make-default-comparator)
-            (imapping 1 'a 2 'b)
-            (imapping 2 'b 1 'a 3 'c))
+<pre class="example"><code>(fxmapping&lt;? (make-default-comparator)
+             (fxmapping 1 'a 2 'b)
+             (fxmapping 2 'b 1 'a 3 'c))
  ⇒ #t
 
-(imapping&gt;? (make-default-comparator)
-            (imapping 2 'b 1 "worf" 3 'c)
-            (imapping 1 'a 2 'b))
+(fxmapping&gt;? (make-default-comparator)
+             (fxmapping 2 'b 1 "worf" 3 'c)
+             (fxmapping 1 'a 2 'b))
  ⇒ #f
 
-(imapping&gt;=? (make-default-comparator)
-             (imapping 2 'b 1 'a 3 'c)
-             (imapping 1 'a 2 'b)
-             (imapping 2 'b 1 'a)
-             (imapping 1 'a))
+(fxmapping&gt;=? (make-default-comparator)
+              (fxmapping 2 'b 1 'a 3 'c)
+              (fxmapping 1 'a 2 'b)
+              (fxmapping 2 'b 1 'a)
+              (fxmapping 1 'a))
  ⇒ #t
 </code></pre>
 
 <h3 id="settheory">Set theory operations</h3>
 
-<p><code>(imapping-union</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-difference</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-xor</code>&nbsp;<em>imap</em>₁ <em>imap</em>₂<code>) → imapping</code></p>
+<p><code>(fxmapping-union</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
+<code>(fxmapping-intersection</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
+<code>(fxmapping-difference</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
+<code>(fxmapping-xor</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂<code>) → fxmapping</code></p>
 
-<p>Return an imapping whose set of associations is the
+<p>Return an fxmapping whose set of associations is the
 union, intersection, asymmetric difference, or symmetric difference of
-the sets of associations of the <em>imaps</em>.  Asymmetric difference is
-extended to more than two imappings by taking the difference between
-the first imapping and the union of the others.  Symmetric difference
-is not extended beyond two imappings.  When comparing associations,
+the sets of associations of the <em>fxmaps</em>.  Asymmetric difference is
+extended to more than two fxmappings by taking the difference between
+the first fxmapping and the union of the others.  Symmetric difference
+is not extended beyond two fxmappings.  When comparing associations,
 only the keys are compared.  In case of duplicate keys, associations
-in the result imapping are drawn from the first imapping in which they
+in the result fxmapping are drawn from the first fxmapping in which they
 appear.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist (imapping-union (imapping 0 'a 2 'c)
-                                 (imapping 1 'b 3 'd)))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-union (fxmapping 0 'a 2 'c)
+                                   (fxmapping 1 'b 3 'd)))
  ⇒ ((0 . a) (1 . b) (2 . c) (3 . d))
 
-(imapping-&gt;alist
- (imapping-intersection (imapping 0 'a 2 'c)
-                        (imapping 1 'b 2 'c 3 'd)
-                        (imapping 2 'c 4 'e)))
+(fxmapping-&gt;alist
+ (fxmapping-intersection (fxmapping 0 'a 2 'c)
+                         (fxmapping 1 'b 2 'c 3 'd)
+                         (fxmapping 2 'c 4 'e)))
  ⇒ ((2 . c))
 
-(imapping-&gt;alist (imapping-difference (imapping 0 'a 1 'b 2 'c)
-                                      (imapping 2 "worf")
-                                      (imapping 1 "data")))
+(fxmapping-&gt;alist (fxmapping-difference (fxmapping 0 'a 1 'b 2 'c)
+                                        (fxmapping 2 "worf")
+                                        (fxmapping 1 "data")))
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(imapping-union/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code><br>
-<code>(imapping-intersection/combinator</code>&nbsp;<em>proc imap</em>₁ <em>imap</em>₂ <em>imap</em>₃ …<code>) → imapping</code></p>
+<p><code>(fxmapping-union/combinator</code>&nbsp;<em>proc fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
+<code>(fxmapping-intersection/combinator</code>&nbsp;<em>proc fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code></p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Return an imapping whose set of keys is the union/intersection of
-the sets of keys of the <em>imaps</em>.  The values associated with duplicate
+<p>Return an fxmapping whose set of keys is the union/intersection of
+the sets of keys of the <em>fxmaps</em>.  The values associated with duplicate
 keys are combined left-associatively with <em>proc</em>, which is also passed
 the duplicated key as its first argument; that is, if an integer <em>k</em> is associated
-with values <em>v</em>₁, <em>v</em>₂, …, <em>v</em>ₙ in <em>imap</em>₁, <em>imap</em>₂, …, <em>imap</em>ₙ,
-respectively, then the resulting imapping will contain the association
+with values <em>v</em>₁, <em>v</em>₂, …, <em>v</em>ₙ in <em>fxmap</em>₁, <em>fxmap</em>₂, …, <em>fxmap</em>ₙ,
+respectively, then the resulting fxmapping will contain the association
 (<em>k</em>, (<em>proc k</em> … (<em>proc k v</em>₁ <em>v</em>₂) … <em>v</em>ₙ)).</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>;; Right-biased union.
-(imapping-&gt;alist
- (imapping-union/combinator (lambda (_k _l r) r)
-                            (imapping 1 'b 2 'c)
-                            (imapping 2 "data" 3 "picard")))
+(fxmapping-&gt;alist
+ (fxmapping-union/combinator (lambda (_k _l r) r)
+                             (fxmapping 1 'b 2 'c)
+                             (fxmapping 2 "data" 3 "picard")))
 
  ⇒ ((1 . b) (2 . "data") (3 . "picard"))
 
-(imapping-&gt;alist
- (imapping-intersection/combinator
+(fxmapping-&gt;alist
+ (fxmapping-intersection/combinator
   (lambda (_ l r) (string-append l " " r))
-  (imapping 1 "q" 3 "jean-luc" 5 "miles" 7 "quark")
-  (imapping 3 "picard" 5 "o'brien")))
+  (fxmapping 1 "q" 3 "jean-luc" 5 "miles" 7 "quark")
+  (fxmapping 3 "picard" 5 "o'brien")))
 
  ⇒ ((3 . "jean-luc picard") (5 . "miles o'brien"))
 </code></pre>
 
 <h3 id="submappings">Submappings</h3>
 
-<p><code>(imapping-open-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-open-closed-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code><br>
-<code>(imapping-closed-open-interval</code>&nbsp;<em>imap low high</em><code>) → imapping</code></p>
+<p><code>(fxmapping-open-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code><br>
+<code>(fxmapping-closed-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code><br>
+<code>(fxmapping-open-closed-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code><br>
+<code>(fxmapping-closed-open-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code></p>
 
 <p><em>low</em> and <em>high</em> are both exact integers.</p>
 
-<p>Procedures that return a subset of <em>imap</em> containing the associations
+<p>Procedures that return a subset of <em>fxmap</em> containing the associations
 whose keys are contained in the interval from <em>low</em> to <em>high</em>.  The
 interval is open/closed/open below and closed above/open
 above and closed below.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (imapping-open-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (fxmapping-open-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((2 . c))
 
-(imapping-&gt;alist
- (imapping-closed-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+(fxmapping-&gt;alist
+ (fxmapping-closed-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((1 . b) (2 . c) (3 . d))
 
-(imapping-&gt;alist
- (imapping-closed-open-interval (imapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+(fxmapping-&gt;alist
+ (fxmapping-closed-open-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((1 . b) (2 . c))
 </code></pre>
 
-<p><code>(isubmapping=</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&lt;=</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;</code>&nbsp;<em>imap k</em><code>) → imapping</code><br>
-<code>(isubmapping&gt;=</code>&nbsp;<em>imap k</em><code>) → imapping</code></p>
+<p><code>(isubmapping=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(isubmapping&lt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(isubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(isubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(isubmapping&gt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code></p>
 
-<p>Procedures that return an imapping containing the associations of
-<em>imap</em> whose keys are equal to/less than/less than or equal
+<p>Procedures that return an fxmapping containing the associations of
+<em>fxmap</em> whose keys are equal to/less than/less than or equal
 to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>isubmapping=</code> contains at most one element.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(imapping-&gt;alist
- (isubmapping= (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+<pre class="example"><code>(fxmapping-&gt;alist
+ (isubmapping= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((2 . c))
 
-(imapping-&gt;alist
- (isubmapping&lt; (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+(fxmapping-&gt;alist
+ (isubmapping&lt; (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((0 . a) (1 . b))
 
-(imapping-&gt;alist
- (isubmapping&gt;= (imapping 0 'a 1 'b 2 'c 3 'd) 2))
+(fxmapping-&gt;alist
+ (isubmapping&gt;= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((2 . c) (3 . d))
 </code></pre>
 
-<p><code>(imapping-split</code> <em>imap k</em><code>) → [imapping, imapping]</code></p>
+<p><code>(fxmapping-split</code> <em>fxmap k</em><code>) → [fxmapping, fxmapping]</code></p>
 
-<p>Returns two imappings.  The first contains all of the associations
-of <em>imap</em> whose keys are less than or equal to <em>k</em>, and the second
+<p>Returns two fxmappings.  The first contains all of the associations
+of <em>fxmap</em> whose keys are less than or equal to <em>k</em>, and the second
 contains the remaining associations.  This is equivalent to
-<code>(values (isubmapping&lt;=</code>&nbsp;<em>imap k</em><code>)
-(isubmapping&gt;</code>&nbsp;<em>imap k</em><code>))</code>, but may be
+<code>(values (isubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>)
+(isubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>))</code>, but may be
 implemented more efficiently.</p>
 
-<p>If <em>imap</em> is empty, then both of the imappings returned by
-<code>imapping-split</code> are empty.</p>
+<p>If <em>fxmap</em> is empty, then both of the fxmappings returned by
+<code>fxmapping-split</code> are empty.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(let-values ((imaps (imapping-split (imapping 0 'a 1 'b 2 'c 3 'd) 2)))
-  (map imapping-&gt;alist imaps))
+<pre class="example"><code>(let-values ((fxmaps (fxmapping-split (fxmapping 0 'a 1 'b 2 'c 3 'd) 2)))
+  (map fxmapping-&gt;alist fxmaps))
 
  ⇒ (((0 . a) (1 . b) (2 . c))
     ((3 . d)))
@@ -1390,7 +1379,7 @@ implemented more efficiently.</p>
 <h2 id="implementation">Implementation</h2>
 
 <p>The sample implementation is found in the repository for this SRFI.
-The imapping implementation is based on big-endian radix (Patricia) trees
+The fxmapping implementation is based on big-endian radix (Patricia) trees
 as described by Chris Okasaki and Andrew Gill in &ldquo;Fast
 Mergeable Integer Maps&rdquo; (see <a href="#references">References</a>).
 These trees provide fast insert, lookup, and set-theoretical operations.
