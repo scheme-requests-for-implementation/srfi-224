@@ -122,8 +122,11 @@ created by <code>define-record-type</code> (see R7RS § 5.5).  The
 effects of using record-type inspection or inheritance for the
 fxmapping type are unspecified.</p>
 
-<p>It is an error to add or remove an association of an fxmapping while
-iterating over it.</p>
+<p>Fxmappings are immutable in the sense that all of the procedures
+defined in this SRFI are &ldquo;pure&rdquo;, that is, they must not
+produce their results through mutation.  If an implementation allows
+fxmappings to be mutated, the results of combining mutation and the
+procedures of this library are unspecified.</p>
 
 <h3>Notation</h3>
 
