@@ -20,52 +20,52 @@
 
   (export
    ;; Constructors
-   imapping imapping-unfold imapping-unfold-maybe alist->imapping
-   alist->imapping/combinator
+   fxmapping fxmapping-unfold fxmapping-unfold-maybe alist->fxmapping
+   alist->fxmapping/combinator
 
    ;; Predicates
-   imapping? imapping-contains? imapping-empty? imapping-disjoint?
+   fxmapping? fxmapping-contains? fxmapping-empty? fxmapping-disjoint?
 
    ;; Accessors
-   imapping-min imapping-max imapping-lookup imapping-ref
-   imapping-lookup-min imapping-lookup-max imapping-ref/default
+   fxmapping-min fxmapping-max fxmapping-lookup fxmapping-ref
+   fxmapping-lookup-min fxmapping-lookup-max fxmapping-ref/default
 
    ;; Updaters
-   imapping-adjoin imapping-adjoin/combinator imapping-adjust
-   imapping-set imapping-delete imapping-delete-all imapping-alter
-   imapping-update imapping-delete-min imapping-delete-max
-   imapping-update-min imapping-update-max imapping-pop-min
-   imapping-pop-max
+   fxmapping-adjoin fxmapping-adjoin/combinator fxmapping-adjust
+   fxmapping-set fxmapping-delete fxmapping-delete-all fxmapping-alter
+   fxmapping-update fxmapping-delete-min fxmapping-delete-max
+   fxmapping-update-min fxmapping-update-max fxmapping-pop-min
+   fxmapping-pop-max
 
-   ;; The whole imapping
-   imapping-size imapping-count imapping-any? imapping-find
-   imapping-query imapping-every?
+   ;; The whole fxmapping
+   fxmapping-size fxmapping-count fxmapping-any? fxmapping-find
+   fxmapping-query fxmapping-every?
 
    ;; Traversal
-   imapping-fold imapping-fold-right imapping-map imapping-map->list
-   imapping-for-each imapping-filter-map imapping-map-either
-   imapping-relation-map
+   fxmapping-fold fxmapping-fold-right fxmapping-map fxmapping-map->list
+   fxmapping-for-each fxmapping-filter-map fxmapping-map-either
+   fxmapping-relation-map
 
    ;; Filter
-   imapping-filter imapping-remove imapping-partition
+   fxmapping-filter fxmapping-remove fxmapping-partition
 
    ;; Copying and conversion
-   imapping-keys imapping-values imapping-copy imapping->alist
-   imapping->decreasing-alist imapping->generator
-   imapping->decreasing-generator
+   fxmapping-keys fxmapping-values fxmapping-copy fxmapping->alist
+   fxmapping->decreasing-alist fxmapping->generator
+   fxmapping->decreasing-generator
 
    ;; Comparison
-   imapping=? imapping<? imapping>? imapping<=? imapping>=?
+   fxmapping=? fxmapping<? fxmapping>? fxmapping<=? fxmapping>=?
 
    ;; Set theory operations
-   imapping-union imapping-intersection imapping-difference imapping-xor
-   imapping-union/combinator imapping-intersection/combinator
+   fxmapping-union fxmapping-intersection fxmapping-difference fxmapping-xor
+   fxmapping-union/combinator fxmapping-intersection/combinator
 
    ;; Submappings
-   imapping-open-interval imapping-closed-interval
-   imapping-open-closed-interval imapping-closed-open-interval
-   isubmapping= isubmapping< isubmapping<= isubmapping>= isubmapping>
-   imapping-split
+   fxmapping-open-interval fxmapping-closed-interval
+   fxmapping-open-closed-interval fxmapping-closed-open-interval
+   fxsubmapping= fxsubmapping< fxsubmapping<= fxsubmapping>= fxsubmapping>
+   fxmapping-split
    )
 
   (include "matchers.scm")
