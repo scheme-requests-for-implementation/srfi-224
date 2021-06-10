@@ -655,7 +655,7 @@
   (test-eqv #t
             (every fxmapping-empty?
                    (map (lambda (m) (fxmapping-filter-map (constantly #f) m))
-                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
+                        all-test-fxmaps)))
   ;; Using filter-map as filter.
   (test-equal (filter (lambda (p) (even? (cdr p))) mixed-seq)
               (fxmapping->alist
@@ -728,11 +728,11 @@
                           (fxmapping=? default-comp
                                        m
                                        (fxmapping-filter (constantly #t) m)))
-                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
+                        all-test-fxmaps)))
   (test-eqv #t
             (every fxmapping-empty?
                    (map (lambda (m) (fxmapping-filter (constantly #f) m))
-                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
+                        all-test-fxmaps)))
   (test-eqv #t (fxmapping=? default-comp
                            (fxmapping 25 25 75 75)
                            (fxmapping-filter (lambda (k v)
@@ -750,7 +750,7 @@
   (test-eqv #t
             (every fxmapping-empty?
                    (map (lambda (m) (fxmapping-remove (constantly #t) m))
-                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
+                        all-test-fxmaps)))
   (test-eqv #t
             (fxmapping=? default-comp
                          (fxmapping -100 -100 -50 -50 0 0)
