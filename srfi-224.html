@@ -1327,29 +1327,29 @@ above and closed below.</p>
  ⇒ ((1 . b) (2 . c))
 </code></pre>
 
-<p><code>(isubmapping=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
-<code>(isubmapping&lt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
-<code>(isubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
-<code>(isubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
-<code>(isubmapping&gt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code></p>
+<p><code>(fxsubmapping=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(fxsubmapping&lt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(fxsubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(fxsubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
+<code>(fxsubmapping&gt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code></p>
 
 <p>Procedures that return an fxmapping containing the associations of
 <em>fxmap</em> whose keys are equal to/less than/less than or equal
 to/greater than/greater than or equal to <em>k</em>.  Note that the result of
-<code>isubmapping=</code> contains at most one element.</p>
+<code>fxsubmapping=</code> contains at most one element.</p>
 
 <p>Examples:</p>
 
 <pre class="example"><code>(fxmapping-&gt;alist
- (isubmapping= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
+ (fxsubmapping= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((2 . c))
 
 (fxmapping-&gt;alist
- (isubmapping&lt; (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
+ (fxsubmapping&lt; (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((0 . a) (1 . b))
 
 (fxmapping-&gt;alist
- (isubmapping&gt;= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
+ (fxsubmapping&gt;= (fxmapping 0 'a 1 'b 2 'c 3 'd) 2))
  ⇒ ((2 . c) (3 . d))
 </code></pre>
 
@@ -1358,8 +1358,8 @@ to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <p>Returns two fxmappings.  The first contains all of the associations
 of <em>fxmap</em> whose keys are less than or equal to <em>k</em>, and the second
 contains the remaining associations.  This is equivalent to
-<code>(values (isubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>)
-(isubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>))</code>, but may be
+<code>(values (fxsubmapping&lt;=</code>&nbsp;<em>fxmap k</em><code>)
+(fxsubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>))</code>, but may be
 implemented more efficiently.</p>
 
 <p>If <em>fxmap</em> is empty, then both of the fxmappings returned by
