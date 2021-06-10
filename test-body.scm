@@ -20,14 +20,14 @@
      (let-values ((vs producer))
        (list-ref vs i)))))
 
-;;;; Test imappings
+;;;; Test fxmappings
 
-(define empty-imap (imapping))
+(define empty-fxmap (fxmapping))
 
-(define letter-imap
+(define letter-fxmap
   (let* ((cs "abcdefghijklmnopqrstuvwxyz")
          (len (string-length cs)))
-    (imapping-unfold
+    (fxmapping-unfold
      (lambda (i) (= i len))
      (lambda (i) (values i (string->symbol (string (string-ref cs i)))))
      (lambda (i) (+ i 1))
@@ -40,7 +40,7 @@
           (lambda (i) (+ i 25))
           -100))
 
-(define mixed-imap (alist->imapping mixed-seq))
+(define mixed-fxmap (alist->fxmapping mixed-seq))
 
 ;; From -65536 to 65536 in steps of 4096.  Key = value.
 (define sparse-seq
@@ -49,331 +49,331 @@
           (lambda (i) (+ i 4096))
           -65536))
 
-(define sparse-imap (alist->imapping sparse-seq))
+(define sparse-fxmap (alist->fxmapping sparse-seq))
 
-(define all-test-imaps
-  (list empty-imap mixed-imap letter-imap sparse-imap))
+(define all-test-fxmaps
+  (list empty-fxmap mixed-fxmap letter-fxmap sparse-fxmap))
 
-;;; imapping=? and the alist conversions are used in many other tests,
-;;; so we test these first.  These also test the basic imapping
+;;; fxmapping=? and the alist conversions are used in many other tests,
+;;; so we test these first.  These also test the basic fxmapping
 ;;; constructor.
 
 (test-group "Equality"
-  (test-eqv #t (imapping=? default-comp empty-imap (imapping)))
-  (test-eqv #t (imapping=? default-comp (imapping 10 'a) (imapping 10 'a)))
-  (test-eqv #f (imapping=? default-comp empty-imap (imapping 10 'a)))
-  (test-eqv #t (imapping=? default-comp mixed-imap mixed-imap))
-  (test-eqv #t (imapping=? default-comp letter-imap letter-imap))
+  (test-eqv #t (fxmapping=? default-comp empty-fxmap (fxmapping)))
+  (test-eqv #t (fxmapping=? default-comp (fxmapping 10 'a) (fxmapping 10 'a)))
+  (test-eqv #f (fxmapping=? default-comp empty-fxmap (fxmapping 10 'a)))
+  (test-eqv #t (fxmapping=? default-comp mixed-fxmap mixed-fxmap))
+  (test-eqv #t (fxmapping=? default-comp letter-fxmap letter-fxmap))
   )
 
 (test-group "Conversion"
-  (test-eqv #t (null? (imapping->alist empty-imap)))
-  (test-equal '((10 . a)) (imapping->alist (imapping 10 'a)))
-  (test-equal mixed-seq (imapping->alist mixed-imap))
-  (test-equal sparse-seq (imapping->alist sparse-imap))
+  (test-eqv #t (null? (fxmapping->alist empty-fxmap)))
+  (test-equal '((10 . a)) (fxmapping->alist (fxmapping 10 'a)))
+  (test-equal mixed-seq (fxmapping->alist mixed-fxmap))
+  (test-equal sparse-seq (fxmapping->alist sparse-fxmap))
 
-  (test-eqv #t (null? (imapping->decreasing-alist empty-imap)))
-  (test-equal '((10 . a)) (imapping->decreasing-alist (imapping 10 'a)))
-  (test-equal (reverse mixed-seq) (imapping->decreasing-alist mixed-imap))
-  (test-equal (reverse sparse-seq) (imapping->decreasing-alist sparse-imap))
+  (test-eqv #t (null? (fxmapping->decreasing-alist empty-fxmap)))
+  (test-equal '((10 . a)) (fxmapping->decreasing-alist (fxmapping 10 'a)))
+  (test-equal (reverse mixed-seq) (fxmapping->decreasing-alist mixed-fxmap))
+  (test-equal (reverse sparse-seq) (fxmapping->decreasing-alist sparse-fxmap))
 
-  (test-eqv #t (null? (imapping-keys empty-imap)))
-  (test-equal (map car mixed-seq) (imapping-keys mixed-imap))
-  (test-equal (map car sparse-seq) (imapping-keys sparse-imap))
+  (test-eqv #t (null? (fxmapping-keys empty-fxmap)))
+  (test-equal (map car mixed-seq) (fxmapping-keys mixed-fxmap))
+  (test-equal (map car sparse-seq) (fxmapping-keys sparse-fxmap))
 
-  (test-eqv #t (null? (imapping-values empty-imap)))
-  (test-equal (map cdr mixed-seq) (imapping-values mixed-imap))
-  (test-equal (map cdr sparse-seq) (imapping-values sparse-imap))
+  (test-eqv #t (null? (fxmapping-values empty-fxmap)))
+  (test-equal (map cdr mixed-seq) (fxmapping-values mixed-fxmap))
+  (test-equal (map cdr sparse-seq) (fxmapping-values sparse-fxmap))
 
   (test-eqv #t
             (every
              (lambda (im)
-               (equal? (imapping->alist im)
-                       (generator->list (imapping->generator im))))
-             all-test-imaps))
+               (equal? (fxmapping->alist im)
+                       (generator->list (fxmapping->generator im))))
+             all-test-fxmaps))
   (test-eqv #t
             (every
              (lambda (im)
-               (equal? (imapping->decreasing-alist im)
-                       (generator->list (imapping->decreasing-generator im))))
-             all-test-imaps))
+               (equal? (fxmapping->decreasing-alist im)
+                       (generator->list (fxmapping->decreasing-generator im))))
+             all-test-fxmaps))
   )
 
 (test-group "Constructors"
   (test-equal '((1 . a) (2 . b) (3 . c))
-              (imapping->alist (imapping 1 'a 2 'b 3 'c)))
+              (fxmapping->alist (fxmapping 1 'a 2 'b 3 'c)))
 
   ;;; unfolds
 
-  (test-eqv #t (null? (imapping->alist (imapping-unfold
+  (test-eqv #t (null? (fxmapping->alist (fxmapping-unfold
                                         values
                                         (lambda (b) (values 1 b))
                                         (lambda (b) (not b))
                                         #t))))
-  (test-equal '((1 . #f)) (imapping->alist (imapping-unfold
+  (test-equal '((1 . #f)) (fxmapping->alist (fxmapping-unfold
                                             values
                                             (lambda (b) (values 1 b))
                                             (lambda (b) (not b))
                                             #f)))
   (test-equal '((-3 . -3) (-2 . -2) (-1 . -1))
-              (imapping->alist (imapping-unfold
+              (fxmapping->alist (fxmapping-unfold
                                 (lambda (i) (< i -3))
                                 (lambda (i) (values i i))
                                 (lambda (i) (- i 1))
                                 -1)))
 
-  (test-eqv #t (null? (imapping->alist (imapping-unfold-maybe
+  (test-eqv #t (null? (fxmapping->alist (fxmapping-unfold-maybe
                                         (lambda (b)
                                           (if b (nothing) (just 1 b (not b))))
                                         #t))))
   (test-equal '((1 . #f))
-              (imapping->alist (imapping-unfold-maybe
+              (fxmapping->alist (fxmapping-unfold-maybe
                                 (lambda (b)
                                   (if b (nothing) (just 1 b (not b))))
                                 #f)))
   (test-equal '((-3 . -3) (-2 . -2) (-1 . -1))
-              (imapping->alist
-               (imapping-unfold-maybe
+              (fxmapping->alist
+               (fxmapping-unfold-maybe
                 (lambda (i)
                   (if (< i -3) (nothing) (just i i (- i 1))))
                 -1)))
 
-  ;;; alist->imapping
+  ;;; alist->fxmapping
 
-  (test-eqv #t (null? (imapping->alist (alist->imapping '()))))
-  (test-equal mixed-seq (imapping->alist (alist->imapping mixed-seq)))
-  (test-equal sparse-seq (imapping->alist (alist->imapping sparse-seq)))
+  (test-eqv #t (null? (fxmapping->alist (alist->fxmapping '()))))
+  (test-equal mixed-seq (fxmapping->alist (alist->fxmapping mixed-seq)))
+  (test-equal sparse-seq (fxmapping->alist (alist->fxmapping sparse-seq)))
 
   (test-equal '((0 . a) (1 . b) (2 . c))
-              (imapping->alist
-               (alist->imapping '((0 . a) (1 . b) (2 . c) (2 . #t)))))
+              (fxmapping->alist
+               (alist->fxmapping '((0 . a) (1 . b) (2 . c) (2 . #t)))))
 
   (test-equal '((0 . a) (1 . b) (2 . #t))
-              (imapping->alist
-               (alist->imapping/combinator
+              (fxmapping->alist
+               (alist->fxmapping/combinator
                 first-arg
                 '((0 . a) (1 . b) (2 . c) (2 . #t)))))
   )
 
 (test-group "Predicates"
-  (test-eqv #f (imapping-contains? empty-imap 1))
-  (test-eqv #t (imapping-contains? letter-imap 0))
-  (test-eqv #f (imapping-contains? letter-imap 100))
-  (test-eqv #t (imapping-contains? sparse-imap 4096))
-  (test-eqv #f (imapping-contains? sparse-imap -4097))
+  (test-eqv #f (fxmapping-contains? empty-fxmap 1))
+  (test-eqv #t (fxmapping-contains? letter-fxmap 0))
+  (test-eqv #f (fxmapping-contains? letter-fxmap 100))
+  (test-eqv #t (fxmapping-contains? sparse-fxmap 4096))
+  (test-eqv #f (fxmapping-contains? sparse-fxmap -4097))
 
-  (test-eqv #t (imapping-empty? empty-imap))
-  (test-eqv #f (imapping-empty? letter-imap))
-  (test-eqv #f (imapping-empty? mixed-imap))
-  (test-eqv #f (imapping-empty? sparse-imap))
+  (test-eqv #t (fxmapping-empty? empty-fxmap))
+  (test-eqv #f (fxmapping-empty? letter-fxmap))
+  (test-eqv #f (fxmapping-empty? mixed-fxmap))
+  (test-eqv #f (fxmapping-empty? sparse-fxmap))
 
-  (test-eqv #t (imapping-disjoint? empty-imap letter-imap))
-  (test-eqv #t (imapping-disjoint? (imapping 1 'a) (imapping 2 'b)))
-  (test-eqv #f (imapping-disjoint? (imapping 1 'a) (imapping 1 'b)))
+  (test-eqv #t (fxmapping-disjoint? empty-fxmap letter-fxmap))
+  (test-eqv #t (fxmapping-disjoint? (fxmapping 1 'a) (fxmapping 2 'b)))
+  (test-eqv #f (fxmapping-disjoint? (fxmapping 1 'a) (fxmapping 1 'b)))
   )
 
 
 (test-group "Accessors"
   ;;; lookups
 
-  (test-eqv #t (nothing? (imapping-lookup empty-imap 1)))
-  (test-eqv #t (maybe= eqv? (just 'a) (imapping-lookup letter-imap 0)))
-  (test-eqv #t (maybe= eqv? (just -50) (imapping-lookup mixed-imap -50)))
-  (test-eqv #t (nothing? (imapping-lookup mixed-imap -51)))
-  (test-eqv #t (maybe= eqv? (just 36864) (imapping-lookup sparse-imap 36864)))
-  (test-eqv #t (nothing? (imapping-lookup sparse-imap 36800)))
+  (test-eqv #t (nothing? (fxmapping-lookup empty-fxmap 1)))
+  (test-eqv #t (maybe= eqv? (just 'a) (fxmapping-lookup letter-fxmap 0)))
+  (test-eqv #t (maybe= eqv? (just -50) (fxmapping-lookup mixed-fxmap -50)))
+  (test-eqv #t (nothing? (fxmapping-lookup mixed-fxmap -51)))
+  (test-eqv #t (maybe= eqv? (just 36864) (fxmapping-lookup sparse-fxmap 36864)))
+  (test-eqv #t (nothing? (fxmapping-lookup sparse-fxmap 36800)))
   ;; Ensure that false values are not conflated with missing assocs.
   (test-eqv #t (maybe= eqv?
                        (just #f)
-                       (imapping-lookup (imapping 0 #f) 0)))
+                       (fxmapping-lookup (fxmapping 0 #f) 0)))
 
-  (test-eqv -50 (imapping-ref mixed-imap -50))
-  (test-eqv 36864 (imapping-ref sparse-imap 36864))
-  (test-eqv 'z (imapping-ref sparse-imap 17 (lambda () 'z)))
-  (test-eqv 625 (imapping-ref mixed-imap 25 (lambda () #f) square))
+  (test-eqv -50 (fxmapping-ref mixed-fxmap -50))
+  (test-eqv 36864 (fxmapping-ref sparse-fxmap 36864))
+  (test-eqv 'z (fxmapping-ref sparse-fxmap 17 (lambda () 'z)))
+  (test-eqv 625 (fxmapping-ref mixed-fxmap 25 (lambda () #f) square))
 
-  (test-eqv 'z (imapping-ref/default empty-imap 1 'z))
-  (test-eqv 'a (imapping-ref/default letter-imap 0 #f))
-  (test-eqv -50 (imapping-ref/default mixed-imap -50 #f))
-  (test-eqv 'z (imapping-ref/default mixed-imap -51 'z))
-  (test-eqv 36864 (imapping-ref/default sparse-imap 36864 #f))
-  (test-eqv 'z (imapping-ref/default sparse-imap 36800 'z))
+  (test-eqv 'z (fxmapping-ref/default empty-fxmap 1 'z))
+  (test-eqv 'a (fxmapping-ref/default letter-fxmap 0 #f))
+  (test-eqv -50 (fxmapping-ref/default mixed-fxmap -50 #f))
+  (test-eqv 'z (fxmapping-ref/default mixed-fxmap -51 'z))
+  (test-eqv 36864 (fxmapping-ref/default sparse-fxmap 36864 #f))
+  (test-eqv 'z (fxmapping-ref/default sparse-fxmap 36800 'z))
 
   ;;; min/max
 
-  (test-eqv #t (nothing? (imapping-lookup-min empty-imap)))
-  (test-equal '(0 a) (maybe-ref (imapping-lookup-min letter-imap)
+  (test-eqv #t (nothing? (fxmapping-lookup-min empty-fxmap)))
+  (test-equal '(0 a) (maybe-ref (fxmapping-lookup-min letter-fxmap)
                                 (lambda () #f)
                                 list))
-  (test-equal '(-100 -100) (maybe-ref (imapping-lookup-min mixed-imap)
+  (test-equal '(-100 -100) (maybe-ref (fxmapping-lookup-min mixed-fxmap)
                                       (lambda () #f)
                                       list))
   (test-equal '(-65536 -65536)
-              (maybe-ref (imapping-lookup-min sparse-imap)
+              (maybe-ref (fxmapping-lookup-min sparse-fxmap)
                          (lambda () #f)
                          list))
 
   (test-equal '(0 a)
-              (let-values ((xs (imapping-min letter-imap)))
+              (let-values ((xs (fxmapping-min letter-fxmap)))
                 xs))
   (test-equal '(-100 -100)
-              (let-values ((xs (imapping-min mixed-imap)))
+              (let-values ((xs (fxmapping-min mixed-fxmap)))
                 xs))
 
-  (test-eqv #t (nothing? (imapping-lookup-max empty-imap)))
-  (test-equal '(25 z) (maybe-ref (imapping-lookup-max letter-imap)
+  (test-eqv #t (nothing? (fxmapping-lookup-max empty-fxmap)))
+  (test-equal '(25 z) (maybe-ref (fxmapping-lookup-max letter-fxmap)
                                  (lambda () #f)
                                  list))
-  (test-equal '(100 100) (maybe-ref (imapping-lookup-max mixed-imap)
+  (test-equal '(100 100) (maybe-ref (fxmapping-lookup-max mixed-fxmap)
                                     (lambda () #f)
                                     list))
   (test-equal '(65536 65536)
-              (maybe-ref (imapping-lookup-max sparse-imap)
+              (maybe-ref (fxmapping-lookup-max sparse-fxmap)
                          (lambda () #f)
                          list))
 
   (test-equal '(25 z)
-              (let-values ((xs (imapping-max letter-imap)))
+              (let-values ((xs (fxmapping-max letter-fxmap)))
                 xs))
   (test-equal '(100 100)
-              (let-values ((xs (imapping-max mixed-imap)))
+              (let-values ((xs (fxmapping-max mixed-fxmap)))
                 xs))
   )
 
 (test-group "Updaters"
   ;;; adjoins
 
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a)
-                           (imapping-adjoin empty-imap 0 'a)))
-  (test-eqv #t (imapping-contains? (imapping-adjoin mixed-imap 200 #t) 200))
-  (test-eqv #t (imapping-contains? (imapping-adjoin sparse-imap -200 #t) -200))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a 1 'b 2 'c)
-                           (imapping-adjoin empty-imap 0 'a 1 'b 2 'c)))
-  (test-eqv (imapping-ref sparse-imap -4096)
-            (imapping-ref (imapping-adjoin sparse-imap -4096 'z) -4096))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a)
+                           (fxmapping-adjoin empty-fxmap 0 'a)))
+  (test-eqv #t (fxmapping-contains? (fxmapping-adjoin mixed-fxmap 200 #t) 200))
+  (test-eqv #t (fxmapping-contains? (fxmapping-adjoin sparse-fxmap -200 #t) -200))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a 1 'b 2 'c)
+                           (fxmapping-adjoin empty-fxmap 0 'a 1 'b 2 'c)))
+  (test-eqv (fxmapping-ref sparse-fxmap -4096)
+            (fxmapping-ref (fxmapping-adjoin sparse-fxmap -4096 'z) -4096))
 
-  (test-eqv 'U (imapping-ref/default
-                (imapping-adjoin/combinator letter-imap first-arg 20 'U)
+  (test-eqv 'U (fxmapping-ref/default
+                (fxmapping-adjoin/combinator letter-fxmap first-arg 20 'U)
                 20
                 #f))
-  (test-eqv 'u (imapping-ref/default
-                (imapping-adjoin/combinator letter-imap second-arg 20 'U)
+  (test-eqv 'u (fxmapping-ref/default
+                (fxmapping-adjoin/combinator letter-fxmap second-arg 20 'U)
                 20
                 #f))
   (test-eqv #t
-            (imapping=?
+            (fxmapping=?
              default-comp
-             (imapping 0 'a 1 'b 2 'c)
-             (imapping-adjoin/combinator empty-imap first-arg 0 'a 1 'b 2 'c)))
+             (fxmapping 0 'a 1 'b 2 'c)
+             (fxmapping-adjoin/combinator empty-fxmap first-arg 0 'a 1 'b 2 'c)))
 
   ;;; set
 
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a)
-                           (imapping-set empty-imap 0 'a)))
-  (test-eqv #t (imapping-contains? (imapping-set mixed-imap 200 #t) 200))
-  (test-eqv #t (imapping-contains? (imapping-set sparse-imap -200 #t) -200))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a 1 'b 2 'c)
-                           (imapping-set empty-imap 0 'a 1 'b 2 'c)))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a)
+                           (fxmapping-set empty-fxmap 0 'a)))
+  (test-eqv #t (fxmapping-contains? (fxmapping-set mixed-fxmap 200 #t) 200))
+  (test-eqv #t (fxmapping-contains? (fxmapping-set sparse-fxmap -200 #t) -200))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a 1 'b 2 'c)
+                           (fxmapping-set empty-fxmap 0 'a 1 'b 2 'c)))
   (test-eqv 'z
-            (imapping-ref (imapping-set sparse-imap -4096 'z) -4096))
+            (fxmapping-ref (fxmapping-set sparse-fxmap -4096 'z) -4096))
 
   ;;; adjusts
 
-  (test-equal '(20 u) (imapping-ref/default
-                       (imapping-adjust letter-imap 20 list)
+  (test-equal '(20 u) (fxmapping-ref/default
+                       (fxmapping-adjust letter-fxmap 20 list)
                        20
                        #f))
-  (test-eqv 16384 (imapping-ref/default
-                   (imapping-adjust sparse-imap
+  (test-eqv 16384 (fxmapping-ref/default
+                   (fxmapping-adjust sparse-fxmap
                                     8192
                                     (lambda (k v) (+ k v)))
                    8192
                    #f))
-  (test-eqv #t (imapping-empty? (imapping-adjust empty-imap 1 list)))
+  (test-eqv #t (fxmapping-empty? (fxmapping-adjust empty-fxmap 1 list)))
 
   ;;; delete & delete-all
 
-  (test-eqv #f (imapping-contains? (imapping-delete letter-imap 10) 10))
-  (test-eqv #f (imapping-contains? (imapping-delete mixed-imap 50) 50))
-  (test-eqv #t (imapping=? default-comp
-                           mixed-imap
-                           (imapping-delete mixed-imap 1)))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete letter-fxmap 10) 10))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete mixed-fxmap 50) 50))
+  (test-eqv #t (fxmapping=? default-comp
+                           mixed-fxmap
+                           (fxmapping-delete mixed-fxmap 1)))
   (let* ((ks '(4096 8192 16384))
-         (sm (apply imapping-delete sparse-imap ks)))
-    (test-eqv #f (any (lambda (k) (imapping-contains? sm k)) ks)))
+         (sm (apply fxmapping-delete sparse-fxmap ks)))
+    (test-eqv #f (any (lambda (k) (fxmapping-contains? sm k)) ks)))
 
-  (test-eqv #f (imapping-contains? (imapping-delete-all letter-imap '(10)) 10))
-  (test-eqv #f (imapping-contains? (imapping-delete-all mixed-imap '(50)) 50))
-  (test-eqv #t (imapping=? default-comp
-                           mixed-imap
-                           (imapping-delete-all mixed-imap '(1))))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-all letter-fxmap '(10)) 10))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-all mixed-fxmap '(50)) 50))
+  (test-eqv #t (fxmapping=? default-comp
+                           mixed-fxmap
+                           (fxmapping-delete-all mixed-fxmap '(1))))
   (let* ((ks '(4096 8192 16384))
-         (sm (imapping-delete-all sparse-imap ks)))
-    (test-eqv #f (any (lambda (k) (imapping-contains? sm k)) ks)))
+         (sm (fxmapping-delete-all sparse-fxmap ks)))
+    (test-eqv #f (any (lambda (k) (fxmapping-contains? sm k)) ks)))
 
   ;;; update
 
-  (test-eqv #t (imapping=?
+  (test-eqv #t (fxmapping=?
                 default-comp
-                (imapping 0 '(0 a))
-                (imapping-update (imapping 0 'a)
+                (fxmapping 0 '(0 a))
+                (fxmapping-update (fxmapping 0 'a)
                                  0
                                  (lambda (k v) (just (list k v))))))
-  (test-eqv 'U (imapping-ref/default
-                (imapping-update letter-imap 20 (constantly (just 'U)))
+  (test-eqv 'U (fxmapping-ref/default
+                (fxmapping-update letter-fxmap 20 (constantly (just 'U)))
                 20
                 #f))
-  (test-eqv #f (imapping-contains?
-                (imapping-update letter-imap 20 (constantly (nothing)))
+  (test-eqv #f (fxmapping-contains?
+                (fxmapping-update letter-fxmap 20 (constantly (nothing)))
                 20))
-  (test-eqv #f (imapping-contains?
-                (imapping-update sparse-imap -8192 (constantly (nothing)))
+  (test-eqv #f (fxmapping-contains?
+                (fxmapping-update sparse-fxmap -8192 (constantly (nothing)))
                 -8192))
 
   ;;; alter
 
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a)
-                           (imapping-alter (imapping 0 'a)
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a)
+                           (fxmapping-alter (fxmapping 0 'a)
                                            1
                                            (constantly (nothing)))))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 'a 1 'b)
-                           (imapping-alter (imapping 0 'a)
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 'a 1 'b)
+                           (fxmapping-alter (fxmapping 0 'a)
                                            1
                                            (constantly (just 'b)))))
-  (test-eqv 101 (imapping-ref/default
-                 (imapping-alter mixed-imap
+  (test-eqv 101 (fxmapping-ref/default
+                 (fxmapping-alter mixed-fxmap
                                  101
                                  (constantly (just 101)))
                  101
                  #f))
-  (test-eqv 101 (imapping-ref/default
-                 (imapping-alter mixed-imap
+  (test-eqv 101 (fxmapping-ref/default
+                 (fxmapping-alter mixed-fxmap
                                  100
                                  (lambda (m)
                                    (maybe-map (lambda (_k n) (+ n 1)) m)))
                  100
                  #f))
-  (test-eqv 'z (imapping-ref/default
-                (imapping-alter mixed-imap
+  (test-eqv 'z (fxmapping-ref/default
+                (fxmapping-alter mixed-fxmap
                                 100
                                 (constantly (nothing)))
                 100
                 'z))
-  (test-eqv -16383 (imapping-ref/default
-                    (imapping-alter sparse-imap
+  (test-eqv -16383 (fxmapping-ref/default
+                    (fxmapping-alter sparse-fxmap
                                     -16384
                                     (lambda (m)
                                       (maybe-map (lambda (_k n) (+ n 1)) m)))
                     -16384
                     #f))
-  (test-eqv 'z (imapping-ref/default
-                (imapping-alter sparse-imap
+  (test-eqv 'z (fxmapping-ref/default
+                (fxmapping-alter sparse-fxmap
                                 -16384
                                 (constantly (nothing)))
                 -16384
@@ -381,688 +381,688 @@
 
   ;;; delete-min/-max
 
-  (test-eqv #t (imapping=? default-comp
-                           empty-imap
-                           (imapping-delete-min (imapping 0 'a))))
-  (test-eqv #f (imapping-contains? (imapping-delete-min letter-imap) 0))
-  (test-eqv #f (imapping-contains? (imapping-delete-min sparse-imap) -65536))
+  (test-eqv #t (fxmapping=? default-comp
+                           empty-fxmap
+                           (fxmapping-delete-min (fxmapping 0 'a))))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-min letter-fxmap) 0))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-min sparse-fxmap) -65536))
 
-  (test-eqv #t (imapping=? default-comp
-                           empty-imap
-                           (imapping-delete-max (imapping 0 'a))))
-  (test-eqv #f (imapping-contains? (imapping-delete-max letter-imap) 25))
-  (test-eqv #f (imapping-contains? (imapping-delete-max sparse-imap) 65536))
+  (test-eqv #t (fxmapping=? default-comp
+                           empty-fxmap
+                           (fxmapping-delete-max (fxmapping 0 'a))))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-max letter-fxmap) 25))
+  (test-eqv #f (fxmapping-contains? (fxmapping-delete-max sparse-fxmap) 65536))
 
   ;;; min updaters
 
-  (test-eqv -200 (imapping-ref/default
-                    (imapping-update-min mixed-imap
+  (test-eqv -200 (fxmapping-ref/default
+                    (fxmapping-update-min mixed-fxmap
                                          (lambda (k v) (just (+ k v))))
                     -100
                     #f))
   (test-equal '(0 a)
-              (imapping-ref/default
-               (imapping-update-min letter-imap
+              (fxmapping-ref/default
+               (fxmapping-update-min letter-fxmap
                                     (lambda (k v) (just (list k v))))
                0
                #f))
 
   ;;; max updaters
 
-  (test-eqv 200 (imapping-ref/default
-                 (imapping-update-max mixed-imap
+  (test-eqv 200 (fxmapping-ref/default
+                 (fxmapping-update-max mixed-fxmap
                                       (lambda (k v) (just (+ k v))))
                  100
                  #f))
   (test-equal '(25 z)
-              (imapping-ref/default
-               (imapping-update-max letter-imap
+              (fxmapping-ref/default
+               (fxmapping-update-max letter-fxmap
                                     (lambda (k v) (just (list k v))))
                25
                #f))
 
   ;;; pop-min
 
-  (test-eqv #t (nothing? (imapping-pop-min empty-imap)))
+  (test-eqv #t (nothing? (fxmapping-pop-min empty-fxmap)))
   (test-eqv #t
             (every
              (lambda (im)
                (let-values (((k v im*)
-                             (maybe-ref/default (imapping-pop-min im) #f))
+                             (maybe-ref/default (fxmapping-pop-min im) #f))
                             ((test-k test-v)
-                             (maybe-ref/default (imapping-lookup-min im) #f)))
+                             (maybe-ref/default (fxmapping-lookup-min im) #f)))
                  (and (= k test-k)
                       (eqv? v test-v)
-                      (imapping=? default-comp (imapping-delete-min im) im*))))
-             (list mixed-imap letter-imap sparse-imap)))  ; non-empty only
+                      (fxmapping=? default-comp (fxmapping-delete-min im) im*))))
+             (list mixed-fxmap letter-fxmap sparse-fxmap)))  ; non-empty only
 
   ;;; pop-max
 
-  (test-eqv #t (nothing? (imapping-pop-max empty-imap)))
+  (test-eqv #t (nothing? (fxmapping-pop-max empty-fxmap)))
   (test-eqv #t
             (every
              (lambda (im)
                (let-values (((k v im*)
-                             (maybe-ref/default (imapping-pop-max im) #f))
+                             (maybe-ref/default (fxmapping-pop-max im) #f))
                             ((test-k test-v)
-                             (maybe-ref/default (imapping-lookup-max im) #f)))
+                             (maybe-ref/default (fxmapping-lookup-max im) #f)))
                  (and (= k test-k)
                       (eqv? v test-v)
-                      (imapping=? default-comp (imapping-delete-max im) im*))))
-             (list mixed-imap letter-imap sparse-imap)))  ; non-empty only
+                      (fxmapping=? default-comp (fxmapping-delete-max im) im*))))
+             (list mixed-fxmap letter-fxmap sparse-fxmap)))  ; non-empty only
   )
 
-(test-group "Whole imappings"
-  (test-eqv 0 (imapping-size empty-imap))
-  (test-eqv 26 (imapping-size letter-imap))
+(test-group "Whole fxmappings"
+  (test-eqv 0 (fxmapping-size empty-fxmap))
+  (test-eqv 26 (fxmapping-size letter-fxmap))
 
   ;;; find
 
-  (test-eqv 'z (imapping-find even? empty-imap (constantly 'z)))
+  (test-eqv 'z (fxmapping-find even? empty-fxmap (constantly 'z)))
   (test-equal '(0 a)
-              (let-values ((p (imapping-find (lambda (_ v) (symbol? v))
-                                             letter-imap
+              (let-values ((p (fxmapping-find (lambda (_ v) (symbol? v))
+                                             letter-fxmap
                                              (lambda () (values #f #f)))))
                 p))
   (let ((ss '(f r o b)))
     (test-equal '(1 b)
-                (let-values ((p (imapping-find (lambda (_ s) (memv s ss))
-                                               letter-imap
+                (let-values ((p (fxmapping-find (lambda (_ s) (memv s ss))
+                                               letter-fxmap
                                                (lambda ()
                                                  (values #f #f)))))
                   p)))
   (test-equal '(4096 4096)
-              (let-values ((p (imapping-find (lambda (_ v) (positive? v))
-                                             sparse-imap
+              (let-values ((p (fxmapping-find (lambda (_ v) (positive? v))
+                                             sparse-fxmap
                                              (lambda () (values #f #f)))))
                 p))
   ;; Ensure negative-keyed associations are tested first.
   (test-equal '(-65536 -65536)
-              (let-values ((p (imapping-find (lambda (_ v) (integer? v))
-                                             sparse-imap
+              (let-values ((p (fxmapping-find (lambda (_ v) (integer? v))
+                                             sparse-fxmap
                                              (lambda () (values #f #f)))))
                 p))
   (test-equal '(z z)
               (let-values
-               ((p (imapping-find eqv?
-                                  letter-imap
+               ((p (fxmapping-find eqv?
+                                  letter-fxmap
                                   (lambda () (values 'z 'z)))))
                 p))
 
   ;;; query
 
   (test-eqv 'z (maybe-ref/default
-                (imapping-query (lambda (_ v) (even? v)) empty-imap) 'z))
+                (fxmapping-query (lambda (_ v) (even? v)) empty-fxmap) 'z))
   (test-equal '(0 a)
               (maybe->list
-               (imapping-query (lambda (_ v) (symbol? v)) letter-imap)))
+               (fxmapping-query (lambda (_ v) (symbol? v)) letter-fxmap)))
   (let ((ss '(f r o b)))
     (test-equal '(1 b)
                 (maybe->list
-                 (imapping-query (lambda (_ s) (memv s ss))
-                                 letter-imap))))
+                 (fxmapping-query (lambda (_ s) (memv s ss))
+                                 letter-fxmap))))
   (test-equal '(4096 4096)
               (maybe->list
-               (imapping-query (lambda (_ v) (positive? v)) sparse-imap)))
+               (fxmapping-query (lambda (_ v) (positive? v)) sparse-fxmap)))
   ;; Ensure negative-keyed associations are tested first.
   (test-equal '(-65536 -65536)
               (maybe->list
-               (imapping-query (lambda (_ v) (integer? v)) sparse-imap)))
-  (test-equal '() (maybe->list (imapping-query eqv? letter-imap)))
+               (fxmapping-query (lambda (_ v) (integer? v)) sparse-fxmap)))
+  (test-equal '() (maybe->list (fxmapping-query eqv? letter-fxmap)))
 
   ;;; count
 
-  (test-eqv 0 (imapping-count (lambda (_ v) (even? v)) empty-imap))
-  (test-eqv 26 (imapping-count (lambda (_ v) (symbol? v)) letter-imap))
+  (test-eqv 0 (fxmapping-count (lambda (_ v) (even? v)) empty-fxmap))
+  (test-eqv 26 (fxmapping-count (lambda (_ v) (symbol? v)) letter-fxmap))
   (let ((ss '(f r o b)))
     (test-eqv (length ss)
-              (imapping-count (lambda (_ s) (memv s ss)) letter-imap))
-    (test-eqv (- (imapping-size letter-imap) (length ss))
-              (imapping-count (lambda (_ s) (not (memv s ss))) letter-imap)))
-  (test-eqv 4 (imapping-count (lambda (_ v) (positive? v)) mixed-imap))
-  (test-eqv 2 (imapping-count (lambda (k v) (and (even? k) (positive? v)))
-                              mixed-imap))
+              (fxmapping-count (lambda (_ s) (memv s ss)) letter-fxmap))
+    (test-eqv (- (fxmapping-size letter-fxmap) (length ss))
+              (fxmapping-count (lambda (_ s) (not (memv s ss))) letter-fxmap)))
+  (test-eqv 4 (fxmapping-count (lambda (_ v) (positive? v)) mixed-fxmap))
+  (test-eqv 2 (fxmapping-count (lambda (k v) (and (even? k) (positive? v)))
+                              mixed-fxmap))
 
   ;;; any?/every?
 
-  (test-eqv #f (imapping-any? (lambda (_ v) (even? v)) empty-imap))
-  (test-eqv #t (imapping-any? (lambda (_ v) (positive? v)) mixed-imap))
-  (test-eqv #f (imapping-any? (lambda (_ v) (odd? v)) sparse-imap))
-  (test-eqv #t (imapping-any? (lambda (_ v) (negative? v)) sparse-imap))
+  (test-eqv #f (fxmapping-any? (lambda (_ v) (even? v)) empty-fxmap))
+  (test-eqv #t (fxmapping-any? (lambda (_ v) (positive? v)) mixed-fxmap))
+  (test-eqv #f (fxmapping-any? (lambda (_ v) (odd? v)) sparse-fxmap))
+  (test-eqv #t (fxmapping-any? (lambda (_ v) (negative? v)) sparse-fxmap))
 
-  (test-eqv #t (imapping-every? (lambda (_ v) (even? v)) empty-imap))
-  (test-eqv #f (imapping-every? (lambda (_ v) (positive? v)) mixed-imap))
-  (test-eqv #t (imapping-every? (lambda (_ v) (even? v)) sparse-imap))
-  (test-eqv #f (imapping-every? (lambda (_ v) (negative? v)) sparse-imap))
+  (test-eqv #t (fxmapping-every? (lambda (_ v) (even? v)) empty-fxmap))
+  (test-eqv #f (fxmapping-every? (lambda (_ v) (positive? v)) mixed-fxmap))
+  (test-eqv #t (fxmapping-every? (lambda (_ v) (even? v)) sparse-fxmap))
+  (test-eqv #f (fxmapping-every? (lambda (_ v) (negative? v)) sparse-fxmap))
   )
 
 (test-group "Iterators"
   ;;; map
 
-  (test-eqv #t (imapping=? default-comp
-                           empty-imap
-                           (imapping-map (constantly #t) empty-imap)))
-  (test-eqv #t (imapping=? default-comp
-                           mixed-imap
-                           (imapping-map (nth 1) mixed-imap)))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 "" 1 "b" 2 "cc")
-                           (imapping-map make-string
-                                         (imapping 0 #\a 1 #\b 2 #\c))))
+  (test-eqv #t (fxmapping=? default-comp
+                           empty-fxmap
+                           (fxmapping-map (constantly #t) empty-fxmap)))
+  (test-eqv #t (fxmapping=? default-comp
+                           mixed-fxmap
+                           (fxmapping-map (nth 1) mixed-fxmap)))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 "" 1 "b" 2 "cc")
+                           (fxmapping-map make-string
+                                         (fxmapping 0 #\a 1 #\b 2 #\c))))
 
   ;;; for-each
 
   (test-eqv 26
             (let ((size 0))
-              (imapping-for-each (lambda (_k _v) (set! size (+ size 1)))
-                                 letter-imap)
+              (fxmapping-for-each (lambda (_k _v) (set! size (+ size 1)))
+                                 letter-fxmap)
               size))
   (test-equal '(c b a)
               (let ((xs '()))
-                (imapping-for-each (lambda (_ x) (set! xs (cons x xs)))
-                                   (imapping 0 'a 1 'b 2 'c))
+                (fxmapping-for-each (lambda (_ x) (set! xs (cons x xs)))
+                                   (fxmapping 0 'a 1 'b 2 'c))
                 xs))
   (test-equal '((2 . c) (1 . b) (0 . a))
               (let ((xs '()))
-                (imapping-for-each
+                (fxmapping-for-each
                  (lambda (k x) (set! xs (cons (cons k x) xs)))
-                 (imapping 0 'a 1 'b 2 'c))
+                 (fxmapping 0 'a 1 'b 2 'c))
                 xs))
 
   ;;; fold
 
-  (test-eqv 'z (imapping-fold (nth 2) 'z empty-imap))
+  (test-eqv 'z (fxmapping-fold (nth 2) 'z empty-fxmap))
   (test-equal (reverse '(a b c d e f g h i j k l m n o p q r s t u v w x y z))
-              (imapping-fold (lambda (_ v vs) (cons v vs))
+              (fxmapping-fold (lambda (_ v vs) (cons v vs))
                              '()
-                             letter-imap))
+                             letter-fxmap))
   (test-equal (reverse (iota 9 -100 25))
-              (imapping-fold (lambda (_ v vs) (cons v vs))
+              (fxmapping-fold (lambda (_ v vs) (cons v vs))
                             '()
-                            mixed-imap))
+                            mixed-fxmap))
   (test-eqv (fold + 0 (iota 9 -100 25))
-            (imapping-fold (lambda (_ v sum) (+ v sum))
+            (fxmapping-fold (lambda (_ v sum) (+ v sum))
                            0
-                           mixed-imap))
+                           mixed-fxmap))
   (test-equal (reverse '((0 . "") (1 . "b") (2 . "cc")))
-              (imapping-fold (lambda (k c as)
+              (fxmapping-fold (lambda (k c as)
                                (cons (cons k (make-string k c)) as))
                              '()
-                             (imapping 0 #\a 1 #\b 2 #\c)))
+                             (fxmapping 0 #\a 1 #\b 2 #\c)))
 
   ;;; fold-right
 
-  (test-eqv 'z (imapping-fold-right (nth 2) 'z empty-imap))
+  (test-eqv 'z (fxmapping-fold-right (nth 2) 'z empty-fxmap))
   (test-equal '(a b c d e f g h i j k l m n o p q r s t u v w x y z)
-              (imapping-fold-right (lambda (_ v vs) (cons v vs))
+              (fxmapping-fold-right (lambda (_ v vs) (cons v vs))
                                    '()
-                                   letter-imap))
+                                   letter-fxmap))
   (test-equal (iota 9 -100 25)
-              (imapping-fold-right (lambda (_ v vs) (cons v vs))
+              (fxmapping-fold-right (lambda (_ v vs) (cons v vs))
                                    '()
-                                   mixed-imap))
+                                   mixed-fxmap))
   (test-eqv (fold + 0 (iota 9 -100 25))
-            (imapping-fold-right (lambda (_ v sum) (+ v sum))
+            (fxmapping-fold-right (lambda (_ v sum) (+ v sum))
                                  0
-                                 mixed-imap))
+                                 mixed-fxmap))
   (test-equal '((0 . "") (1 . "b") (2 . "cc"))
-              (imapping-fold-right (lambda (k c as)
+              (fxmapping-fold-right (lambda (k c as)
                                      (cons (cons k (make-string k c)) as))
                                    '()
-                                   (imapping 0 #\a 1 #\b 2 #\c)))
+                                   (fxmapping 0 #\a 1 #\b 2 #\c)))
 
   ;;; map->list
 
-  (test-eqv #t (null? (imapping-map->list (constantly #t) empty-imap)))
+  (test-eqv #t (null? (fxmapping-map->list (constantly #t) empty-fxmap)))
   (test-equal '(a b c d e f g h i j k l m n o p q r s t u v w x y z)
-              (imapping-map->list (nth 1) letter-imap))
+              (fxmapping-map->list (nth 1) letter-fxmap))
   (test-equal (map square (iota 9 -100 25))
-              (imapping-map->list (lambda (_ v) (square v)) mixed-imap))
+              (fxmapping-map->list (lambda (_ v) (square v)) mixed-fxmap))
   (test-equal '("" "a" "aa")
-              (imapping-map->list (lambda (_ n) (make-string n #\a))
-                                  (imapping 0 0 1 1 2 2)))
-  (test-equal (iota 26) (imapping-map->list (nth 0) letter-imap))
+              (fxmapping-map->list (lambda (_ n) (make-string n #\a))
+                                  (fxmapping 0 0 1 1 2 2)))
+  (test-equal (iota 26) (fxmapping-map->list (nth 0) letter-fxmap))
   (test-equal '((0 . "") (1 . "b") (2 . "cc"))
-              (imapping-map->list (lambda (k c) (cons k (make-string k c)))
-                                      (imapping 0 #\a 1 #\b 2 #\c)))
+              (fxmapping-map->list (lambda (k c) (cons k (make-string k c)))
+                                      (fxmapping 0 #\a 1 #\b 2 #\c)))
 
   ;;; filter-map
 
   ;; filter-map is equivalent to map if the mapped procedure
   ;; always returns a truthy value.  (Ignoring side-effects.)
-  (test-eqv #t (imapping=? default-comp
-                           empty-imap
-                           (imapping-filter-map (constantly #t)
-                                                    empty-imap)))
-  (test-eqv #t (imapping=? default-comp
-                           mixed-imap
-                           (imapping-filter-map (nth 1) mixed-imap)))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 0 "" 1 "b" 2 "cc")
-                           (imapping-filter-map
+  (test-eqv #t (fxmapping=? default-comp
+                           empty-fxmap
+                           (fxmapping-filter-map (constantly #t)
+                                                    empty-fxmap)))
+  (test-eqv #t (fxmapping=? default-comp
+                           mixed-fxmap
+                           (fxmapping-filter-map (nth 1) mixed-fxmap)))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 0 "" 1 "b" 2 "cc")
+                           (fxmapping-filter-map
                             make-string
-                            (imapping 0 #\a 1 #\b 2 #\c))))
+                            (fxmapping 0 #\a 1 #\b 2 #\c))))
   ;; filter-map empties a mapping if the mapped proc always returns #f.
   (test-eqv #t
-            (every imapping-empty?
-                   (map (lambda (m) (imapping-filter-map (constantly #f) m))
-                        (list empty-imap letter-imap mixed-imap sparse-imap))))
+            (every fxmapping-empty?
+                   (map (lambda (m) (fxmapping-filter-map (constantly #f) m))
+                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
   ;; Using filter-map as filter.
   (test-equal (filter (lambda (p) (even? (cdr p))) mixed-seq)
-              (imapping->alist
-               (imapping-filter-map (lambda (k v) (and (even? v) v))
-                                    mixed-imap)))
+              (fxmapping->alist
+               (fxmapping-filter-map (lambda (k v) (and (even? v) v))
+                                    mixed-fxmap)))
   ;; Filtering and transforming the values of a mapping.
   (test-equal (filter-map (lambda (p)
                             (let ((k (car p)) (v (cdr p)))
                               (and (even? k) (cons k (+ k v)))))
                           sparse-seq)
-              (imapping->alist
-               (imapping-filter-map (lambda (k v)
+              (fxmapping->alist
+               (fxmapping-filter-map (lambda (k v)
                                       (and (even? k) (+ k v)))
-                                    sparse-imap)))
+                                    sparse-fxmap)))
 
   ;;; map-either
 
-  ;; Mapping `left' with map-either copies the imapping argument as
+  ;; Mapping `left' with map-either copies the fxmapping argument as
   ;; the first returned value.
   (test-eqv #t
             (every
              (lambda (im)
-               (imapping=? default-comp
+               (fxmapping=? default-comp
                            im
                            (let-values (((lm rm)
-                                         (imapping-map-either
+                                         (fxmapping-map-either
                                           (lambda (_ v) (left v))
                                           im)))
                              lm)))
-             (list empty-imap letter-imap mixed-imap sparse-imap)))
-  ;; Mapping `right' with map-either copies the imapping argument as
+             (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap)))
+  ;; Mapping `right' with map-either copies the fxmapping argument as
   ;; the second returned value.
   (test-eqv #t
             (every
              (lambda (im)
-               (imapping=? default-comp
+               (fxmapping=? default-comp
                            im
                            (let-values (((lm rm)
-                                         (imapping-map-either
+                                         (fxmapping-map-either
                                           (lambda (_ v) (right v))
                                           im)))
                              rm)))
-             (list empty-imap letter-imap mixed-imap sparse-imap)))
-  ;; Using map-either to partition an imapping.
+             (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap)))
+  ;; Using map-either to partition an fxmapping.
   (test-eqv #t
             (let-values (((neg pos)
-                          (imapping-map-either
+                          (fxmapping-map-either
                            (lambda (_ n)
                              (if (negative? n) (left n) (right n)))
-                           sparse-imap)))
-              (and (imapping-every? (lambda (_ x) (negative? x)) neg)
-                   (imapping-every? (lambda (_ x) (not (negative? x))) pos))))
-  ;; Using map-either to split and transform an imapping.
+                           sparse-fxmap)))
+              (and (fxmapping-every? (lambda (_ x) (negative? x)) neg)
+                   (fxmapping-every? (lambda (_ x) (not (negative? x))) pos))))
+  ;; Using map-either to split and transform an fxmapping.
   (test-eqv #t
             (let-values (((lm rm)
-                          (imapping-map-either
+                          (fxmapping-map-either
                            (lambda (k n)
                              (if (negative? n)
                                  (left (+ k (abs n)))
                                  (right (+ k n))))
-                           (imapping -2 -2 -1 -1 3 3 5 5))))
-              (and (imapping=? default-comp lm (imapping -2 0 -1 0))
-                   (imapping=? default-comp rm (imapping 3 6 5 10)))))
+                           (fxmapping -2 -2 -1 -1 3 3 5 5))))
+              (and (fxmapping=? default-comp lm (fxmapping -2 0 -1 0))
+                   (fxmapping=? default-comp rm (fxmapping 3 6 5 10)))))
   )
 
 (test-group "Filters"
   (test-eqv #t
             (every values
                    (map (lambda (m)
-                          (imapping=? default-comp
+                          (fxmapping=? default-comp
                                       m
-                                      (imapping-filter (constantly #t) m)))
-                        (list empty-imap letter-imap mixed-imap sparse-imap))))
+                                      (fxmapping-filter (constantly #t) m)))
+                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
   (test-eqv #t
-            (every imapping-empty?
-                   (map (lambda (m) (imapping-filter (constantly #f) m))
-                        (list empty-imap letter-imap mixed-imap sparse-imap))))
-  (test-eqv #t (imapping=? default-comp
-                           (imapping 25 25 75 75)
-                           (imapping-filter (lambda (k v)
+            (every fxmapping-empty?
+                   (map (lambda (m) (fxmapping-filter (constantly #f) m))
+                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
+  (test-eqv #t (fxmapping=? default-comp
+                           (fxmapping 25 25 75 75)
+                           (fxmapping-filter (lambda (k v)
                                               (and (odd? k) (positive? v)))
-                                            mixed-imap)))
+                                            mixed-fxmap)))
 
   ;;; remove
 
   (test-eqv #t
             (every (lambda (m)
-                     (imapping=? default-comp
+                     (fxmapping=? default-comp
                                  m
-                                 (imapping-remove (constantly #f) m)))
-                   all-test-imaps))
+                                 (fxmapping-remove (constantly #f) m)))
+                   all-test-fxmaps))
   (test-eqv #t
-            (every imapping-empty?
-                   (map (lambda (m) (imapping-remove (constantly #t) m))
-                        (list empty-imap letter-imap mixed-imap sparse-imap))))
+            (every fxmapping-empty?
+                   (map (lambda (m) (fxmapping-remove (constantly #t) m))
+                        (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap))))
   (test-eqv #t
-            (imapping=? default-comp
-                        (imapping -100 -100 -50 -50 0 0)
-                        (imapping-remove (lambda (k v)
+            (fxmapping=? default-comp
+                        (fxmapping -100 -100 -50 -50 0 0)
+                        (fxmapping-remove (lambda (k v)
                                            (or (odd? k) (positive? v)))
-                                         mixed-imap)))
+                                         mixed-fxmap)))
 
   ;;; partition
 
   (test-eqv #t
             (every (lambda (m)
-                     (imapping=?
+                     (fxmapping=?
                       default-comp
                       m
-                      (value/mv 0 (imapping-partition (constantly #t) m))))
-                   all-test-imaps))
+                      (value/mv 0 (fxmapping-partition (constantly #t) m))))
+                   all-test-fxmaps))
   (test-equal (call-with-values
                (lambda () (partition even? (map car mixed-seq)))
                list)
               (let-values (((em om)
-                            (imapping-partition (lambda (_ v) (even? v))
-                                                mixed-imap)))
-                (list (imapping-values em) (imapping-values om))))
+                            (fxmapping-partition (lambda (_ v) (even? v))
+                                                mixed-fxmap)))
+                (list (fxmapping-values em) (fxmapping-values om))))
   (test-eqv #t
             (let-values (((zm not-zm)
-                          (imapping-partition (lambda (_ s) (eqv? s 'z))
-                                              letter-imap)))
-              (and (imapping=? default-comp zm (imapping 25 'z))
-                   (imapping=? default-comp
+                          (fxmapping-partition (lambda (_ s) (eqv? s 'z))
+                                              letter-fxmap)))
+              (and (fxmapping=? default-comp zm (fxmapping 25 'z))
+                   (fxmapping=? default-comp
                                not-zm
-                               (imapping-delete letter-imap 25)))))
+                               (fxmapping-delete letter-fxmap 25)))))
   (test-equal (unfold (lambda (i) (= i 26))
                       (lambda (i)
                         (string->symbol (string (integer->char (+ i #x61)))))
                       (lambda (i) (+ i 2))
                       0)
               (let-values (((em _)
-                            (imapping-partition (lambda (k _) (even? k))
-                                                letter-imap)))
-                (imapping-values em)))
+                            (fxmapping-partition (lambda (k _) (even? k))
+                                                letter-fxmap)))
+                (fxmapping-values em)))
   )
 
 (test-group "Comparison"
-  (let ((subimap (imapping-filter (lambda (_ v) (even? v)) mixed-imap)))
-    (test-eqv #t (imapping<? default-comp (imapping) mixed-imap))
-    (test-eqv #t (imapping<? default-comp subimap mixed-imap))
-    (test-eqv #f (imapping<? default-comp mixed-imap subimap))
-    (test-eqv #f (imapping<? default-comp mixed-imap mixed-imap))
-    (test-eqv #f (imapping<? default-comp
-                             (imapping 0 'z)
-                             (imapping 0 'a 1 'b)))
+  (let ((subfxmap (fxmapping-filter (lambda (_ v) (even? v)) mixed-fxmap)))
+    (test-eqv #t (fxmapping<? default-comp (fxmapping) mixed-fxmap))
+    (test-eqv #t (fxmapping<? default-comp subfxmap mixed-fxmap))
+    (test-eqv #f (fxmapping<? default-comp mixed-fxmap subfxmap))
+    (test-eqv #f (fxmapping<? default-comp mixed-fxmap mixed-fxmap))
+    (test-eqv #f (fxmapping<? default-comp
+                             (fxmapping 0 'z)
+                             (fxmapping 0 'a 1 'b)))
 
-    (test-eqv #t (imapping>? default-comp mixed-imap (imapping)))
-    (test-eqv #f (imapping>? default-comp subimap mixed-imap))
-    (test-eqv #t (imapping>? default-comp mixed-imap subimap))
-    (test-eqv #f (imapping>? default-comp mixed-imap mixed-imap))
-    (test-eqv #f (imapping>? default-comp
-                             (imapping 0 'z 1 'b)
-                             (imapping 0 'a)))
+    (test-eqv #t (fxmapping>? default-comp mixed-fxmap (fxmapping)))
+    (test-eqv #f (fxmapping>? default-comp subfxmap mixed-fxmap))
+    (test-eqv #t (fxmapping>? default-comp mixed-fxmap subfxmap))
+    (test-eqv #f (fxmapping>? default-comp mixed-fxmap mixed-fxmap))
+    (test-eqv #f (fxmapping>? default-comp
+                             (fxmapping 0 'z 1 'b)
+                             (fxmapping 0 'a)))
 
-    (test-eqv #t (imapping<=? default-comp (imapping) mixed-imap))
-    (test-eqv #t (imapping<=? default-comp subimap mixed-imap))
-    (test-eqv #f (imapping<=? default-comp mixed-imap subimap))
-    (test-eqv #t (imapping<=? default-comp mixed-imap mixed-imap))
-    (test-eqv #f (imapping<=? default-comp
-                              (imapping 0 'z 1 'b)
-                              (imapping 0 'a 1 'b)))
+    (test-eqv #t (fxmapping<=? default-comp (fxmapping) mixed-fxmap))
+    (test-eqv #t (fxmapping<=? default-comp subfxmap mixed-fxmap))
+    (test-eqv #f (fxmapping<=? default-comp mixed-fxmap subfxmap))
+    (test-eqv #t (fxmapping<=? default-comp mixed-fxmap mixed-fxmap))
+    (test-eqv #f (fxmapping<=? default-comp
+                              (fxmapping 0 'z 1 'b)
+                              (fxmapping 0 'a 1 'b)))
 
-    (test-eqv #t (imapping>=? default-comp mixed-imap (imapping)))
-    (test-eqv #f (imapping>=? default-comp subimap mixed-imap))
-    (test-eqv #t (imapping>=? default-comp mixed-imap subimap))
-    (test-eqv #t (imapping>=? default-comp mixed-imap mixed-imap))
-    (test-eqv #f (imapping<=? default-comp
-                              (imapping 0 'z 1 'b)
-                              (imapping 0 'a 1 'b)))
+    (test-eqv #t (fxmapping>=? default-comp mixed-fxmap (fxmapping)))
+    (test-eqv #f (fxmapping>=? default-comp subfxmap mixed-fxmap))
+    (test-eqv #t (fxmapping>=? default-comp mixed-fxmap subfxmap))
+    (test-eqv #t (fxmapping>=? default-comp mixed-fxmap mixed-fxmap))
+    (test-eqv #f (fxmapping<=? default-comp
+                              (fxmapping 0 'z 1 'b)
+                              (fxmapping 0 'a 1 'b)))
 
     ;; Variadic comparisons.
-    (let ((subimap1 (imapping-filter (lambda (_ v) (positive? v)) subimap)))
-      (test-eqv #t (imapping<? default-comp subimap1 subimap mixed-imap))
-      (test-eqv #f (imapping<? default-comp subimap1 empty-imap mixed-imap))
+    (let ((subfxmap1 (fxmapping-filter (lambda (_ v) (positive? v)) subfxmap)))
+      (test-eqv #t (fxmapping<? default-comp subfxmap1 subfxmap mixed-fxmap))
+      (test-eqv #f (fxmapping<? default-comp subfxmap1 empty-fxmap mixed-fxmap))
 
-      (test-eqv #t (imapping>? default-comp mixed-imap subimap subimap1))
-      (test-eqv #f (imapping>? default-comp mixed-imap empty-imap subimap1))
+      (test-eqv #t (fxmapping>? default-comp mixed-fxmap subfxmap subfxmap1))
+      (test-eqv #f (fxmapping>? default-comp mixed-fxmap empty-fxmap subfxmap1))
 
-      (test-eqv #t (imapping<=? default-comp
-                                subimap1
-                                subimap
-                                subimap
-                                mixed-imap))
-      (test-eqv #f (imapping<=? default-comp subimap1 empty-imap mixed-imap))
+      (test-eqv #t (fxmapping<=? default-comp
+                                subfxmap1
+                                subfxmap
+                                subfxmap
+                                mixed-fxmap))
+      (test-eqv #f (fxmapping<=? default-comp subfxmap1 empty-fxmap mixed-fxmap))
 
-      (test-eqv #t (imapping>=? default-comp
-                                mixed-imap
-                                subimap
-                                subimap
-                                subimap1))
-      (test-eqv #f (imapping>=? default-comp mixed-imap empty-imap subimap1))
+      (test-eqv #t (fxmapping>=? default-comp
+                                mixed-fxmap
+                                subfxmap
+                                subfxmap
+                                subfxmap1))
+      (test-eqv #f (fxmapping>=? default-comp mixed-fxmap empty-fxmap subfxmap1))
       ))
   )
 
 (test-group "Set theory"
-  (let ((imap1 (imapping -5 'a -2 'b 1 'c))
-        (imap2 (imapping -2 'b 3 'd 5 'e))
-        (imap3 (imapping 3 'd 5 'g 7 'f)))  ; assoc for 5 differs from imap2
-    (test-eqv #t (imapping=? default-comp
-                             sparse-imap
-                             (imapping-union sparse-imap empty-imap)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -5 'a -2 'b 1 'c 3 'd 5 'e)
-                             (imapping-union imap1 imap2)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -2 'b 3 'd 5 'e 7 'f)
-                             (imapping-union imap2 imap3)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -5 'a -2 'b 1 'c 3 'd 5 'e 7 'f)
-                             (imapping-union imap1 imap2 imap3)))
+  (let ((fxmap1 (fxmapping -5 'a -2 'b 1 'c))
+        (fxmap2 (fxmapping -2 'b 3 'd 5 'e))
+        (fxmap3 (fxmapping 3 'd 5 'g 7 'f)))  ; assoc for 5 differs from fxmap2
+    (test-eqv #t (fxmapping=? default-comp
+                             sparse-fxmap
+                             (fxmapping-union sparse-fxmap empty-fxmap)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -5 'a -2 'b 1 'c 3 'd 5 'e)
+                             (fxmapping-union fxmap1 fxmap2)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -2 'b 3 'd 5 'e 7 'f)
+                             (fxmapping-union fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -5 'a -2 'b 1 'c 3 'd 5 'e 7 'f)
+                             (fxmapping-union fxmap1 fxmap2 fxmap3)))
 
-    (test-eqv #t (imapping-empty?
-                  (imapping-intersection sparse-imap empty-imap)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -2 'b)
-                             (imapping-intersection imap1 imap2)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping 3 'd 5 'e)
-                             (imapping-intersection imap2 imap3)))
-    (test-eqv #t (imapping=?
+    (test-eqv #t (fxmapping-empty?
+                  (fxmapping-intersection sparse-fxmap empty-fxmap)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -2 'b)
+                             (fxmapping-intersection fxmap1 fxmap2)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping 3 'd 5 'e)
+                             (fxmapping-intersection fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping -2 'b)
-                  (imapping-intersection imap1 imap2 (imapping -2 'b))))
+                  (fxmapping -2 'b)
+                  (fxmapping-intersection fxmap1 fxmap2 (fxmapping -2 'b))))
 
-    (test-eqv #t (imapping=? default-comp
-                             sparse-imap
-                             (imapping-difference sparse-imap empty-imap)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -5 'a 1 'c)
-                             (imapping-difference imap1 imap2)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -2 'b)
-                             (imapping-difference imap2 imap3)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -5 'a 1 'c)
-                             (imapping-difference imap1 imap2 imap3)))
+    (test-eqv #t (fxmapping=? default-comp
+                             sparse-fxmap
+                             (fxmapping-difference sparse-fxmap empty-fxmap)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -5 'a 1 'c)
+                             (fxmapping-difference fxmap1 fxmap2)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -2 'b)
+                             (fxmapping-difference fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -5 'a 1 'c)
+                             (fxmapping-difference fxmap1 fxmap2 fxmap3)))
 
-    (test-eqv #t (imapping=? default-comp
-                             sparse-imap
-                             (imapping-xor sparse-imap empty-imap)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -5 'a 1 'c 3 'd 5 'e)
-                             (imapping-xor imap1 imap2)))
-    (test-eqv #t (imapping=? default-comp
-                             (imapping -2 'b 7 'f)
-                             (imapping-xor imap2 imap3)))
+    (test-eqv #t (fxmapping=? default-comp
+                             sparse-fxmap
+                             (fxmapping-xor sparse-fxmap empty-fxmap)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -5 'a 1 'c 3 'd 5 'e)
+                             (fxmapping-xor fxmap1 fxmap2)))
+    (test-eqv #t (fxmapping=? default-comp
+                             (fxmapping -2 'b 7 'f)
+                             (fxmapping-xor fxmap2 fxmap3)))
 
     ;;; /combinator variants
 
-    (test-eqv #t (imapping=? default-comp
-                             sparse-imap
-                             (imapping-union/combinator second-arg
-                                                        sparse-imap
-                                                        empty-imap)))
-    (test-eqv #t (imapping=?
+    (test-eqv #t (fxmapping=? default-comp
+                             sparse-fxmap
+                             (fxmapping-union/combinator second-arg
+                                                        sparse-fxmap
+                                                        empty-fxmap)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping -2 'b 3 'd 5 'g 7 'f)
-                  (imapping-union/combinator second-arg imap2 imap3)))
-    (test-eqv #t (imapping=?
+                  (fxmapping -2 'b 3 'd 5 'g 7 'f)
+                  (fxmapping-union/combinator second-arg fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping -5 'a -2 'b 1 'c 3 'd 5 'g 7 'f)
-                  (imapping-union/combinator second-arg imap1 imap2 imap3)))
-    (test-eqv #t (imapping=?
+                  (fxmapping -5 'a -2 'b 1 'c 3 'd 5 'g 7 'f)
+                  (fxmapping-union/combinator second-arg fxmap1 fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping 0 "abc")
-                  (imapping-union/combinator (lambda (_ s t)
+                  (fxmapping 0 "abc")
+                  (fxmapping-union/combinator (lambda (_ s t)
                                                (string-append s t))
-                                             (imapping 0 "a")
-                                             (imapping 0 "b")
-                                             (imapping 0 "c"))))
+                                             (fxmapping 0 "a")
+                                             (fxmapping 0 "b")
+                                             (fxmapping 0 "c"))))
 
-    (test-eqv #t (imapping=? default-comp
-                             empty-imap
-                             (imapping-intersection/combinator second-arg
-                                                               sparse-imap
-                                                               empty-imap)))
-    (test-eqv #t (imapping=?
+    (test-eqv #t (fxmapping=? default-comp
+                             empty-fxmap
+                             (fxmapping-intersection/combinator second-arg
+                                                               sparse-fxmap
+                                                               empty-fxmap)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping 3 'd 5 'g)
-                  (imapping-intersection/combinator second-arg imap2 imap3)))
-    (test-eqv #t (imapping=?
+                  (fxmapping 3 'd 5 'g)
+                  (fxmapping-intersection/combinator second-arg fxmap2 fxmap3)))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping -2 'z)
-                  (imapping-intersection/combinator second-arg
-                                                    imap1
-                                                    imap2
-                                                    (imapping -2 'z))))
-    (test-eqv #t (imapping=?
+                  (fxmapping -2 'z)
+                  (fxmapping-intersection/combinator second-arg
+                                                    fxmap1
+                                                    fxmap2
+                                                    (fxmapping -2 'z))))
+    (test-eqv #t (fxmapping=?
                   default-comp
-                  (imapping 0 "abc")
-                  (imapping-intersection/combinator (lambda (_ s t)
+                  (fxmapping 0 "abc")
+                  (fxmapping-intersection/combinator (lambda (_ s t)
                                                       (string-append s t))
-                                                    (imapping 0 "a")
-                                                    (imapping 0 "b")
-                                                    (imapping 0 "c"))))
+                                                    (fxmapping 0 "a")
+                                                    (fxmapping 0 "b")
+                                                    (fxmapping 0 "c"))))
     ))
 
 (test-group "Intervals"
   (test-equal (list->dup-alist '(-25 0 25))
-              (imapping->alist
-               (imapping-open-interval mixed-imap -50 50)))
+              (fxmapping->alist
+               (fxmapping-open-interval mixed-fxmap -50 50)))
   (test-equal '((6 . g) (7 . h) (8 . i) (9 . j))
-              (imapping->alist
-               (imapping-open-interval letter-imap 5 10)))
+              (fxmapping->alist
+               (fxmapping-open-interval letter-fxmap 5 10)))
   (test-equal (list->dup-alist '(-8192 -4096 0 4096 8192))
-              (imapping->alist
-               (imapping-open-interval sparse-imap -12288 12288)))
+              (fxmapping->alist
+               (fxmapping-open-interval sparse-fxmap -12288 12288)))
 
   (test-equal (list->dup-alist '(-50 -25 0 25 50))
-              (imapping->alist
-               (imapping-closed-interval mixed-imap -50 50)))
+              (fxmapping->alist
+               (fxmapping-closed-interval mixed-fxmap -50 50)))
   (test-equal '((5 . f) (6 . g) (7 . h) (8 . i) (9 . j) (10 . k))
-              (imapping->alist
-               (imapping-closed-interval letter-imap 5 10)))
+              (fxmapping->alist
+               (fxmapping-closed-interval letter-fxmap 5 10)))
   (test-equal (list->dup-alist '(-12288 -8192 -4096 0 4096 8192 12288))
-              (imapping->alist
-               (imapping-closed-interval sparse-imap -12288 12288)))
+              (fxmapping->alist
+               (fxmapping-closed-interval sparse-fxmap -12288 12288)))
 
   (test-equal (list->dup-alist '(-25 0 25 50))
-              (imapping->alist
-               (imapping-open-closed-interval mixed-imap -50 50)))
+              (fxmapping->alist
+               (fxmapping-open-closed-interval mixed-fxmap -50 50)))
   (test-equal '((6 . g) (7 . h) (8 . i) (9 . j) (10 . k))
-              (imapping->alist
-               (imapping-open-closed-interval letter-imap 5 10)))
+              (fxmapping->alist
+               (fxmapping-open-closed-interval letter-fxmap 5 10)))
   (test-equal (list->dup-alist '(-8192 -4096 0 4096 8192 12288))
-              (imapping->alist
-               (imapping-open-closed-interval sparse-imap -12288 12288)))
+              (fxmapping->alist
+               (fxmapping-open-closed-interval sparse-fxmap -12288 12288)))
 
   (test-equal (list->dup-alist '(-50 -25 0 25))
-              (imapping->alist
-               (imapping-closed-open-interval mixed-imap -50 50)))
+              (fxmapping->alist
+               (fxmapping-closed-open-interval mixed-fxmap -50 50)))
   (test-equal '((5 . f) (6 . g) (7 . h) (8 . i) (9 . j))
-              (imapping->alist
-               (imapping-closed-open-interval letter-imap 5 10)))
+              (fxmapping->alist
+               (fxmapping-closed-open-interval letter-fxmap 5 10)))
   (test-equal (list->dup-alist '(-12288 -8192 -4096 0 4096 8192))
-              (imapping->alist
-               (imapping-closed-open-interval sparse-imap -12288 12288)))
+              (fxmapping->alist
+               (fxmapping-closed-open-interval sparse-fxmap -12288 12288)))
   )
 
 (test-group "Submappings"
-  (test-equal '((100 . 100)) (imapping->alist (isubmapping= mixed-imap 100)))
-  (test-equal '((7 . h)) (imapping->alist (isubmapping= letter-imap 7)))
+  (test-equal '((100 . 100)) (fxmapping->alist (fxsubmapping= mixed-fxmap 100)))
+  (test-equal '((7 . h)) (fxmapping->alist (fxsubmapping= letter-fxmap 7)))
   (test-equal '((16384 . 16384))
-              (imapping->alist (isubmapping= sparse-imap 16384)))
-  (test-eqv #t (imapping-empty? (isubmapping= sparse-imap 1)))
+              (fxmapping->alist (fxsubmapping= sparse-fxmap 16384)))
+  (test-eqv #t (fxmapping-empty? (fxsubmapping= sparse-fxmap 1)))
 
   (test-equal (list->dup-alist '(-100 -75 -50 -25))
-              (imapping->alist (isubmapping< mixed-imap 0)))
+              (fxmapping->alist (fxsubmapping< mixed-fxmap 0)))
   (test-equal '((0 . a) (1 . b) (2 . c))
-              (imapping->alist (isubmapping< letter-imap 3)))
+              (fxmapping->alist (fxsubmapping< letter-fxmap 3)))
   (test-equal (list->dup-alist '(-65536 -61440 -57344))
-              (imapping->alist (isubmapping< sparse-imap -53248)))
+              (fxmapping->alist (fxsubmapping< sparse-fxmap -53248)))
 
   (test-equal (list->dup-alist '(25 50 75 100))
-              (imapping->alist (isubmapping> mixed-imap 0)))
+              (fxmapping->alist (fxsubmapping> mixed-fxmap 0)))
   (test-equal '((23 . x) (24 . y) (25 . z))
-              (imapping->alist (isubmapping> letter-imap 22)))
+              (fxmapping->alist (fxsubmapping> letter-fxmap 22)))
   (test-equal (list->dup-alist '(57344 61440 65536))
-              (imapping->alist (isubmapping> sparse-imap 53248)))
+              (fxmapping->alist (fxsubmapping> sparse-fxmap 53248)))
 
   (test-equal (list->dup-alist '(-100 -75 -50 -25 0))
-              (imapping->alist (isubmapping<= mixed-imap 0)))
+              (fxmapping->alist (fxsubmapping<= mixed-fxmap 0)))
   (test-equal '((0 . a) (1 . b) (2 . c) (3 . d))
-              (imapping->alist (isubmapping<= letter-imap 3)))
+              (fxmapping->alist (fxsubmapping<= letter-fxmap 3)))
   (test-equal (list->dup-alist '(-65536 -61440 -57344 -53248))
-              (imapping->alist (isubmapping<= sparse-imap -53248)))
+              (fxmapping->alist (fxsubmapping<= sparse-fxmap -53248)))
 
   (test-equal (list->dup-alist '(0 25 50 75 100))
-              (imapping->alist (isubmapping>= mixed-imap 0)))
+              (fxmapping->alist (fxsubmapping>= mixed-fxmap 0)))
   (test-equal '((22 . w) (23 . x) (24 . y) (25 . z))
-              (imapping->alist (isubmapping>= letter-imap 22)))
+              (fxmapping->alist (fxsubmapping>= letter-fxmap 22)))
   (test-equal (list->dup-alist '(53248 57344 61440 65536))
-              (imapping->alist (isubmapping>= sparse-imap 53248)))
+              (fxmapping->alist (fxsubmapping>= sparse-fxmap 53248)))
 
   (test-equal (list (list->dup-alist (iota 5 -100 25))
                     (list->dup-alist (iota 4 25 25)))
-              (let-values ((imaps (imapping-split mixed-imap 0)))
-                (map imapping->alist imaps)))
+              (let-values ((fxmaps (fxmapping-split mixed-fxmap 0)))
+                (map fxmapping->alist fxmaps)))
   (test-equal (list '() sparse-seq)
               (maybe-ref
-               (imapping-lookup-min sparse-imap)
+               (fxmapping-lookup-min sparse-fxmap)
                (constantly #f)
                (lambda (min-key _)
-                 (let-values ((imaps (imapping-split sparse-imap
+                 (let-values ((fxmaps (fxmapping-split sparse-fxmap
                                                      (- min-key 1))))
-                   (map imapping->alist imaps)))))
+                   (map fxmapping->alist fxmaps)))))
   (test-equal (list sparse-seq '())
               (maybe-ref
-               (imapping-lookup-max sparse-imap)
+               (fxmapping-lookup-max sparse-fxmap)
                (constantly #f)
                (lambda (max-key _)
-                 (let-values ((imaps (imapping-split sparse-imap
+                 (let-values ((fxmaps (fxmapping-split sparse-fxmap
                                                      (+ max-key 1))))
-                   (map imapping->alist imaps)))))
+                   (map fxmapping->alist fxmaps)))))
   )
 
 (test-group "Relation map"
   (test-eqv #t
-            (imapping=? default-comp
-                        (imapping 0 #t)
-                        (imapping-relation-map (lambda (_k _v) (values 0 #t))
-                                               letter-imap)))
+            (fxmapping=? default-comp
+                        (fxmapping 0 #t)
+                        (fxmapping-relation-map (lambda (_k _v) (values 0 #t))
+                                               letter-fxmap)))
   (test-eqv #t
-            (imapping=? default-comp
-                        letter-imap
-                        (imapping-relation-map values letter-imap)))
+            (fxmapping=? default-comp
+                        letter-fxmap
+                        (fxmapping-relation-map values letter-fxmap)))
   (test-equal '((0 . a) (1 . b) (2 . c))
-              (imapping->alist
-               (imapping-relation-map (lambda (k v) (values (- k) v))
-                                      (imapping 0 'a -1 'b -2 'c))))
+              (fxmapping->alist
+               (fxmapping-relation-map (lambda (k v) (values (- k) v))
+                                      (fxmapping 0 'a -1 'b -2 'c))))
   )
 
 (test-group "Copying"
   (test-eqv #t
             (every
-             (lambda (im) (imapping=? default-comp im (imapping-copy im)))
-             all-test-imaps))
+             (lambda (im) (fxmapping=? default-comp im (fxmapping-copy im)))
+             all-test-fxmaps))
   )
