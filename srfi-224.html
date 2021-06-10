@@ -558,7 +558,7 @@ procedure of type <code>exact-integer * → *</code>.</p>
 <p>Returns an fxmapping in which the association (<em>k</em>, <em>v</em>) in <em>fxmap</em>
 is replaced by (<em>k</em>, (<em>proc k v</em>)).  If <em>k</em> has
 no association in <em>fxmap</em>,
-then a copy of <em>fxmap</em> is returned.</p>
+then an fxmapping with the same associations as <em>fxmap</em> is returned.</p>
 
 <p>Examples:</p>
 
@@ -601,7 +601,8 @@ that the association for <em>k</em> is updated as follows.  <em>mproc</em> is
 applied to <em>k</em> and its associated value.
 If it returns Nothing, the association is deleted;
 if it returns Just <em>v</em>, then <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the new fxmapping.
-If <em>k</em> has no association in <em>fxmap</em>, then a copy of <em>fxmap</em>
+If <em>k</em> has no association in <em>fxmap</em>, then an fxmapping
+with the same associations as <em>fxmap</em>
 is returned.</p>
 
 <p>Simple versions of several other update operations may be defined
