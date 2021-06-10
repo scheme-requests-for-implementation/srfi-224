@@ -90,6 +90,7 @@
                   (branch p m (insert l) r)
                   (branch p m l (insert r)))
               (trie-join key 0 new-leaf p m t)))))))
+    (assume (valid-integer? key) "invalid key")
     (insert trie)))
 
 (define (trie-join prefix1 mask1 trie1 prefix2 mask2 trie2)
