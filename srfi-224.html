@@ -456,7 +456,7 @@ Otherwise, returns Nothing.</p>
 (fxmapping-lookup (fxmapping 0 'a) 36864) ⇒ nothing
 </code></pre>
 
-<p><code>(fxmapping-lookup-min</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-lookup-min</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>fxmap</em>.
 If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
@@ -469,7 +469,7 @@ Nothing.</p>
 (fxmapping-lookup-min (fxmapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(fxmapping-min</code>&nbsp;<em>fxmap</em><code>) → [exact-integer, *]</code></p>
+<p><code>(fxmapping-min</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *]</code></p>
 
 <p>Returns two values: the least key of <em>fxmap</em> and its
 associated value. It is an error if <em>fxmap</em> is empty.</p>
@@ -479,7 +479,7 @@ associated value. It is an error if <em>fxmap</em> is empty.</p>
 <pre class="example"><code>(fxmapping-min (fxmapping 0 'a 1 'b 2 'c)) ⇒ 0 a
 </code></pre>
 
-<p><code>(fxmapping-lookup-max</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-lookup-max</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *]</code></p>
 
 <p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>fxmap</em>.
 If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
@@ -492,7 +492,7 @@ Nothing.</p>
 (fxmapping-lookup-max (fxmapping)) ⇒ nothing
 </code></pre>
 
-<p><code>(fxmapping-max</code>&nbsp;<em>fxmap</em><code>) → [exact-integer, *]</code></p>
+<p><code>(fxmapping-max</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *]</code></p>
 
 <p>Returns two values: the greatest key of <em>fxmap</em> and its
 associated value. It is an error if <em>fxmap</em> is empty.</p>
@@ -725,8 +725,8 @@ to the new fxmapping.  If <em>fxmap</em> is empty, an error is signaled.</p>
  ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
-<p><code>(fxmapping-pop-min</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *, fxmapping]</code><br>
-<code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code>) → maybe[exact-integer, *, fxmapping]</code></p>
+<p><code>(fxmapping-pop-min</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *, fxmapping]</code><br>
+<code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *, fxmapping]</code></p>
 
 <p>Returns Just <em>k v fxmap′</em>, where (<em>k</em>, <em>v</em>) is the association of
 <em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is an
@@ -748,7 +748,7 @@ fxmapping containing all of the associations of <em>fxmap</em> except for
 
 <p>Returns the number of associations in <em>fxmap</em>.</p>
 
-<p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code>)</code> → <code>[exact-integer, *] or [*, …]</code></p>
+<p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code>)</code> → <code>[fixnum, *] or [*, …]</code></p>
 
 <p><em>pred</em> is a predicate of type <code>exact-integer * → boolean</code>.
 <code>failure</code> is a procedure of no arguments returning zero
@@ -779,7 +779,7 @@ arguments and its results are returned.</p>
  ⇒ 4 "troi"
 </code></pre>
 
-<p><code>(fxmapping-query</code>&nbsp;<em>pred fxmap</em><code>) → maybe[exact-integer, *]</code></p>
+<p><code>(fxmapping-query</code>&nbsp;<em>pred fxmap</em><code>) → maybe[fixnum, *]</code></p>
 
 <p><em>pred</em> is a predicate of type
 <code>exact-integer * → boolean</code>.</p>
@@ -1084,7 +1084,7 @@ that do not.</p>
 
 <h3 id="conversion">Conversion</h3>
 
-<p><code>(fxmapping-&gt;alist</code>&nbsp;<em>fxmap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(fxmapping-&gt;alist</code>&nbsp;<em>fxmap</em><code>) → alist[fixnum, *]</code></p>
 
 <p>Returns an alist containing the associations of
 <em>fxmap</em> in increasing numerical order of key.
@@ -1101,7 +1101,7 @@ produces the list <code>((</code><em>k</em>₁ <code>.</code>
 <pre class="example"><code>(fxmapping-&gt;alist (fxmapping 1 'a 2 'b)) ⇒ ((1 . a) (2 . b))
 </code></pre>
 
-<p><code>(fxmapping-&gt;decreasing-alist</code>&nbsp;<em>fxmap</em><code>) → alist[exact-integer, *]</code></p>
+<p><code>(fxmapping-&gt;decreasing-alist</code>&nbsp;<em>fxmap</em><code>) → alist[fixnum, *]</code></p>
 
 <p>Identical to <code>fxmapping-&gt;alist</code>, except that the
 resulting alist contains the associations of <em>fxmap</em> in
@@ -1112,7 +1112,7 @@ decreasing numerical order of key.</p>
 <pre class="example"><code>(fxmapping-&gt;alist (fxmapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
 </code></pre>
 
-<p><code>(fxmapping-keys</code>&nbsp;<em>fxmap</em><code>) → list[exact-integer]</code></p>
+<p><code>(fxmapping-keys</code>&nbsp;<em>fxmap</em><code>) → list[fixnum]</code></p>
 
 <p>Returns the keys of <em>fxmap</em> as a list in ascending numerical order.</p>
 
@@ -1138,7 +1138,7 @@ produces the list
  ⇒ ("picard" "riker" "troi")
 </code></pre>
 
-<p><code>(fxmapping-&gt;generator</code> <em>fxmapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+<p><code>(fxmapping-&gt;generator</code> <em>fxmapping</em><code>) → generator[pair(fixnum, *)]</code></p>
 
 <p>Returns a <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generator which
 produces the associations of <em>fxmapping</em> as key/value pairs in increasing
@@ -1156,7 +1156,7 @@ produces the pairs <code>(</code><em>k</em>₁ <code>.</code>
  ⇒ ((2 . "troi") (3 . "yar"))
 </code></pre>
 
-<p><code>(fxmapping-&gt;decreasing-generator</code> <em>fxmapping</em><code>) → generator[pair(exact-integer, *)]</code></p>
+<p><code>(fxmapping-&gt;decreasing-generator</code> <em>fxmapping</em><code>) → generator[pair(fixnum, *)]</code></p>
 
 <p>This is the same as <code>fxmapping-&gt;generator</code>, except that the associations
 of <em>fxmapping</em> are produced in decreasing order of key.</p>
