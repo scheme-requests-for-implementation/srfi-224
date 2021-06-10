@@ -338,9 +338,7 @@ side-effects.</p>
 
 <p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not a
-fixnum (in the sense of
-<a href="https://srfi.schemers.org/srfi-143/">SRFI 143</a>'s <code>fixnum?</code>).
-If an integer <em>k</em> appears as the key of multiple
+fixnum.  If an integer <em>k</em> appears as the key of multiple
 associations in <em>alist</em> (i.e. as the car of multiple pairs),
 then the first association for <em>k</em> is preferred.</p>
 
@@ -358,9 +356,7 @@ then the first association for <em>k</em> is preferred.</p>
 
 <p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
 It is an error if the car of any pair in <em>alist</em> is not a
-fixnum (in the sense of
-<a href="https://srfi.schemers.org/srfi-143/">SRFI 143</a>'s <code>fixnum?</code>).
-If pairs (<em>k</em> . <em>v</em>₁) and
+fixnum.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
 the association
 (<em>k</em>, (<em>proc k v</em>₂ <em>v</em>₁)) is
