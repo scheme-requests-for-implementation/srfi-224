@@ -255,7 +255,7 @@ the arguments, earlier associations take priority.</p>
 The arguments have the following types:
 <ul>
 <li><em>stop?</em> : <code>* → *-or-#f</code></li>
-<li><em>mapper</em> : <code>* → [exact-integer, *]</code></li>
+<li><em>mapper</em> : <code>* → [fixnum, *]</code></li>
 <li><em>successor</em> : <code>* → *</code></li>
 <li><em>seed</em> : <code>*</code></li>
 </ul>
@@ -281,7 +281,7 @@ newly allocated.</p>
 
 The arguments have the following types:
 <ul>
-<li><em>mproc</em> : <code>* → maybe[exact-integer, *, *]</code></li>
+<li><em>mproc</em> : <code>* → maybe[fixnum, *, *]</code></li>
 <li><em>seed</em> : <code>*</code></li>
 </ul>
 
@@ -337,8 +337,8 @@ side-effects.</p>
 <p><code>(alist-&gt;fxmapping</code>&nbsp;<em>alist</em><code>) → fxmapping</code></p>
 
 <p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
-It is an error if the car of any pair in <em>alist</em> is not an
-exact integer.  If an integer <em>k</em> appears as the key of multiple
+It is an error if the car of any pair in <em>alist</em> is not a
+fixnum.  If an integer <em>k</em> appears as the key of multiple
 associations in <em>alist</em> (i.e. as the car of multiple pairs),
 then the first association for <em>k</em> is preferred.</p>
 
@@ -355,8 +355,8 @@ then the first association for <em>k</em> is preferred.</p>
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
 <p>Returns a newly allocated fxmapping containing the associations of <em>alist</em>.
-It is an error if the car of any pair in <em>alist</em> is not an
-exact integer.  If pairs (<em>k</em> . <em>v</em>₁) and
+It is an error if the car of any pair in <em>alist</em> is not a
+fixnum.  If pairs (<em>k</em> . <em>v</em>₁) and
 (<em>k</em> . <em>v</em>₂) appear (in that order) in <em>alist</em>, then
 the association
 (<em>k</em>, (<em>proc k v</em>₂ <em>v</em>₁)) is
@@ -1005,7 +1005,7 @@ is added to the second resulting fxmapping.</p>
 <p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> must be a procedure of type
-<code>exact-integer * → [exact-integer, *]</code>.</p>
+<code>exact-integer * → [fixnum, *]</code>.</p>
 
 <p>Returns an fxmapping whose associations are the results of
 transforming both the keys and the values of <em>fxmap</em> with
