@@ -1070,10 +1070,3 @@
                (fxmapping-relation-map (lambda (k v) (values (- k) v))
                                        (fxmapping 0 'a -1 'b -2 'c))))
   )
-
-(test-group "Copying"
-  (test-eqv #t
-            (every
-             (lambda (im) (fxmapping=? default-comp im (fxmapping-copy im)))
-             all-test-fxmaps))
-  )

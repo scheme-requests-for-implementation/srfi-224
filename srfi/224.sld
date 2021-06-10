@@ -50,7 +50,7 @@
    fxmapping-filter fxmapping-remove fxmapping-partition
 
    ;; Copying and conversion
-   fxmapping-keys fxmapping-values fxmapping-copy fxmapping->alist
+   fxmapping-keys fxmapping-values fxmapping->alist
    fxmapping->decreasing-alist fxmapping->generator
    fxmapping->decreasing-generator
 

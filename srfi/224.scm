@@ -399,11 +399,7 @@
                 (trie-partition pred (fxmapping-trie fxmap))))
     (values (raw-fxmapping tin) (raw-fxmapping tout))))
 
-;;;; Copying & Conversion
-
-(define (fxmapping-copy fxmap)
-  (assume (fxmapping? fxmap))
-  fxmap)
+;;;; Conversion
 
 (define (fxmapping->alist fxmap)
   (fxmapping-fold-right (lambda (k v as) (cons (cons k v) as))

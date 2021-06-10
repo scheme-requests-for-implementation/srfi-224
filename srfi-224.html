@@ -217,7 +217,7 @@ fxmapping-map-either,
 fxmapping-relation-map</code></p></li>
 <li><p><a href="#filter">Filter</a>: <code>fxmapping-filter,
 fxmapping-remove, fxmapping-partition</code></p></li>
-<li><p><a href="#conversion">Copying and conversion</a>: <code>fxmapping-copy, fxmapping-&gt;alist,
+<li><p><a href="#conversion">Conversion</a>: <code>fxmapping-&gt;alist,
 fxmapping-&gt;decreasing-alist, fxmapping-keys, fxmapping-values,
 fxmapping-&gt;generator, fxmapping-&gt;decreasing-generator</code></p></li>
 <li><p><a href="#comparison">Comparison</a>: <code>fxmapping=?, fxmapping&lt;?, fxmapping&gt;?, fxmapping&lt;=?, fxmapping&gt;=?</code></p></li>
@@ -1078,17 +1078,7 @@ that do not.</p>
    ((1 . -4) (3 . -16))
 </code></pre>
 
-<h3 id="conversion">Copying and conversion</h3>
-
-<p><code>(fxmapping-copy</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code></p>
-
-<p>Returns an fxmapping containing the associations of
-<em>fxmap</em>.</p>
-
-<p>In an implementation with immutable fxmappings, <code>fxmapping-copy</code>
-may simply return <em>fxmap</em>.  If fxmappings may be mutated,
-however, then the resulting fxmapping must be newly allocated
-and must not share structure with <em>fxmap</em>.</p>
+<h3 id="conversion">Conversion</h3>
 
 <p><code>(fxmapping-&gt;alist</code>&nbsp;<em>fxmap</em><code>) → alist[exact-integer, *]</code></p>
 
