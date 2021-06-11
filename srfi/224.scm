@@ -88,7 +88,9 @@
 ;;;; Predicates
 
 (define (fxmapping-contains? fxmap n)
-  (just? (fxmapping-lookup fxmap n)))
+  (assume (fxmapping? fxmap))
+  (assume (valid-integer? n))
+  (trie-contains? (fxmapping-trie fxmap) n))
 
 (define (fxmapping-empty? fxmap)
   (assume (fxmapping? fxmap))

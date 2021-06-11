@@ -178,7 +178,14 @@
     (search trie)))
 
 (define (trie-contains? trie key)
-  (trie-assoc trie key (lambda () #f) (lambda (_) #t)))
+  (letrec
+   ((search
+     (tmatch-lambda
+       ((leaf ,k ,v) (fx=? k key))
+       ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
+        (if (zero-bit? key m) (search l) (search r)))
+       (else #f))))
+    (search trie)))
 
 ;; Return a Just of the leftmost association of trie that satisfies
 ;; pred, or Nothing if no such assoc is found.
