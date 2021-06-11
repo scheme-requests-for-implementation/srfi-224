@@ -177,6 +177,18 @@
        (else (failure)))))
     (search trie)))
 
+;; If `key' has an association in `trie', then return the associated
+;; value.  Otherwise, return `default'.
+(define (trie-assoc/default trie key default)
+  (letrec
+   ((search
+     (tmatch-lambda
+       ((leaf ,k ,v) (guard (fx=? k key)) v)
+       ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
+        (if (zero-bit? key m) (search l) (search r)))
+       (else default))))
+    (search trie)))
+
 (define (trie-contains? trie key)
   (letrec
    ((search

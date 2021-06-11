@@ -126,11 +126,10 @@
      (assume (procedure? success))
      (trie-assoc (fxmapping-trie fxmap) key failure success))))
 
-;; TODO: Optimize.
 (define (fxmapping-ref/default fxmap key default)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
-  (fxmapping-ref fxmap key (lambda () default) values))
+  (trie-assoc/default (fxmapping-trie fxmap) key default))
 
 (define (fxmapping-lookup-min fxmap)
   (assume (fxmapping? fxmap))
