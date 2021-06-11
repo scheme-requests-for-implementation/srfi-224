@@ -165,17 +165,20 @@
             (just (v) (trie-join key 0 (leaf key v) p m t))))))))
     (update trie)))
 
-;; If `key' has an association in `trie', then return a Just
-;; containing the associated value.  Otherwise, return Nothing.
-(define (trie-assoc trie key)
+;; If `key' has an association in `trie', then call `success' with
+;; on the associated value.  Otherwise, call `failure'.
+(define (trie-assoc trie key failure success)
   (letrec
    ((search
      (tmatch-lambda
-       ((leaf ,k ,v) (guard (fx=? k key)) (just v))
+       ((leaf ,k ,v) (guard (fx=? k key)) (success v))
        ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
         (if (zero-bit? key m) (search l) (search r)))
-       (else (nothing)))))
+       (else (failure)))))
     (search trie)))
+
+(define (trie-contains? trie key)
+  (trie-assoc trie key (lambda () #f) (lambda (_) #t)))
 
 ;; Return a Just of the leftmost association of trie that satisfies
 ;; pred, or Nothing if no such assoc is found.
@@ -498,8 +501,8 @@
                   (let ((k (leaf-key s)))
                     (if (leaf? t)
                         (not (fx=? k (leaf-key t)))
-                        (nothing? (trie-assoc t k)))))
-                 ((leaf? t) (nothing? (trie-assoc s (leaf-key t))))
+                        (not (trie-contains? t k)))))
+                 ((leaf? t) (not (trie-contains? s (leaf-key t))))
                  (else (branches-disjoint? s t))))))
     (branches-disjoint?
      (lambda (s t)
@@ -592,9 +595,10 @@
        (cond ((trie-empty? s) the-empty-trie)
              ((trie-empty? t) s)
              ((leaf? s)
-              (if (just? (trie-assoc t (leaf-key s)))
-                  the-empty-trie
-                  s))
+              (trie-assoc t
+                          (leaf-key s)
+                          (lambda () s)
+                          (lambda (_) the-empty-trie)))
              ((leaf? t) (trie-delete s (leaf-key t)))
              (else (branch-difference s t)))))
     (branch-difference

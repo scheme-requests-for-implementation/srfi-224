@@ -104,7 +104,7 @@
 (define (fxmapping-lookup fxmap key)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
-  (trie-assoc (fxmapping-trie fxmap) key))
+  (trie-assoc (fxmapping-trie fxmap) key nothing just))
 
 (define fxmapping-ref
   (case-lambda
@@ -122,15 +122,13 @@
      (assume (valid-integer? key))
      (assume (procedure? failure))
      (assume (procedure? success))
-     (maybe-ref (trie-assoc (fxmapping-trie fxmap) key)
-                failure
-                success))))
+     (trie-assoc (fxmapping-trie fxmap) key failure success))))
 
+;; TODO: Optimize.
 (define (fxmapping-ref/default fxmap key default)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
-  (maybe-ref/default (trie-assoc (fxmapping-trie fxmap) key)
-                     default))
+  (fxmapping-ref fxmap key (lambda () default) values))
 
 (define (fxmapping-lookup-min fxmap)
   (assume (fxmapping? fxmap))
