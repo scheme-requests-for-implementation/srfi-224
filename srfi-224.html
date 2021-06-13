@@ -251,22 +251,32 @@ the arguments, earlier associations take priority.</p>
 (fxmapping-&gt;alist (fxmapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
 </code></pre>
 
-<p><code>(fxmapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em><code>) → fxmapping</code></p>
+<p><code>(fxmapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em>₁ <em>seed</em>₂ …<code>) → fxmapping</code></p>
 
 The arguments have the following types:
 <ul>
-<li><em>stop?</em> : <code>* → *-or-#f</code></li>
-<li><em>mapper</em> : <code>* → [fixnum, *]</code></li>
-<li><em>successor</em> : <code>* → *</code></li>
-<li><em>seed</em> : <code>*</code></li>
+<li><em>stop?</em> : <code>* *</code> … <code>→ *-or-#f</code></li>
+<li><em>mapper</em> : <code>* *</code> … <code>→ [fixnum, *]</code></li>
+<li><em>successor</em> : <code>* *</code> … <code> → * *</code> …</li>
+<li><em>seed</em>₁, <em>seed</em>₂, … : <code>*</code></li>
 </ul>
+<p>The <em>stop?</em>, <em>mapper</em>, and <em>successor</em>
+procedures must accept as many arguments as there are <em>seed</em>
+parameters.  In addition, the number of values returned by the
+<em>successor</em> procedure must agree with the number of arguments
+expected by <em>mapper</em>; that is, the expression</p>
+<pre class="example"><code>(call-with-values
+ (lambda () (</code><em>successor seed</em>₁ <em>seed</em>₂ … <code>))
+ </code><em>mapper</em><code>)
+</code></pre>
+<p>must result in a valid procedure application.</p>
 
-<p>Unfold an fxmapping from the initial seed value <em>seed</em>.
-<em>mapper</em> is applied to each seed and returns two values, a key
+<p>Unfold an fxmapping from the initial <em>seed</em>s.
+<em>mapper</em> is applied to the <em>seed</em>s and returns two values, a key
 and an associated value, which are adjoined to the new fxmapping.
-<em>successor</em> maps each seed to a new seed.
+<em>successor</em> maps the <em>seed</em>s to new seeds.
 Unfolding terminates when the predicate <em>stop?</em> returns a true
-value when applied to the current seed.  The resulting fxmapping is
+value when applied to the current seeds.  The resulting fxmapping is
 newly allocated.</p>
 
 <p>Example:</p>
@@ -278,19 +288,30 @@ newly allocated.</p>
  ⇒ ((0 . "") (1 . "a") (2 . "aa") (3 . "aaa"))
 </code></pre>
 
-<p><code>(fxmapping-unfold-maybe</code>&nbsp;<em>mproc seed</em><code>) → fxmapping</code></p>
+<p><code>(fxmapping-unfold-maybe</code>&nbsp;<em>mproc seed</em>₁ <em>seed</em>₂ …<code>) → fxmapping</code></p>
 
 The arguments have the following types:
 <ul>
-<li><em>mproc</em> : <code>* → maybe[fixnum, *, *]</code></li>
-<li><em>seed</em> : <code>*</code></li>
+<li><em>mproc</em> : <code>* *</code> … <code>→ maybe[fixnum, *, *, *,</code> …<code>]</code></li>
+<li><em>seed</em>₁, <em>seed</em>₂, … : <code>*</code></li>
 </ul>
+<p>The <em>mproc</em> argument must accept as many arguments as
+there are <em>seed</em> parameters, and return two plus a number
+of arguments which can in turn be passed as arguments to <em>mproc</em>.
+That is, the expression</p>
+<pre class="example"><code>(maybe-ref
+ (</code><em>mproc seed</em>₁ <em>seed</em>₂ …<code>)
+ (lambda () (error "nothing"))
+ (lambda (key value . new-seeds)
+   (apply</code> <em>mproc</em> <code>new-seeds)))
+</code></pre>
+<p>must result in a valid application of <em>mproc</em>.</p>
 
-<p>Unfold an fxmapping.  <em>mproc</em> is applied to <em>seed</em> and returns
+<p>Unfold an fxmapping.  <em>mproc</em> is applied to the <em>seed</em>s and returns
 a Maybe value.  If this value is Nothing, then unfolding terminates.
-If it is Just <em>k v seed′</em>, then a new association
+If it is Just <em>k v seed</em>₁′ <em>seed</em>₂′ …, then a new association
 <code>(</code><em>k</em>, <em>v</em><code>)</code> is added to the resulting fxmapping and unfolding continues
-with <em>seed′</em>.  The resulting fxmapping is newly allocated.</p>
+with <em>seed</em>₁′ <em>seed</em>₂′ ….  The resulting fxmapping is newly allocated.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(fxmapping-&gt;alist

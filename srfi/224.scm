@@ -67,23 +67,46 @@
 (define (alist->fxmapping as)
   (alist->fxmapping/combinator second-arg as))
 
-(define (fxmapping-unfold stop? mapper successor seed)
-  (assume (procedure? stop?))
-  (assume (procedure? mapper))
-  (assume (procedure? successor))
-  (let lp ((trie the-empty-trie) (seed seed))
-    (if (stop? seed)
-        (raw-fxmapping trie)
-        (let-values (((k v) (mapper seed)))
-          (assume (valid-integer? k))
-          (lp (trie-insert trie k v) (successor seed))))))
+(define fxmapping-unfold
+  (case-lambda
+    ((stop? mapper successor seed)                ; fast path
+     (assume (procedure? stop?))
+     (assume (procedure? mapper))
+     (assume (procedure? successor))
+     (let lp ((trie the-empty-trie) (seed seed))
+       (if (stop? seed)
+           (raw-fxmapping trie)
+           (let-values (((k v) (mapper seed)))
+             (assume (valid-integer? k))
+             (lp (trie-insert trie k v) (successor seed))))))
+    ((stop? mapper successor . seeds)             ; variadic path
+     (assume (procedure? stop?))
+     (assume (procedure? mapper))
+     (assume (procedure? successor))
+     (assume (pair? seeds))
+     (let lp ((trie the-empty-trie) (seeds seeds))
+       (if (apply stop? seeds)
+           (raw-fxmapping trie)
+           (let-values (((k v) (apply mapper seeds))
+                        (seeds* (apply successor seeds)))
+             (assume (valid-integer? k))
+             (lp (trie-insert trie k v) seeds*)))))))
 
-(define (fxmapping-unfold-maybe proc seed)
-  (assume (procedure? proc))
-  (let lp ((trie the-empty-trie) (seed seed))
-    (mmatch (proc seed)
-      (nothing (raw-fxmapping trie))
-      (just (k v seed*) (lp (trie-insert trie k v) seed*)))))
+(define fxmapping-unfold-maybe
+  (case-lambda
+    ((proc seed)                                ; fast path
+     (assume (procedure? proc))
+     (let lp ((trie the-empty-trie) (seed seed))
+       (mmatch (proc seed)
+         (nothing (raw-fxmapping trie))
+         (just (k v seed*) (lp (trie-insert trie k v) seed*)))))
+    ((proc . seeds)                             ; variadic path
+     (assume (procedure? proc))
+     (assume (pair? seeds))
+     (let lp ((trie the-empty-trie) (seeds seeds))
+       (mmatch (apply proc seeds)
+         (nothing (raw-fxmapping trie))
+         (just (k v . seeds*) (lp (trie-insert trie k v) seeds*)))))))
 
 ;;;; Predicates
 
