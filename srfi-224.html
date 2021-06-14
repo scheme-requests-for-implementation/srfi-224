@@ -203,7 +203,7 @@ fxmapping-unfold-maybe, alist-&gt;fxmapping,
 alist-&gt;fxmapping/combinator</code></p></li>
 <li><p><a href="#predicates">Predicates</a>: <code>fxmapping?, fxmapping-contains?, fxmapping-empty?, fxmapping-disjoint?</code></p></li>
 <li><p><a href="#accessors">Accessors</a>: <code>fxmapping-ref, fxmapping-ref/default,
-fxmapping-lookup, fxmapping-min, fxmapping-max, fxmapping-lookup-min, fxmapping-lookup-max</code></p></li>
+fxmapping-min, fxmapping-max</code></p></li>
 <li><p><a href="#updaters">Updaters</a>: <code>fxmapping-adjoin, fxmapping-adjoin/combinator,
 fxmapping-set, fxmapping-adjust, fxmapping-delete,
 fxmapping-delete-all, fxmapping-alter,
@@ -212,7 +212,7 @@ fxmapping-delete-max,
 fxmapping-update-min, fxmapping-update-max,
 fxmapping-pop-min, fxmapping-pop-max</code></p></li>
 <li><p><a href="#whole">The whole fxmapping</a>: <code>fxmapping-size,
-fxmapping-find, fxmapping-query,
+fxmapping-find,
 fxmapping-count, fxmapping-any?, fxmapping-every?</code></p></li>
 <li><p><a href="#traversal">Traversal</a>: <code>fxmapping-fold,
 fxmapping-fold-right, fxmapping-map, fxmapping-map-&gt;list,
@@ -466,31 +466,6 @@ Otherwise, returns <em>obj</em>.</p>
 (fxmapping-ref/default (fxmapping 0 'a) 36864 #f) ⇒ #f
 </code></pre>
 
-<p><code>(fxmapping-lookup</code>&nbsp;<em>fxmap k</em><code>) → maybe[*]</code></p>
-
-<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>, returns Just <em>v</em>.
-Otherwise, returns Nothing.</p>
-<p>Examples:</p>
-<pre class="example">(define (fxmapping-ref fxmap k failure success)
-  (maybe-ref (fxmapping-lookup fxmap k) failure success))
-
-<code>(fxmapping-lookup (fxmapping 36864 'zap) 36864) ⇒ just[zap]
-(fxmapping-lookup (fxmapping 0 'a) 36864) ⇒ nothing
-</code></pre>
-
-<p><code>(fxmapping-lookup-min</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *]</code></p>
-
-<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the least key of <em>fxmap</em>.
-If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
-Nothing.</p>
-
-<p>Examples:</p>
-
-<pre class="example"><code>(maybe-&gt;list-truth
- (fxmapping-lookup-min (fxmapping 0 'a 1 'b 2 'c))) ⇒ (0 a)
-(fxmapping-lookup-min (fxmapping)) ⇒ nothing
-</code></pre>
-
 <p><code>(fxmapping-min</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *]</code></p>
 
 <p>Returns two values: the least key of <em>fxmap</em> and its
@@ -499,19 +474,6 @@ associated value. It is an error if <em>fxmap</em> is empty.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(fxmapping-min (fxmapping 0 'a 1 'b 2 'c)) ⇒ 0 a
-</code></pre>
-
-<p><code>(fxmapping-lookup-max</code>&nbsp;<em>fxmap</em><code>) → maybe[fixnum, *]</code></p>
-
-<p>Returns Just <em>k</em> <em>v</em>, where <em>k</em> is the greatest key of <em>fxmap</em>.
-If <em>fxmap</em> is empty in the sense of <code>fxmapping-empty?</code>, returns
-Nothing.</p>
-
-<p>Examples:</p>
-
-<pre class="example"><code>(maybe-&gt;list-truth
- (fxmapping-lookup-max (fxmapping 0 'a 1 'b 2 'c))) ⇒ (2 c)
-(fxmapping-lookup-max (fxmapping)) ⇒ nothing
 </code></pre>
 
 <p><code>(fxmapping-max</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *]</code></p>
@@ -799,31 +761,6 @@ arguments and its results are returned.</p>
                 (fxmapping 2 "worf" 3 "data" 4 "troi")
                 (lambda () (error "not found")))
  ⇒ 4 "troi"
-</code></pre>
-
-<p><code>(fxmapping-query</code>&nbsp;<em>pred fxmap</em><code>) → maybe[fixnum, *]</code></p>
-
-<p><em>pred</em> is a predicate of type
-<code>exact-integer * → boolean</code>.</p>
-
-<p>Returns Just <em>k v</em>, where (<em>k</em>, <em>v</em>) is the
-association of <em>fxmap</em> with the least key <em>k</em> such that
-<code>(</code><em>pred k v</em><code>)</code> is true, or Nothing if
-there is no such association.</p>
-
-<p>Examples:</p>
-
-<pre class="example"><code>;; Simulating fxmapping-lookup
-(maybe-&gt;list-truth
- (fxmapping-query (lambda (_ s) (equal? s "guinan"))
-                  (fxmapping 11 "ro" 13 "guinan" 17 "barclay")))
- ⇒ (13 "guinan")
-
-(maybe-&gt;list-truth
- (fxmapping-query (lambda (k v)
-                    (and (positive? k) (integer? v)))
-                  (alist->fxmapping '((-3 . 80) (0 . 1/3) (3 . 7+2i)))))
- ⇒ #f
 </code></pre>
 
 <p><code>(fxmapping-count</code>&nbsp;<em>pred fxmap</em><code>) → exact-integer</code></p>
