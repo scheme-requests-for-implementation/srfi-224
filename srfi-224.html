@@ -260,6 +260,9 @@ Unfolding terminates when the predicate <em>stop?</em> returns a true
 value when applied to the current seeds.  The resulting fxmapping is
 newly allocated.</p>
 
+<p>It is an error for the number of seeds to vary between steps of
+the unfolding process.</p>
+
 <p>Example:</p>
 <pre class="example"><code>(fxmapping-&gt;alist
  (fxmapping-unfold (lambda (i) (= i 4))
