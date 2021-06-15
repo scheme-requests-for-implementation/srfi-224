@@ -20,7 +20,7 @@
 
   (export
    ;; Constructors
-   fxmapping fxmapping-unfold fxmapping-unfold-maybe alist->fxmapping
+   fxmapping fxmapping-unfold fxmapping-accumulate alist->fxmapping
    alist->fxmapping/combinator
 
    ;; Predicates

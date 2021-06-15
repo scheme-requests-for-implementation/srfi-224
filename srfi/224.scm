@@ -92,21 +92,27 @@
              (assume (valid-integer? k))
              (lp (trie-insert trie k v) seeds*)))))))
 
-(define fxmapping-unfold-maybe
+(define fxmapping-accumulate
   (case-lambda
     ((proc seed)                                ; fast path
      (assume (procedure? proc))
-     (let lp ((trie the-empty-trie) (seed seed))
-       (mmatch (proc seed)
-         (nothing (raw-fxmapping trie))
-         (just (k v seed*) (lp (trie-insert trie k v) seed*)))))
+     (call-with-current-continuation
+      (lambda (k)
+        (let ((build (lambda (t) (k (raw-fxmapping t)))))
+          (let lp ((trie the-empty-trie) (seed seed))
+            (let-values (((k v seed*) (proc (lambda () (build trie))
+                                            seed)))
+              (lp (trie-insert trie k v) seed*)))))))
     ((proc . seeds)                             ; variadic path
      (assume (procedure? proc))
      (assume (pair? seeds))
-     (let lp ((trie the-empty-trie) (seeds seeds))
-       (mmatch (apply proc seeds)
-         (nothing (raw-fxmapping trie))
-         (just (k v . seeds*) (lp (trie-insert trie k v) seeds*)))))))
+     (call-with-current-continuation
+      (lambda (k)
+        (let ((build (lambda (t) (k (raw-fxmapping t)))))
+          (let lp ((trie the-empty-trie) (seeds seeds))
+            (let-values (((k v . seeds*)
+                          (apply proc (lambda () (build trie)) seeds)))
+              (lp (trie-insert trie k v) seeds*)))))))))
 
 ;;;; Predicates
 
