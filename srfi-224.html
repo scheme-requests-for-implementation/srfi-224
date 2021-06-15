@@ -47,11 +47,6 @@ no intrinsic order, but may be treated as ordered sets, using the
 natural ordering on keys; a substantial sublibrary for working with
 fxmappings in this fashion is included.</p>
 
-<h2>Issues</h2>
-
-<p>Maybe and Either are somewhat controversial in the Scheme community;
-should procedures using them be moved to an optional sublibrary?</p>
-
 <h2>Rationale</h2>
 
 <p>&ldquo;Finite maps are the workhorse data structure in every compiler.&rdquo;
@@ -95,21 +90,8 @@ several other forms derive from Haskell&rsquo;s
 <a href="https://hackage.haskell.org/package/containers/docs/Data-IntMap-Strict.html">IntMap</a>
 library.</p>
 
-<p>Many forms make
-instrumental use of <a href="https://srfi.schemers.org/srfi-189/">SRFI 189&rsquo;s</a>
-Maybe type; I believe that this choice results in simpler,
-more compositional definitions.  (Compare, for instance, the
-conventional <code>fxmapping-ref</code> form with
-<code>fxmapping-lookup</code>.)  Using the protocol conversions of
-SRFI 189 (<code>maybe-&gt;truth</code>, <code>maybe-&gt;generation</code>, etc.),
-procedures that operate on Maybe values can be easily integrated with
-traditional Scheme code.
-Where the use of Maybe values would clarify nothing, I have preferred the
-traditional &ldquo;value or <code>#f</code>&rdquo; Lisp protocol.</p>
-
-<p>The specification of this SRFI depends on the Maybe and Either types
-specified in SRFI 189 and on the comparator type (used to determine the
-equality of values, not keys) described in
+<p>The specification of this SRFI depends on the comparator type
+(used to determine the equality of values, not keys) described in
 SRFI 128.  Conversions from fxmappings to
 <a href="https://srfi.schemers.org/srfi-158/">SRFI 158</a> generators
 are provided.
@@ -148,7 +130,6 @@ in the R7RS Scheme standard.</p>
 <tr><td><em>list</em></td><td>A proper list.</td></tr>
 <tr><td><em>alist</em></td><td>An association list.</td></tr>
 <tr><td><em>proc</em></td><td>A procedure.</td></tr>
-<tr><td><em>mproc</em></td><td>A procedure returning a Maybe object.</td></tr>
 <tr><td><em>pred</em></td><td>A predicate, assumed to entail no side-effects.</td></tr>
 <tr><td><em>comp</em></td><td>A SRFI 128 comparator object.</td></tr>
 </table>
@@ -1405,7 +1386,7 @@ Mergeable Integer Maps&rdquo; (see <a href="#references">References</a>).
 These trees provide fast insert, lookup, and set-theoretical operations.</p>
 
 <p>The implementation should be portable without changes to any R7RS
-Scheme that provides SRFIs 1, 128, 143, 145, 158, 189, and 217.  The provided
+Scheme that provides SRFIs 1, 128, 143, 145, 158, and 217.  The provided
 tests can be run with SRFIs 64 or 78; additional shims for the test
 libraries preferred by <a href="http://synthcode.com/scheme/chibi/lib/chibi/test.html">chibi-scheme</a>
 and <a href="https://wiki.call-cc.org/eggref/5/test">CHICKEN</a> are also
