@@ -123,7 +123,7 @@
 
 (define (fxmapping-empty? fxmap)
   (assume (fxmapping? fxmap))
-  (not (fxmapping-trie fxmap)))
+  (eqv? (fxmapping-trie fxmap) the-empty-trie))
 
 (define (fxmapping-disjoint? fxmap1 fxmap2)
   (assume (fxmapping? fxmap1))
