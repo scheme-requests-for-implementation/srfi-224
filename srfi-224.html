@@ -636,28 +636,55 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
-<p><code>(fxmapping-alter</code>&nbsp;<em>fxmap k proc</em><code>) → fxmapping</code></p>
+<p><code>(fxmapping-alter</code>&nbsp;<em>fxmap k failure success</em><code>) → *</code> …</p>
 
-<p><em>proc</em> is a procedure of type
-<code>maybe[exact-integer, *] → maybe[*]</code>.</p>
+<p><em>failure</em> is a procedure of type
+<code>(* → fxmapping) ([] → fxmapping) → [*, …]</code>.
+<em>success</em> is a procedure of type
+<code>exact-integer * (* → fxmapping) ([] → fxmapping) →  [*, …]</code>.</p>
 
-<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
-that the association, or lack thereof, for <em>k</em> is updated as follows.
-If the association <code>(</code><em>k</em>, <em>v</em><code>)</code> exists in <em>fxmap</em>, then <em>proc</em> is called on
-Just <em>k v</em>; if no such association exists, then <em>proc</em> is called on
-Nothing.  If the result of this application is Nothing, the
-association is deleted (or no new association is added); if the result
-is Just <em>v′</em>, the association <em>(k, v′)</em> is added to the
-resulting fxmapping, replacing any old association for <em>k</em>.</p>
+<p>Updates the association, or lack thereof, for <em>k</em> in <em>fxmap</em> as
+follows.  If the association (<em>k</em>, <em>v</em>) exists in <em>fxmap</em>,
+then <em>success</em> is called on <em>k</em>, <em>v</em>, and two procedure
+arguments, <em>replace</em> and <em>delete</em>, and its values are
+returned.</p>
 
-<p><code>fxmapping-alter</code> is a very general operator on fxmappings, and most
-of the other update operations may be defined in terms of it.  For
-example:</p>
+<ul>
+  <li><p>Invoking <code>(</code><em>replace v′</em><code>)</code> returns
+         a fxmapping with the association (<em>k</em>, <em>v′</em>)
+         as well as all of <em>fxmap</em>&rsquo;s other associations.</p></li>
+  <li><p>Invoking <code>(</code><em>delete</em><code>)</code> returns
+         a fxmapping with all of <em>fxmap</em>&rsquo;s associations
+         except for (<em>k</em>, <em>v</em>).</p></li>
+</ul>
 
-<pre class="example"><code>  (fxmapping-update fxmap k f)
-   ≡
-  (fxmapping-alter fxmap k (lambda (m)
-                           (maybe-ref m nothing f))
+<p>If no association for <em>k</em> exists in <em>fxmap</em>, then
+<em>failure</em> is called on two procedure arguments, <em>insert</em> and
+<em>ignore</em>, and its values are returned.</p>
+
+<ul>
+  <li><p>Invoking <code>(</code><em>insert u</em><code>)</code> returns
+         a fxmapping with all of the associations of <em>fxmap</em>
+         as well as (<em>k</em>, <em>u</em>).</p></li>
+  <li><p>Invoking <code>(</code><em>ignore</em><code>)</code> returns
+         a fxmapping with the same associations as <em>fxmap</em>.</p></li>
+</ul>
+
+<p>Note that, in contrast to similar Scheme forms, <em>failure</em> and
+<em>success</em> are not required to tail-call one of their procedure
+arguments, and that <code>fxmapping-alter</code> simply returns the
+results of invoking <em>failure</em> or <em>success</em>.  Thus, the
+following is valid:</p>
+<pre class="example"><code>;; Returns an additional boolean value indicating
+;; whether the fxmapping was updated.
+(fxmapping-alter (fxmapping 0 'a 1 'b 2 'c)
+                 1
+                 (lambda (_ins ignore)
+                   (values (ignore) #f))
+                 (lambda (_k _v replace _del)
+                   (values (replace 'z) #t)))
+ ⇒ &lt;fxmapping&gt;
+   #t
 </code></pre>
 
 <p>Examples:</p>
@@ -666,19 +693,21 @@ example:</p>
 (fxmapping-&gt;alist
  (fxmapping-alter (fxmapping 0 'a 1 'b)
                   4
-                  (lambda (m)
-                    (if (nothing? m) (just 'e) m))))
+                  (lambda (insert _ig) (insert 'e))
+                  (lambda (_k v replace _del)
+                    (replace v))))  ; keep original value
  ⇒ ((0 . a) (1 . b) (4 . e))
+   #t
 
 ;; Delete an association for 1 if its value is a symbol.
 (fxmapping-&gt;alist
  (fxmapping-alter (fxmapping 0 'a 1 'b)
                   1
-                  (lambda (m)
-                    (maybe-bind m (lambda (_ v)
-                                    (if (symbol? v)
-                                        (nothing)
-                                        (just v)))))))
+                  (lambda (_ins ignore) (ignore))
+                  (lambda (_k v replace delete)
+                    (if (symbol? v)
+                        (delete)
+                        (replace v)))))
  ⇒ ((0 . a))
 </code></pre>
 
