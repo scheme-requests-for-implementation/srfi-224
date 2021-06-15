@@ -978,35 +978,38 @@ is added for <em>k</em>.  The dynamic order of the applications of
  ⇒ ((0 . 4) (2 . 64))
 </code></pre>
 
-<p><code>(fxmapping-map-either</code>&nbsp;<em>proc fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
+<p><code>(fxmapping-partition-map</code>&nbsp;<em>proc fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
 
-<p>The <em>proc</em> of <code>fxmapping-map-either</code> is a
-procedure of type <code>exact-integer * → either[*]</code>, where
-<code>either[*]</code> denotes a SRFI 189 Either containing a single
-value.</p>
+<p>The <em>proc</em> of <code>fxmapping-partition-map</code> is a
+procedure of type <code>exact-integer * (* → []) (* → []) → [*, …]</code>.</p>
 
-<p><code>fxmapping-map-either</code> maps <em>proc</em> over the associations
-of <em>fxmap</em> and returns fxmappings of the Left and of the Right
-results.  For each association (<em>k</em>, <em>v</em>) in
-<em>fxmap</em>, (<em>proc k v</em>) is evaluated.  If the result is a
-Left of a value <em>v</em>₁, then the association (<em>k</em>,
-<em>v</em>₁) is added to the first resulting fxmapping.  If it is instead a
-Right of <em>v</em>₂, then the association (<em>k</em>, <em>v</em>₂)
-is added to the second resulting fxmapping.</p>
+<p><code>fxmapping-partition-map</code> maps <em>proc</em> over the associations
+of <em>fxmap</em> and returns two fxmappings of the results.  For each
+association (<em>k</em>, <em>v</em>) in <em>fxmap</em>, <em>proc</em> is
+called on <em>k</em>, <em>v</em>, and two procedure arguments,
+<em>insert-left</em> and <em>insert-right</em>.  If <em>insert-left</em>
+is tail-called on a value <em>v</em>₁, then the association (<em>k</em>,
+<em>v</em>₁) is added to the first resulting fxmapping.  If
+<em>insert-right</em> is tail-called on a value <em>v</em>₂, then the
+association (<em>k</em>, <em>v</em>₂) is added to the second resulting
+fxmapping.  If <em>proc</em> returns rather than tail-calling one of
+<em>insert-left</em> and <em>insert-right</em>, or if either
+<em>insert</em> procedure is invoked in non-tail position, it is an
+error.</p>
 
 <p>Example:</p>
 
 <pre class="example"><code>(let-values (((lefts rights)
-              (fxmapping-map-either
-               (lambda (_ v)
+              (fxmapping-partition-map
+               (lambda (_ v insert-left insert-right)
                  (if (&gt;= v 0)
-                     (right v)
-                     (left v)))
+                     (insert-right (sqrt v))
+                     (insert-left (sqrt (abs v)))))
                (fxmapping 0 -50 4 -25 8 25 12 50))))
   (values (fxmapping-&gt;alist lefts)
           (fxmapping-&gt;alist rights)))
- ⇒ ((0 . -50) (4 . -25))
-   ((8 . 25) (12 . 50))
+ ⇒ ((0 . 7.071) (4 . 5))
+   ((8 . 5) (12 . 7.071))
 </code></pre>
 
 <p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
