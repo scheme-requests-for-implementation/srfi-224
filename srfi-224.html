@@ -559,17 +559,17 @@ those for keys equal to an element of <em>list</em>.</p>
 <p><code>(fxmapping-update</code>&nbsp;<em>fxmap k proc</em><code>) → *</code> …</p>
 
 <p><em>proc</em> is a procedure of type
-<code>exact-integer * ([] → fxmapping) (* → fxmapping) → *</code> ….</p>
+<code>exact-integer * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association for <em>k</em> in <em>fxmap</em> as follows.
 <em>proc</em> is
 applied to <em>k</em>, its associated value, and two procedure arguments,
-<em>delete</em> and <em>replace</em>, and its values are returned.
-Invoking <em>delete</em> returns a fxmapping with all of the associations of
-<em>fxmap</em>, but without an association for <em>k</em>.  Invoking
-<em>replace</em> on a value <em>v</em> similarly returns a fxmapping with
+<em>replace</em> and <em>delete</em>, and its values are returned.
+Invoking <em>replace</em> on a value <em>v</em> returns a fxmapping with
 the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
 associations.
+Invoking <em>delete</em> returns a fxmapping with all of the associations of
+<em>fxmap</em>, but without an association for <em>k</em>.
 If <em>k</em> has no association in <em>fxmap</em>, then an fxmapping
 with the same associations as <em>fxmap</em>
 is returned.</p>
@@ -581,7 +581,7 @@ invoking <em>proc</em>.  Thus, the following is valid:</p>
 
 <pre class="example"><code>(fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
                   1
-                  (lambda (k v _d replace)
+                  (lambda (k v replace _del)
                     (values k v (fxmapping->alist (replace 'z)))))
  ⇒ 1
    b
@@ -593,11 +593,11 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 
 <pre><code>  (fxmapping-delete fxmap k)
    ≡
-  (fxmapping-update fxmap k (lambda (_k _v delete _r) (delete)))
+  (fxmapping-update fxmap k (lambda (_k _v _r delete) (delete)))
 
   (fxmapping-set fxmap k v)
    ≡
-  (fxmapping-update fxmap k (lambda (_k _u _d replace) (replace v)))
+  (fxmapping-update fxmap k (lambda (_k _u replace _d) (replace v)))
 </code></pre>
 <p>Examples:</p>
 
@@ -605,7 +605,7 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 (fxmapping-&gt;alist
  (fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
                    1
-                   (lambda (_k v delete replace)
+                   (lambda (_k v replace delete)
                      (if (symbol? v)
                          (delete)
                          (replace v)))))
@@ -614,7 +614,7 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 (fxmapping-&gt;alist
  (fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
                    1
-                   (lambda (k _v _d replace)
+                   (lambda (k _v replace _d)
                      (replace k)))))
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
@@ -711,17 +711,17 @@ an error is signalled.</p>
 <code>(fxmapping-update-max</code>&nbsp;<em>fxmap proc</em><code>) → *</code> …</p>
 
 <p>The <em>proc</em> argument of <code>fxmapping-update-min</code> and <code>-max</code> is of
-type <code>exact-integer * ([] → fxmapping) (* → fxmapping) → *</code> ….</p>
+type <code>exact-integer * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association of <em>fxmap</em> with the least/greatest key
 <em>k</em> as follows.  <em>proc</em> is applied to <em>k</em>, its
-associated value, and two procedure arguments, <em>delete</em> and
-<em>replace</em>, and its values are returned.
-Invoking <em>delete</em> returns a fxmapping with all of the associations of
-<em>fxmap</em>, but without an association for <em>k</em>.  Invoking
-<em>replace</em> on a value <em>v</em> similarly returns a fxmapping with
+associated value, and two procedure arguments, <em>replace</em> and
+<em>delete</em>, and its values are returned.  Invoking
+<em>replace</em> on a value <em>v</em> returns a fxmapping with
 the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
-associations. If <em>fxmap</em> is empty, an error is signaled.</p>
+associations.  Invoking <em>delete</em> returns a fxmapping with all of
+the associations of <em>fxmap</em>, but without an association for
+<em>k</em>.  If <em>fxmap</em> is empty, an error is signaled.</p>
 
 <p>Note that, in contrast to similar Scheme forms, <em>proc</em> is
 not required to tail-call one of <em>delete</em> or <em>replace</em>,
@@ -729,7 +729,7 @@ and that <code>fxmapping-update-min</code> and <code>-max</code> simply
 return the results of invoking <em>proc</em>.  Thus, the following is
 valid:</p>
 <pre class="example"><code>(fxmapping-update-min (fxmapping 0 'a 1 'b 2 'c)
-                      (lambda (k v d _r)
+                      (lambda (k v _r delete)
                         (values k v (fxmapping->alist (delete)))))
  ⇒ 0
    a
@@ -739,7 +739,7 @@ valid:</p>
 
 <pre class="example"><code>(fxmapping-&gt;alist
  (fxmapping-update-min (fxmapping -5 "phaser" -1 "tricorder")
-                       (lambda (_ v delete replace)
+                       (lambda (_ v replace delete)
                          (if (symbol? v)
                              (replace v)
                              (delete)))))
@@ -747,7 +747,7 @@ valid:</p>
 
 (fxmapping-&gt;alist
  (fxmapping-update-max (fxmapping -5 "phaser" -1 "tricorder")
-                       (lambda (k v delete replace)
+                       (lambda (k v replace delete)
                          (if (and (negative? k) (string? v))
                              (replace (string-length v))
                              (delete)))))
