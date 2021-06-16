@@ -117,7 +117,8 @@
               t))))))
     (update trie)))
 
-(define (trie-update trie key mproc)
+;; FIXME: Rewrite to allow proc to call its continuations for values.
+(define (trie-update trie key proc)
   (letrec
    ((update
      (lambda (t)
@@ -125,9 +126,10 @@
          (empty t)
          ((leaf ,k ,v)
           (if (fx=? key k)
-              (mmatch (mproc k v)
-                (nothing the-empty-trie)
-                (just (v*) (leaf k v*)))
+              (proc k
+                    v
+                    (lambda (v*) (leaf k v*))
+                    (lambda () the-empty-trie))
               t))
          ((branch ,p ,m ,l ,r)
           (if (match-prefix? key p m)
@@ -137,32 +139,33 @@
               t))))))
     (update trie)))
 
-;; This is the sane person's trie-search.
-(define (trie-alter trie key proc)
+;; FIXME: Rewrite to allow failure/success to call their continuations
+;; for values.
+(define (trie-alter trie key failure success)
   (letrec
    ((update
      (lambda (t)
        (tmatch t
          (empty
-          (mmatch (proc (nothing))
-            (nothing the-empty-trie)
-            (just (v) (leaf key v))))
+          (failure (lambda (v) (leaf key v))       ; insert
+                   (lambda () the-empty-trie)))    ; ignore
          ((leaf ,k ,v)
           (if (fx=? key k)
-              (mmatch (proc (just k v))
-                (nothing the-empty-trie)
-                (just (v*) (leaf k v*)))
-              (mmatch (proc (nothing))
-                (nothing t)
-                (just (u) (trie-join key 0 (leaf key u) k 0 t)))))
+              (success k
+                       v
+                       (lambda (v*) (leaf k v*))   ; replace
+                       (lambda () the-empty-trie)) ; delete
+              (failure (lambda (u)                 ; insert
+                         (trie-join key 0 (leaf key u) k 0 t))
+                       (lambda () t))))            ; ignore
          ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
           (if (zero-bit? key m)
               (branch p m (update l) r)
               (branch p m l (update r))))
          ((branch ,p ,m ? ?)
-          (mmatch (proc (nothing))
-            (nothing t)
-            (just (v) (trie-join key 0 (leaf key v) p m t))))))))
+          (failure (lambda (v)                     ; insert
+                     (trie-join key 0 (leaf key v) p m t))
+                   (lambda () t)))))))             ; ignore
     (update trie)))
 
 ;; If `key' has an association in `trie', then call `success' with
@@ -199,19 +202,25 @@
        (else #f))))
     (search trie)))
 
-;; Return a Just of the leftmost association of trie that satisfies
-;; pred, or Nothing if no such assoc is found.
-(define (trie-query pred trie)
-  (call-with-current-continuation
-   (lambda (return)
-     (let lp ((t trie))
-       (tmatch t
-         (empty (return (nothing)))
-         ((leaf ,k ,v) (guard (pred k v))
-          (return (just k v)))
-         ((branch ? ? ,l ,r) (lp l) (lp r))
-         (else #f)))
-     (nothing))))
+(define (trie-find pred trie)
+  (letrec
+   ((search
+     (lambda (t)
+       (call-with-current-continuation
+        (lambda (return)
+          (let lp ((t t))
+            (tmatch t
+              (empty (return #f #f))
+              ((leaf ,k ,v) (guard (pred k v))
+               (return k v))
+              ((branch ? ? ,l ,r) (lp l) (lp r))
+              (else #f)))  ; ignored
+          (values #f #f))))))
+    (tmatch trie
+      ((branch ? ,m ,l ,r) (guard (negative? m))
+       (let-values (((k v) (search r)))
+         (if k (values k v) (search l))))
+      (else (search trie)))))
 
 (define (branching-bit-higher? mask1 mask2)
   (if (negative? (fxxor mask1 mask2))  ; signs differ
@@ -312,24 +321,6 @@
          ((branch ? ? ,l ,r) (cata (cata b r) l))))))
     (cata nil trie)))
 
-(define (trie-map-either proc trie)
-  (letrec
-   ((split-map
-     (lambda (t)
-       (tmatch t
-         (empty (values the-empty-trie the-empty-trie))
-         ((leaf ,k ,v)
-          (either-ref
-           (proc k v)
-           (lambda (v*) (values (leaf k v*) the-empty-trie))
-           (lambda (v*) (values the-empty-trie (leaf k v*)))))
-         ((branch ,p ,m ,l ,r)  ; slight naming confusion here.
-          (let-values (((l-lefts l-rights) (split-map l))
-                       ((r-lefts r-rights) (split-map r)))
-            (values (branch p m l-lefts r-lefts)
-                    (branch p m l-rights r-rights))))))))
-    (split-map trie)))
-
 (define (trie-filter pred trie)
   (letrec ((filter
             (lambda (t)
@@ -341,17 +332,15 @@
                  (branch p m (filter l) (filter r)))))))
     (filter trie)))
 
-;; Return a Just containing the least key and value of trie,
-;; or Nothing if trie is empty.
 (define (trie-min trie)
   (letrec
    ((search
      (tmatch-lambda
-       ((leaf ,k ,v) (just k v))
+       ((leaf ,k ,v) (values k v))
        ((branch ? ? ,l ?) (search l)))))
     (tmatch trie
-      (empty (nothing))
-      ((leaf ,k ,v) (just k v))
+      (empty (error "empty trie"))
+      ((leaf ,k ,v) (values k v))
       ((branch ? ,m ,l ,r)
        (if (fxnegative? m) (search r) (search l))))))
 
@@ -361,9 +350,10 @@
      (tmatch-lambda
        (empty the-empty-trie)
        ((leaf ,k ,v)
-        (mmatch (success k v)
-          (nothing the-empty-trie)
-          (just (v*) (leaf k v*))))
+        (success k
+                 v
+                 (lambda (v*) (leaf k v*))
+                 (lambda () the-empty-trie)))
        ((branch ,p ,m ,l ,r) (branch p m (update l) r)))))
     (tmatch trie
       ((branch ,p ,m ,l ,r)
@@ -394,13 +384,13 @@
   (letrec
    ((search
      (tmatch-lambda
-       ((leaf ,k ,v) (just k v))
+       ((leaf ,k ,v) (values k v))
        ((branch ? ? ? ,r) (search r)))))
     (tmatch trie
-      (empty (nothing))
+      (empty (error "empty trie"))
       ((branch ? ,m ,l ,r)
        (if (fxnegative? m) (search l) (search r)))
-      (else (search trie)))))
+      ((leaf ,k ,v) (values k v)))))
 
 (define (trie-update-max trie success)
   (letrec
@@ -408,9 +398,10 @@
      (tmatch-lambda
        (empty the-empty-trie)
        ((leaf ,k ,v)
-        (mmatch (success k v)
-          (nothing the-empty-trie)
-          (just (v*) (leaf k v*))))
+        (success k
+                 v
+                 (lambda (v*) (leaf k v*))
+                 (lambda () the-empty-trie)))
        ((branch ,p ,m ,l ,r) (branch p m l (update r))))))
     (tmatch trie
       ((branch ,p ,m ,l ,r)
@@ -646,10 +637,8 @@
 (define (%trie-insert-xor trie key value)
   (trie-alter trie
               key
-              (lambda (mv)
-                (if (nothing? mv)
-                    (just value)
-                    (nothing)))))
+              (lambda (insert _ig) (insert value))
+              (lambda (_k _v _rep delete) (delete))))
 
 (define (trie-xor trie1 trie2)
   (letrec

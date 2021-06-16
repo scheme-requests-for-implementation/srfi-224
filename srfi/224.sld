@@ -3,7 +3,6 @@
           (scheme case-lambda)
           (only (srfi 1) fold every)
           (only (srfi 128) comparator? =?)
-          (srfi 189)
           (srfi 143)
           (only (srfi 158) make-coroutine-generator)
           (only (srfi 217) list->iset iset-contains?))
@@ -27,8 +26,7 @@
    fxmapping? fxmapping-contains? fxmapping-empty? fxmapping-disjoint?
 
    ;; Accessors
-   fxmapping-min fxmapping-max fxmapping-lookup fxmapping-ref
-   fxmapping-lookup-min fxmapping-lookup-max fxmapping-ref/default
+   fxmapping-min fxmapping-max fxmapping-ref fxmapping-ref/default
 
    ;; Updaters
    fxmapping-adjoin fxmapping-adjoin/combinator fxmapping-adjust
@@ -39,11 +37,11 @@
 
    ;; The whole fxmapping
    fxmapping-size fxmapping-count fxmapping-any? fxmapping-find
-   fxmapping-query fxmapping-every?
+   fxmapping-every?
 
    ;; Traversal
    fxmapping-fold fxmapping-fold-right fxmapping-map fxmapping-map->list
-   fxmapping-for-each fxmapping-filter-map fxmapping-map-either
+   fxmapping-for-each fxmapping-filter-map
    fxmapping-relation-map
 
    ;; Filter

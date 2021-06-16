@@ -132,11 +132,6 @@
 
 ;;;; Accessors
 
-(define (fxmapping-lookup fxmap key)
-  (assume (fxmapping? fxmap))
-  (assume (valid-integer? key))
-  (trie-assoc (fxmapping-trie fxmap) key nothing just))
-
 (define fxmapping-ref
   (case-lambda
     ((fxmap key)
@@ -160,21 +155,15 @@
   (assume (valid-integer? key))
   (trie-assoc/default (fxmapping-trie fxmap) key default))
 
-(define (fxmapping-lookup-min fxmap)
-  (assume (fxmapping? fxmap))
-  (trie-min (fxmapping-trie fxmap)))
-
 (define (fxmapping-min fxmap)
-  (maybe-ref (fxmapping-lookup-min fxmap)
-             (lambda () (error "fxmapping-min: empty fxmapping" fxmap))))
-
-(define (fxmapping-lookup-max fxmap)
-  (assume (fxmapping? fxmap))
-  (trie-max (fxmapping-trie fxmap)))
+  (if (fxmapping-empty? fxmap)
+      (error "fxmapping-min: empty fxmapping" fxmap)
+      (trie-min (fxmapping-trie fxmap))))
 
 (define (fxmapping-max fxmap)
-  (maybe-ref (fxmapping-lookup-max fxmap)
-             (lambda () (error "fxmapping-max: empty fxmapping" fxmap))))
+  (if (fxmapping-empty? fxmap)
+      (error "fxmapping-max: empty fxmapping" fxmap)
+      (trie-max (fxmapping-trie fxmap))))
 
 ;;;; Updaters
 
@@ -237,26 +226,27 @@
     (fxmapping-remove (lambda (k _) (iset-contains? key-set k))
                       fxmap)))
 
-;; Update the association (key, value) in trie with the result of
-;; (mproc value), which is a Maybe value.
-(define (fxmapping-update fxmap key mproc)
+(define (fxmapping-update fxmap key success)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
-  (assume (procedure? mproc))
-  (raw-fxmapping (trie-update (fxmapping-trie fxmap) key mproc)))
+  (assume (procedure? success))
+  (raw-fxmapping
+   (trie-update (fxmapping-trie fxmap) key success)))
 
-;; Update the association (key, value) (or lack thereof) in fxmap
-;; using proc, which is an endomap on Maybes.
-(define (fxmapping-alter fxmap key proc)
+(define (fxmapping-alter fxmap key failure success)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
-  (assume (procedure? proc))
-  (raw-fxmapping (trie-alter (fxmapping-trie fxmap) key proc)))
+  (assume (procedure? failure))
+  (assume (procedure? success))
+  (raw-fxmapping
+   (trie-alter (fxmapping-trie fxmap) key failure success)))
 
 ;; Delete the element with the least key, or return an empty
 ;; mapping if `fxmap' is empty.
 (define (fxmapping-delete-min fxmap)
-  (fxmapping-update-min fxmap (lambda (_k _v) (nothing))))
+  (fxmapping-update-min fxmap
+                        (lambda (_k _v _rep delete)
+                          (delete))))
 
 (define (fxmapping-update-min fxmap success)
   (assume (fxmapping? fxmap))
@@ -283,7 +273,9 @@
 ;; Delete the element with the greatest key, or return an empty
 ;; mapping if `fxmap' is empty.
 (define (fxmapping-delete-max fxmap)
-  (fxmapping-update-max fxmap (lambda (_k _v) (nothing))))
+  (fxmapping-update-max fxmap
+                        (lambda (_k _v _rep delete)
+                          (delete))))
 
 (define (fxmapping-update-max fxmap success)
   (assume (fxmapping? fxmap))
@@ -317,23 +309,12 @@
           (else
            (lp (lp acc (branch-left t)) (branch-right t))))))
 
-(define (fxmapping-query pred fxmap)
-  (assume (procedure? pred))
-  (assume (fxmapping? fxmap))
-  (let ((trie (fxmapping-trie fxmap)))
-    (tmatch trie
-      ((branch ? ,m ,l ,r) (guard (negative? m))
-       (let ((m (trie-query pred r)))
-         (if (just? m)
-             m
-             (trie-query pred l))))
-      (else (trie-query pred trie)))))
-
 (define (fxmapping-find pred fxmap failure)
   (assume (procedure? pred))
   (assume (fxmapping? fxmap))
   (assume (procedure? failure))
-  (maybe-ref (fxmapping-query pred fxmap) failure))
+  (let-values (((k v) (trie-find pred (fxmapping-trie fxmap))))
+    (if k (values k v) (failure))))
 
 (define (fxmapping-count pred fxmap)
   (assume (procedure? pred))
@@ -420,13 +401,6 @@
                        (,v* (trie-insert t k v*))))
                    the-empty-trie
                    fxmap)))
-
-(define (fxmapping-map-either proc fxmap)
-  (assume (procedure? proc))
-  (assume (fxmapping? fxmap))
-  (let-values (((trie-left trie-right)
-                (trie-map-either proc (fxmapping-trie fxmap))))
-    (values (raw-fxmapping trie-left) (raw-fxmapping trie-right))))
 
 (define (fxmapping-filter pred fxmap)
   (assume (procedure? pred))
@@ -595,11 +569,10 @@
 ;;;; Subsets
 
 (define (fxsubmapping= fxmap key)
-  (assume (fxmapping? fxmap))
-  (assume (valid-integer? key))
-  (mmatch (fxmapping-lookup fxmap key)
-          (nothing (fxmapping))
-          (just (v) (fxmapping key v))))
+  (fxmapping-ref fxmap
+                 key
+                 fxmapping
+                 (lambda (v) (fxmapping key v))))
 
 (define (fxmapping-open-interval fxmap low high)
   (assume (fxmapping? fxmap))
