@@ -122,20 +122,20 @@
                                  (lambda (i) (- i 1))
                                  -1)))
 
-  (test-eqv #t (null? (fxmapping->alist (fxmapping-unfold-maybe
-                                         (lambda (b)
-                                           (if b (nothing) (just 1 b (not b))))
+  (test-eqv #t (null? (fxmapping->alist (fxmapping-accumulate
+                                         (lambda (abort b)
+                                           (if b (abort) (values 1 b (not b))))
                                          #t))))
   (test-equal '((1 . #f))
-              (fxmapping->alist (fxmapping-unfold-maybe
-                                 (lambda (b)
-                                   (if b (nothing) (just 1 b (not b))))
+              (fxmapping->alist (fxmapping-accumulate
+                                 (lambda (abort b)
+                                   (if b (abort) (values 1 b (not b))))
                                  #f)))
   (test-equal '((-3 . -3) (-2 . -2) (-1 . -1))
               (fxmapping->alist
-               (fxmapping-unfold-maybe
-                (lambda (i)
-                  (if (< i -3) (nothing) (just i i (- i 1))))
+               (fxmapping-accumulate
+                (lambda (abort i)
+                  (if (< i -3) (abort) (values i i (- i 1))))
                 -1)))
 
   ;;; alist->fxmapping
@@ -174,19 +174,6 @@
 
 
 (test-group "Accessors"
-  ;;; lookups
-
-  (test-eqv #t (nothing? (fxmapping-lookup empty-fxmap 1)))
-  (test-eqv #t (maybe= eqv? (just 'a) (fxmapping-lookup letter-fxmap 0)))
-  (test-eqv #t (maybe= eqv? (just -50) (fxmapping-lookup mixed-fxmap -50)))
-  (test-eqv #t (nothing? (fxmapping-lookup mixed-fxmap -51)))
-  (test-eqv #t (maybe= eqv? (just 36864) (fxmapping-lookup sparse-fxmap 36864)))
-  (test-eqv #t (nothing? (fxmapping-lookup sparse-fxmap 36800)))
-  ;; Ensure that false values are not conflated with missing assocs.
-  (test-eqv #t (maybe= eqv?
-                       (just #f)
-                       (fxmapping-lookup (fxmapping 0 #f) 0)))
-
   (test-eqv -50 (fxmapping-ref mixed-fxmap -50))
   (test-eqv 36864 (fxmapping-ref sparse-fxmap 36864))
   (test-eqv 'z (fxmapping-ref sparse-fxmap 17 (lambda () 'z)))
@@ -201,36 +188,12 @@
 
   ;;; min/max
 
-  (test-eqv #t (nothing? (fxmapping-lookup-min empty-fxmap)))
-  (test-equal '(0 a) (maybe-ref (fxmapping-lookup-min letter-fxmap)
-                                (lambda () #f)
-                                list))
-  (test-equal '(-100 -100) (maybe-ref (fxmapping-lookup-min mixed-fxmap)
-                                      (lambda () #f)
-                                      list))
-  (test-equal '(-65536 -65536)
-              (maybe-ref (fxmapping-lookup-min sparse-fxmap)
-                         (lambda () #f)
-                         list))
-
   (test-equal '(0 a)
               (let-values ((xs (fxmapping-min letter-fxmap)))
                 xs))
   (test-equal '(-100 -100)
               (let-values ((xs (fxmapping-min mixed-fxmap)))
                 xs))
-
-  (test-eqv #t (nothing? (fxmapping-lookup-max empty-fxmap)))
-  (test-equal '(25 z) (maybe-ref (fxmapping-lookup-max letter-fxmap)
-                                 (lambda () #f)
-                                 list))
-  (test-equal '(100 100) (maybe-ref (fxmapping-lookup-max mixed-fxmap)
-                                    (lambda () #f)
-                                    list))
-  (test-equal '(65536 65536)
-              (maybe-ref (fxmapping-lookup-max sparse-fxmap)
-                         (lambda () #f)
-                         list))
 
   (test-equal '(25 z)
               (let-values ((xs (fxmapping-max letter-fxmap)))
@@ -327,16 +290,26 @@
                 (fxmapping 0 '(0 a))
                 (fxmapping-update (fxmapping 0 'a)
                                   0
-                                  (lambda (k v) (just (list k v))))))
+                                  (lambda (k v replace _del)
+                                    (replace (list k v))))))
   (test-eqv 'U (fxmapping-ref/default
-                (fxmapping-update letter-fxmap 20 (constantly (just 'U)))
+                (fxmapping-update letter-fxmap
+                                  20
+                                  (lambda (_k _v replace _del)
+                                    (replace 'U)))
                 20
                 #f))
   (test-eqv #f (fxmapping-contains?
-                (fxmapping-update letter-fxmap 20 (constantly (nothing)))
+                (fxmapping-update letter-fxmap
+                                  20
+                                  (lambda (_k _v _rep delete)
+                                    (delete)))
                 20))
   (test-eqv #f (fxmapping-contains?
-                (fxmapping-update sparse-fxmap -8192 (constantly (nothing)))
+                (fxmapping-update sparse-fxmap
+                                  -8192
+                                  (lambda (_k _v _rep delete)
+                                    (delete)))
                 -8192))
 
   ;;; alter
@@ -345,42 +318,52 @@
                             (fxmapping 0 'a)
                             (fxmapping-alter (fxmapping 0 'a)
                                             1
-                                            (constantly (nothing)))))
+                                             (lambda (_ins ignore) (ignore))
+                                             (lambda (_k v replace _del)
+                                               (replace v)))))
   (test-eqv #t (fxmapping=? default-comp
                             (fxmapping 0 'a 1 'b)
                             (fxmapping-alter (fxmapping 0 'a)
                                             1
-                                            (constantly (just 'b)))))
+                                             (lambda (insert _ig) (insert 'b))
+                                             (lambda (_k v replace _del)
+                                               (replace 'b)))))
   (test-eqv 101 (fxmapping-ref/default
                  (fxmapping-alter mixed-fxmap
                                   101
-                                  (constantly (just 101)))
+                                  (lambda (insert _ig) (insert 101))
+                                  (lambda (_k _v replace _del)
+                                    (replace 101)))
                  101
                  #f))
   (test-eqv 101 (fxmapping-ref/default
                  (fxmapping-alter mixed-fxmap
                                   100
-                                  (lambda (m)
-                                    (maybe-map (lambda (_k n) (+ n 1)) m)))
+                                  (lambda (insert _ig) (insert 101))
+                                  (lambda (_k v replace _del)
+                                    (replace (+ v 1))))
                  100
                  #f))
   (test-eqv 'z (fxmapping-ref/default
                 (fxmapping-alter mixed-fxmap
                                  100
-                                 (constantly (nothing)))
+                                 (lambda (_ins ignore) (ignore))
+                                 (lambda (_k _v _rep delete) (delete)))
                 100
                 'z))
   (test-eqv -16383 (fxmapping-ref/default
                     (fxmapping-alter sparse-fxmap
                                      -16384
-                                     (lambda (m)
-                                       (maybe-map (lambda (_k n) (+ n 1)) m)))
+                                     (lambda (insert _ig) (insert -16383))
+                                     (lambda (_k v replace _del)
+                                       (replace (+ v 1))))
                     -16384
                     #f))
   (test-eqv 'z (fxmapping-ref/default
                 (fxmapping-alter sparse-fxmap
                                  -16384
-                                 (constantly (nothing)))
+                                 (lambda (_ins ignore) (ignore))
+                                 (lambda (_k _v _rep delete) (delete)))
                 -16384
                 'z))
 
@@ -402,13 +385,15 @@
 
   (test-eqv -200 (fxmapping-ref/default
                     (fxmapping-update-min mixed-fxmap
-                                         (lambda (k v) (just (+ k v))))
+                                          (lambda (k v replace _del)
+                                            (replace (+ k v))))
                     -100
                     #f))
   (test-equal '(0 a)
               (fxmapping-ref/default
                (fxmapping-update-min letter-fxmap
-                                     (lambda (k v) (just (list k v))))
+                                     (lambda (k v replace _del)
+                                       (replace (list k v))))
                0
                #f))
 
@@ -416,26 +401,26 @@
 
   (test-eqv 200 (fxmapping-ref/default
                  (fxmapping-update-max mixed-fxmap
-                                       (lambda (k v) (just (+ k v))))
+                                       (lambda (k v replace _del)
+                                         (replace (+ k v))))
                  100
                  #f))
   (test-equal '(25 z)
               (fxmapping-ref/default
                (fxmapping-update-max letter-fxmap
-                                     (lambda (k v) (just (list k v))))
+                                     (lambda (k v replace _del)
+                                       (replace (list k v))))
                25
                #f))
 
   ;;; pop-min
 
-  (test-eqv #t (nothing? (fxmapping-pop-min empty-fxmap)))
+  (test-eqv 'z (fxmapping-pop-min empty-fxmap (lambda () 'z)))
   (test-eqv #t
             (every
              (lambda (im)
-               (let-values (((k v im*)
-                             (maybe-ref/default (fxmapping-pop-min im) #f))
-                            ((test-k test-v)
-                             (maybe-ref/default (fxmapping-lookup-min im) #f)))
+               (let-values (((k v im*) (fxmapping-pop-min im))
+                            ((test-k test-v) (fxmapping-min im)))
                  (and (= k test-k)
                       (eqv? v test-v)
                       (fxmapping=? default-comp
@@ -445,14 +430,12 @@
 
   ;;; pop-max
 
-  (test-eqv #t (nothing? (fxmapping-pop-max empty-fxmap)))
+  (test-eqv 'z (fxmapping-pop-max empty-fxmap (lambda () 'z)))
   (test-eqv #t
             (every
              (lambda (im)
-               (let-values (((k v im*)
-                             (maybe-ref/default (fxmapping-pop-max im) #f))
-                            ((test-k test-v)
-                             (maybe-ref/default (fxmapping-lookup-max im) #f)))
+               (let-values (((k v im*) (fxmapping-pop-max im))
+                            ((test-k test-v) (fxmapping-max im)))
                  (and (= k test-k)
                       (eqv? v test-v)
                       (fxmapping=? default-comp
@@ -497,27 +480,6 @@
                                    letter-fxmap
                                    (lambda () (values 'z 'z)))))
                 p))
-
-  ;;; query
-
-  (test-eqv 'z (maybe-ref/default
-                (fxmapping-query (lambda (_ v) (even? v)) empty-fxmap) 'z))
-  (test-equal '(0 a)
-              (maybe->list
-               (fxmapping-query (lambda (_ v) (symbol? v)) letter-fxmap)))
-  (let ((ss '(f r o b)))
-    (test-equal '(1 b)
-                (maybe->list
-                 (fxmapping-query (lambda (_ s) (memv s ss))
-                                  letter-fxmap))))
-  (test-equal '(4096 4096)
-              (maybe->list
-               (fxmapping-query (lambda (_ v) (positive? v)) sparse-fxmap)))
-  ;; Ensure negative-keyed associations are tested first.
-  (test-equal '(-65536 -65536)
-              (maybe->list
-               (fxmapping-query (lambda (_ v) (integer? v)) sparse-fxmap)))
-  (test-equal '() (maybe->list (fxmapping-query eqv? letter-fxmap)))
 
   ;;; count
 
@@ -670,55 +632,6 @@
                (fxmapping-filter-map (lambda (k v)
                                        (and (even? k) (+ k v)))
                                      sparse-fxmap)))
-
-  ;;; map-either
-
-  ;; Mapping `left' with map-either copies the fxmapping argument as
-  ;; the first returned value.
-  (test-eqv #t
-            (every
-             (lambda (im)
-               (fxmapping=? default-comp
-                           im
-                           (let-values (((lm rm)
-                                         (fxmapping-map-either
-                                          (lambda (_ v) (left v))
-                                          im)))
-                             lm)))
-             (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap)))
-  ;; Mapping `right' with map-either copies the fxmapping argument as
-  ;; the second returned value.
-  (test-eqv #t
-            (every
-             (lambda (im)
-               (fxmapping=? default-comp
-                           im
-                           (let-values (((lm rm)
-                                         (fxmapping-map-either
-                                          (lambda (_ v) (right v))
-                                          im)))
-                             rm)))
-             (list empty-fxmap letter-fxmap mixed-fxmap sparse-fxmap)))
-  ;; Using map-either to partition an fxmapping.
-  (test-eqv #t
-            (let-values (((neg pos)
-                          (fxmapping-map-either
-                           (lambda (_ n)
-                             (if (negative? n) (left n) (right n)))
-                           sparse-fxmap)))
-              (and (fxmapping-every? (lambda (_ x) (negative? x)) neg)
-                   (fxmapping-every? (lambda (_ x) (not (negative? x))) pos))))
-  ;; Using map-either to split and transform an fxmapping.
-  (test-eqv #t
-            (let-values (((lm rm)
-                          (fxmapping-map-either
-                           (lambda (k n)
-                             (if (negative? n)
-                                 (left (+ k (abs n)))
-                                 (right (+ k n))))
-                           (fxmapping -2 -2 -1 -1 3 3 5 5))))
-              (and (fxmapping=? default-comp lm (fxmapping -2 0 -1 0))
-                   (fxmapping=? default-comp rm (fxmapping 3 6 5 10)))))
   )
 
 (test-group "Filters"
@@ -1038,21 +951,15 @@
               (let-values ((fxmaps (fxmapping-split mixed-fxmap 0)))
                 (map fxmapping->alist fxmaps)))
   (test-equal (list '() sparse-seq)
-              (maybe-ref
-               (fxmapping-lookup-min sparse-fxmap)
-               (constantly #f)
-               (lambda (min-key _)
-                 (let-values ((fxmaps (fxmapping-split sparse-fxmap
-                                                       (- min-key 1))))
-                   (map fxmapping->alist fxmaps)))))
+              (let*-values (((min-key _) (fxmapping-min sparse-fxmap))
+                            (fxmaps (fxmapping-split sparse-fxmap
+                                                     (- min-key 1))))
+                (map fxmapping->alist fxmaps)))
   (test-equal (list sparse-seq '())
-              (maybe-ref
-               (fxmapping-lookup-max sparse-fxmap)
-               (constantly #f)
-               (lambda (max-key _)
-                 (let-values ((fxmaps (fxmapping-split sparse-fxmap
-                                                       (+ max-key 1))))
-                   (map fxmapping->alist fxmaps)))))
+              (let*-values (((max-key _) (fxmapping-max sparse-fxmap))
+                            (fxmaps (fxmapping-split sparse-fxmap
+                                                     (+ max-key 1))))
+                (map fxmapping->alist fxmaps)))
   )
 
 (test-group "Relation map"
