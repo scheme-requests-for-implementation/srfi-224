@@ -198,7 +198,6 @@ fxmapping-count, fxmapping-any?, fxmapping-every?</code></p></li>
 <li><p><a href="#traversal">Traversal</a>: <code>fxmapping-fold,
 fxmapping-fold-right, fxmapping-map, fxmapping-map-&gt;list,
 fxmapping-map&gt;list, fxmapping-for-each, fxmapping-filter-map,
-fxmapping-map-either,
 fxmapping-relation-map</code></p></li>
 <li><p><a href="#filter">Filter</a>: <code>fxmapping-filter,
 fxmapping-remove, fxmapping-partition</code></p></li>
@@ -979,40 +978,6 @@ is added for <em>k</em>.  The dynamic order of the applications of
                          (and (positive? v) (square v)))
                        (fxmapping 0 2 1 -4 2 8)))
  ⇒ ((0 . 4) (2 . 64))
-</code></pre>
-
-<p><code>(fxmapping-partition-map</code>&nbsp;<em>proc fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
-
-<p>The <em>proc</em> of <code>fxmapping-partition-map</code> is a
-procedure of type <code>exact-integer * (* → []) (* → []) → [*, …]</code>.</p>
-
-<p><code>fxmapping-partition-map</code> maps <em>proc</em> over the associations
-of <em>fxmap</em> and returns two fxmappings of the results.  For each
-association (<em>k</em>, <em>v</em>) in <em>fxmap</em>, <em>proc</em> is
-called on <em>k</em>, <em>v</em>, and two procedure arguments,
-<em>insert-left</em> and <em>insert-right</em>.  If <em>insert-left</em>
-is tail-called on a value <em>v</em>₁, then the association (<em>k</em>,
-<em>v</em>₁) is added to the first resulting fxmapping.  If
-<em>insert-right</em> is tail-called on a value <em>v</em>₂, then the
-association (<em>k</em>, <em>v</em>₂) is added to the second resulting
-fxmapping.  If <em>proc</em> returns rather than tail-calling one of
-<em>insert-left</em> and <em>insert-right</em>, or if either
-<em>insert</em> procedure is invoked in non-tail position, it is an
-error.</p>
-
-<p>Example:</p>
-
-<pre class="example"><code>(let-values (((lefts rights)
-              (fxmapping-partition-map
-               (lambda (_ v insert-left insert-right)
-                 (if (&gt;= v 0)
-                     (insert-right (sqrt v))
-                     (insert-left (sqrt (abs v)))))
-               (fxmapping 0 -50 4 -25 8 25 12 50))))
-  (values (fxmapping-&gt;alist lefts)
-          (fxmapping-&gt;alist rights)))
- ⇒ ((0 . 7.071) (4 . 5))
-   ((8 . 5) (12 . 7.071))
 </code></pre>
 
 <p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
