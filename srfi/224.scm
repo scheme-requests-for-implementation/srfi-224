@@ -230,16 +230,14 @@
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
   (assume (procedure? success))
-  (raw-fxmapping
-   (trie-update (fxmapping-trie fxmap) key success)))
+  (trie-update (fxmapping-trie fxmap) key success raw-fxmapping))
 
 (define (fxmapping-alter fxmap key failure success)
   (assume (fxmapping? fxmap))
   (assume (valid-integer? key))
   (assume (procedure? failure))
   (assume (procedure? success))
-  (raw-fxmapping
-   (trie-alter (fxmapping-trie fxmap) key failure success)))
+  (trie-alter (fxmapping-trie fxmap) key failure success raw-fxmapping))
 
 ;; Delete the element with the least key, or return an empty
 ;; mapping if `fxmap' is empty.
@@ -252,8 +250,7 @@
   (assume (fxmapping? fxmap))
   (assume (not (fxmapping-empty? fxmap)))
   (assume (procedure? success))
-  (raw-fxmapping
-   (trie-update-min (fxmapping-trie fxmap) success)))
+  (trie-update-min (fxmapping-trie fxmap) success raw-fxmapping))
 
 (define fxmapping-pop-min
   (case-lambda
@@ -281,8 +278,7 @@
   (assume (fxmapping? fxmap))
   (assume (not (fxmapping-empty? fxmap)))
   (assume (procedure? success))
-  (raw-fxmapping
-   (trie-update-max (fxmapping-trie fxmap) success)))
+  (trie-update-max (fxmapping-trie fxmap) success raw-fxmapping))
 
 (define fxmapping-pop-max
   (case-lambda

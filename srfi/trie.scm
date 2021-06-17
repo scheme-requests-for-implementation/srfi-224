@@ -117,56 +117,63 @@
               t))))))
     (update trie)))
 
-;; FIXME: Rewrite to allow proc to call its continuations for values.
-(define (trie-update trie key proc)
+(define (trie-update trie key proc wrapper)
   (letrec
    ((update
-     (lambda (t)
+     (lambda (t build)
        (tmatch t
-         (empty t)
+         (empty (wrapper (build the-empty-trie)))
          ((leaf ,k ,v)
           (if (fx=? key k)
               (proc k
                     v
-                    (lambda (v*) (leaf k v*))
-                    (lambda () the-empty-trie))
-              t))
+                    (lambda (v*) (wrapper (build (leaf k v*))))
+                    (lambda () (wrapper (build the-empty-trie))))
+              (wrapper (build t))))
          ((branch ,p ,m ,l ,r)
           (if (match-prefix? key p m)
               (if (zero-bit? key m)
-                  (branch p m (update l) r)
-                  (branch p m l (update r)))
-              t))))))
-    (update trie)))
+                  (update l (lambda (l*) (build (branch p m l* r))))
+                  (update r (lambda (r*) (build (branch p m l r*)))))
+              (wrapper (build t))))))))
+    (update trie values)))
 
-;; FIXME: Rewrite to allow failure/success to call their continuations
-;; for values.
-(define (trie-alter trie key failure success)
+(define (trie-alter trie key failure success wrapper)
   (letrec
    ((update
-     (lambda (t)
+     (lambda (t build)
        (tmatch t
          (empty
-          (failure (lambda (v) (leaf key v))       ; insert
-                   (lambda () the-empty-trie)))    ; ignore
+          (failure (lambda (v)
+                     (wrapper (build (leaf key v))))     ; insert
+                   (lambda ()
+                     (wrapper (build the-empty-trie))))) ; ignore
          ((leaf ,k ,v)
           (if (fx=? key k)
               (success k
                        v
-                       (lambda (v*) (leaf k v*))   ; replace
-                       (lambda () the-empty-trie)) ; delete
-              (failure (lambda (u)                 ; insert
-                         (trie-join key 0 (leaf key u) k 0 t))
-                       (lambda () t))))            ; ignore
-         ((branch ,p ,m ,l ,r) (guard (match-prefix? key p m))
-          (if (zero-bit? key m)
-              (branch p m (update l) r)
-              (branch p m l (update r))))
-         ((branch ,p ,m ? ?)
-          (failure (lambda (v)                     ; insert
-                     (trie-join key 0 (leaf key v) p m t))
-                   (lambda () t)))))))             ; ignore
-    (update trie)))
+                       (lambda (v*)                      ; replace
+                         (wrapper (build (leaf k v*))))
+                       (lambda ()                        ; delete
+                         (wrapper (build the-empty-trie))))
+              (failure (lambda (u)                       ; insert
+                         (wrapper
+                          (build (trie-join key 0 (leaf key u) k 0 t))))
+                       (lambda ()                        ; ignore
+                         (wrapper (build t))))))
+         ((branch ,p ,m ,l ,r)
+          (if (match-prefix? key p m)
+              (if (zero-bit? key m)
+                  (update l (lambda (l*)
+                              (build (branch p m l* r))))
+                  (update r (lambda (r*)
+                              (build (branch p m l r*)))))
+              (failure (lambda (v)                    ; insert
+                         (wrapper
+                          (build (trie-join key 0 (leaf key v) p m t))))
+                       (lambda ()                     ; ignore
+                         (wrapper (build t))))))))))
+    (update trie values)))
 
 ;; If `key' has an association in `trie', then call `success' with
 ;; on the associated value.  Otherwise, call `failure'.
@@ -344,23 +351,28 @@
       ((branch ? ,m ,l ,r)
        (if (fxnegative? m) (search r) (search l))))))
 
-(define (trie-update-min trie success)
+(define (trie-update-min trie success wrapper)
   (letrec
    ((update
-     (tmatch-lambda
-       (empty the-empty-trie)
-       ((leaf ,k ,v)
-        (success k
-                 v
-                 (lambda (v*) (leaf k v*))
-                 (lambda () the-empty-trie)))
-       ((branch ,p ,m ,l ,r) (branch p m (update l) r)))))
+     (lambda (t build)
+       (tmatch t
+         (empty (wrapper (build the-empty-trie)))
+         ((leaf ,k ,v)
+          (success k
+                   v
+                   (lambda (v*)
+                     (wrapper (build (leaf k v*))))
+                   (lambda ()
+                     (wrapper (build the-empty-trie)))))
+         ((branch ,p ,m ,l ,r)
+          (update l (lambda (l*)
+                      (build (branch p m l* r)))))))))
     (tmatch trie
       ((branch ,p ,m ,l ,r)
        (if (negative? m)
-           (branch p m l (update r))
-           (branch p m (update l) r)))
-      (else (update trie)))))
+           (update r (lambda (r*) (branch p m l r*)))
+           (update l (lambda (l*) (branch p m l* r)))))
+      (else (update trie values)))))
 
 (define (trie-pop-min trie)
   (letrec
@@ -392,23 +404,28 @@
        (if (fxnegative? m) (search l) (search r)))
       ((leaf ,k ,v) (values k v)))))
 
-(define (trie-update-max trie success)
+(define (trie-update-max trie success wrapper)
   (letrec
    ((update
-     (tmatch-lambda
-       (empty the-empty-trie)
-       ((leaf ,k ,v)
-        (success k
-                 v
-                 (lambda (v*) (leaf k v*))
-                 (lambda () the-empty-trie)))
-       ((branch ,p ,m ,l ,r) (branch p m l (update r))))))
+     (lambda (t build)
+       (tmatch t
+         (empty (wrapper (build the-empty-trie)))
+         ((leaf ,k ,v)
+          (success k
+                   v
+                   (lambda (v*)
+                     (wrapper (build (leaf k v*))))
+                   (lambda ()
+                     (wrapper (build the-empty-trie)))))
+         ((branch ,p ,m ,l ,r)
+          (update r (lambda (r*)
+                      (build (branch p m l r*)))))))))
     (tmatch trie
       ((branch ,p ,m ,l ,r)
        (if (negative? m)
-           (branch p m (update l) r)
-           (branch p m l (update r))))
-      (else (update trie)))))
+           (update l (lambda (l*) (branch p m l* r)))
+           (update r (lambda (r*) (branch p m l r*)))))
+      (else (update trie values)))))
 
 (define (trie-pop-max trie)
   (letrec
@@ -638,7 +655,8 @@
   (trie-alter trie
               key
               (lambda (insert _ig) (insert value))
-              (lambda (_k _v _rep delete) (delete))))
+              (lambda (_k _v _rep delete) (delete))
+              values))
 
 (define (trie-xor trie1 trie2)
   (letrec
