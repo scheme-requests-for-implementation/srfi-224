@@ -290,13 +290,13 @@ The arguments have the following types:
 <p>Similar to <code>fxmapping-unfold</code>, except that a single
 procedure controls the unfolding of a new fxmapping.  Let <em>n</em>
 be the number of <em>seed</em>s.  <em>proc</em> is applied to a
-procedure <em>stop</em> and the <em>seed</em>s, in that order, and is
+procedure <em>abort-with-result</em> and the <em>seed</em>s, in that order, and is
 expected to return <em>n</em><code> + 2</code> values: a key (fixnum), an
 associated value, and <em>n</em> new seed values.  The key/value
 association is added to the new fxmapping, and unfolding continues
-with the new seeds.  If, instead, <em>stop</em> is invoked on any
+with the new seeds.  If, instead, <em>abort-with-result</em> is invoked on any
 number of arbitrary values, then the current continuation is discarded
-and the new fxmapping along with the arguments passed to <em>stop</em>
+and the new fxmapping along with the arguments passed to <em>abort-with-result</em>
 are delivered as multiple values to the continuation that was in effect when
 <code>fxmapping-accumulate</code> was called.</p>
 
@@ -305,9 +305,9 @@ the unfolding process.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-accumulate (lambda (stop i)
+ (fxmapping-accumulate (lambda (abort-with-result i)
                          (if (&lt; i -3)
-                             (stop 'finished)
+                             (abort-with-result 'finished)
                              (values i (square i) (- i 1))))
                        -1))
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
@@ -336,9 +336,9 @@ have no choice other than to compute <em>k</em> and <em>v</em> twice:</p>
 equivalent unfold which computes <em>k</em> and <em>v</em> only once for
 each step:</p>
 
-<pre class="example"><code>(fxmapping-accumulate (lambda (halt s)
+<pre class="example"><code>(fxmapping-accumulate (lambda (abort-with-result s)
                         (if (stop? s)
-                            (halt)
+                            (abort-with-result)
                             (let-values (((k v) (f s)))
                               (let ((s* …))
                                 (values k v s*)))))
