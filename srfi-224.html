@@ -161,7 +161,9 @@ example) will produce the value <em>v</em>.</p>
 <p>where <em>proc</em> is the name of the procedure, the <em>args</em> are its
 parameters, and the <em>types</em> are the types of the objects it returns.
 If the procedure returns a single value, the brackets on the right-hand side
-may be omitted.
+may be omitted.  A pair of empty brackets, <code>[]</code>, denotes zero values;
+thus a "thunk" (nullary procedure) returning zero or more values is of type
+<code>[] → [*, …]</code>.
 The <em>types</em> refer (informally) to Scheme types; e.g. <code>boolean</code>
 denotes a Scheme boolean, <code>list[integer]</code> denotes a list of integers,
 etc.  The special notation &lsquo;*&rsquo; indicates that the type
@@ -428,12 +430,11 @@ with the value of</p>
 
 <p><code>(fxmapping-ref</code>&nbsp;<em>fxmap k</em><code> [ </code><em>failure</em><code> [ </code><em>success</em><code> ] ]) → * …</code></p>
 
-<p>If the optional <em>failure</em> parameter is supplied, then it must
-be a procedure of no arguments returning zero or more values of arbitrary
-type.  The optional <em>success</em> parameter is a procedure taking one
-argument of arbitrary type and returning zero or more values of arbitrary
-type.  <em>failure</em> defaults to a procedure which
-signals an error; <em>success</em> defaults to <code>values</code>.</p>
+<p>The optional <em>failure</em> parameter is a procedure of type
+<code>[] → [*, …]</code>.  The optional <em>success</em> parameter
+is a procedure of type <code>* → [*, …]</code>.  <em>failure</em>
+defaults to a procedure which signals an error; <em>success</em>
+defaults to <code>values</code>.</p>
 
 <p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>,
 tail-calls <em>success</em> on <em>v</em>.  Otherwise, <em>failure</em>
@@ -768,7 +769,7 @@ valid:</p>
 <code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code> [ </code><em>failure</em><code> ]) → [fixnum, *, fxmapping]</code> or <code>*</code> …<br>
 
 <p>If the optional <em>failure</em> parameter is supplied, then it
-must be a procedure of type <code>[] → *</code> ….  <em>failure</em>
+must be a procedure of type <code>[] → [*, …]</code>; it
 defaults to a procedure which signals an error.</p>
 
 <p>Returns three values, <em>k</em>, <em>v</em>, and <em>fxmap′</em>,
@@ -795,8 +796,7 @@ fxmapping containing all of the associations of <em>fxmap</em> except for
 <p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code>)</code> → <code>[fixnum, *] or [*, …]</code></p>
 
 <p><em>pred</em> is a predicate of type <code>exact-integer * → boolean</code>.
-<code>failure</code> is a procedure of no arguments returning zero
-or more values of arbitrary type.</p>
+<code>failure</code> is a procedure of type <code>[] → [*, …]</code>.</p>
 
 <p>Returns two values, <em>k</em> and <em>v</em>, where
 (<em>k</em>, <em>v</em>) is the association of <em>fxmap</em> with the
