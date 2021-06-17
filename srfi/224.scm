@@ -98,21 +98,22 @@
      (assume (procedure? proc))
      (call-with-current-continuation
       (lambda (k)
-        (let ((build (lambda (t) (k (raw-fxmapping t)))))
-          (let lp ((trie the-empty-trie) (seed seed))
-            (let-values (((k v seed*) (proc (lambda () (build trie))
-                                            seed)))
-              (lp (trie-insert trie k v) seed*)))))))
+        (let lp ((trie the-empty-trie) (seed seed))
+          (let-values (((k v seed*)
+                        (proc (lambda xs (apply k (raw-fxmapping trie) xs))
+                              seed)))
+            (lp (trie-insert trie k v) seed*))))))
     ((proc . seeds)                             ; variadic path
      (assume (procedure? proc))
      (assume (pair? seeds))
      (call-with-current-continuation
       (lambda (k)
-        (let ((build (lambda (t) (k (raw-fxmapping t)))))
-          (let lp ((trie the-empty-trie) (seeds seeds))
-            (let-values (((k v . seeds*)
-                          (apply proc (lambda () (build trie)) seeds)))
-              (lp (trie-insert trie k v) seeds*)))))))))
+        (let lp ((trie the-empty-trie) (seeds seeds))
+          (let-values (((k v . seeds*)
+                        (apply proc
+                               (lambda xs (apply k (raw-fxmapping trie) xs))
+                               seeds)))
+            (lp (trie-insert trie k v) seeds*))))))))
 
 ;;;; Predicates
 

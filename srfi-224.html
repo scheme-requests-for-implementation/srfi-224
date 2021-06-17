@@ -279,12 +279,12 @@ the unfolding process.</p>
  ⇒ ((0 . "") (1 . "a") (2 . "aa") (3 . "aaa"))
 </code></pre>
 
-<p><code>(fxmapping-accumulate</code>&nbsp;<em>proc seed</em>₁ …<code>) → fxmapping</code></p>
+<p><code>(fxmapping-accumulate</code>&nbsp;<em>proc seed</em>₁ <em>seed</em>₂ …<code>) → fxmapping</code></p>
 
 The arguments have the following types:
 <ul>
-<li><em>proc</em> : <code>([] → fxmapping) *</code> … <code>→ [fixnum, *, *, …]</code></li>
-<li><em>seed</em>₁, … : <code>*</code></li>
+<li><em>proc</em> : <code>(* … → [fxmapping, *, …]) *</code> … <code>→ [fixnum, *, *, …]</code></li>
+<li><em>seed</em>₁, <em>seed</em>₂, … : <code>*</code></li>
 </ul>
 
 <p>Similar to <code>fxmapping-unfold</code>, except that a single
@@ -294,9 +294,10 @@ procedure <em>stop</em> and the <em>seed</em>s, in that order, and is
 expected to return <em>n</em><code> + 2</code> values: a key (fixnum), an
 associated value, and <em>n</em> new seed values.  The key/value
 association is added to the new fxmapping, and unfolding continues
-with the new seeds.  If, instead, <em>stop</em> is invoked on no
-values, then the current continuation is discarded and the new
-fxmapping is delivered to the continuation that was in effect when
+with the new seeds.  If, instead, <em>stop</em> is invoked on any
+number of arbitrary values, then the current continuation is discarded
+and the new fxmapping along with the arguments passed to <em>stop</em>
+are delivered as multiple values to the continuation that was in effect when
 <code>fxmapping-accumulate</code> was called.</p>
 
 <p>It is an error for the number of seeds to vary between steps of
@@ -306,10 +307,11 @@ the unfolding process.</p>
 <pre class="example"><code>(fxmapping-&gt;alist
  (fxmapping-accumulate (lambda (stop i)
                          (if (&lt; i -3)
-                             (stop)
+                             (stop 'finished)
                              (values i (square i) (- i 1))))
                        -1))
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
+   finished
 </code></pre>
 
 <p><strong>Rationale:</strong> As well as sometimes leading to more compact
