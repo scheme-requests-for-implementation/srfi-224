@@ -139,8 +139,8 @@ in the R7RS Scheme standard.</p>
 that do not have the type implied by the argument names.</p>
 
 <p>The pair notation (<em>k</em>,<em>v</em>) is often used to describe
-an association of an fxmapping.  Here, <em>k</em> is the key and
-<em>v</em> its associated value.  If an fxmapping <em>fxmap</em> is said
+an association of a fxmapping.  Here, <em>k</em> is the key and
+<em>v</em> its associated value.  If a fxmapping <em>fxmap</em> is said
 to "contain the association (<em>k</em>,<em>v</em>)", then this is to
 be understood in the sense that looking up <em>k</em> in <em>fxmap</em>
 (via <code>(fxmapping-ref</code> <em>fxmap k</em><code>)</code>, for
@@ -220,7 +220,7 @@ fxmapping-split</code></p></li>
 
 <p><code>(fxmapping</code>&nbsp;<em>k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Constructs an fxmapping from the given arguments, which alternate between keys
+<p>Constructs a fxmapping from the given arguments, which alternate between keys
 and values (which are arbitrary Scheme objects); the
 resulting fxmapping is newly allocated and contains these (<em>k</em>, <em>obj</em>) associations.
 The number of arguments must be even.  If duplicate keys occur in
@@ -251,7 +251,7 @@ expected by <em>mapper</em>; that is, the expression</p>
 </code></pre>
 <p>must result in a valid procedure application.</p>
 
-<p>Unfold an fxmapping from the initial <em>seed</em>s.
+<p>Unfold a fxmapping from the initial <em>seed</em>s.
 <em>mapper</em> is applied to the <em>seed</em>s and returns two values, a key
 and an associated value, which are adjoined to the new fxmapping.
 <em>successor</em> maps the <em>seed</em>s to new seeds.
@@ -388,7 +388,7 @@ with the value of</p>
 
 <p><code>(fxmapping?</code>&nbsp;<em>obj</em><code>) → boolean</code></p>
 
-<p>Returns <code>#t</code> if and only if <em>obj</em> is an fxmapping.</p>
+<p>Returns <code>#t</code> if and only if <em>obj</em> is a fxmapping.</p>
 
 <p><code>(fxmapping-contains?</code>&nbsp;<em>fxmap k</em><code>) → boolean</code></p>
 
@@ -471,7 +471,7 @@ associated value. It is an error if <em>fxmap</em> is empty.</p>
 
 <p><code>(fxmapping-adjoin</code>&nbsp;<em>fxmap k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Returns an fxmapping containing all of the associations of
+<p>Returns a fxmapping containing all of the associations of
 <em>fxmap</em> as well as the associations (<em>k</em>₁, <em>obj</em>₁),
 (<em>k</em>₂, <em>obj</em>₂), ….
 The number of key/value arguments must be even.</p>
@@ -520,10 +520,10 @@ replaced.</p>
 <p>The <em>proc</em> parameter of <code>fxmapping-adjust</code> is a
 procedure of type <code>exact-integer * → *</code>.</p>
 
-<p>Returns an fxmapping in which the association (<em>k</em>, <em>v</em>) in <em>fxmap</em>
+<p>Returns a fxmapping in which the association (<em>k</em>, <em>v</em>) in <em>fxmap</em>
 is replaced by (<em>k</em>, (<em>proc k v</em>)).  If <em>k</em> has
 no association in <em>fxmap</em>,
-then an fxmapping with the same associations as <em>fxmap</em> is returned.</p>
+then a fxmapping with the same associations as <em>fxmap</em> is returned.</p>
 
 <p>Examples:</p>
 
@@ -536,7 +536,7 @@ then an fxmapping with the same associations as <em>fxmap</em> is returned.</p>
 
 <p><code>(fxmapping-delete fxmap</code>&nbsp;<em>k</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
-<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
+<p>Returns a fxmapping with the same associations as <em>fxmap</em>, except
 those for keys equal to <em>k</em>₁, <em>k</em>₂, ….  If a key does not have an
 association in <em>fxmap</em>, it is ignored.</p>
 
@@ -547,7 +547,7 @@ association in <em>fxmap</em>, it is ignored.</p>
 
 <p><code>(fxmapping-delete-all</code>&nbsp;<em>fxmap list</em><code>) → fxmapping</code></p>
 
-<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
+<p>Returns a fxmapping with the same associations as <em>fxmap</em>, except
 those for keys equal to an element of <em>list</em>.</p>
 
 <p>Example:</p>
@@ -570,7 +570,7 @@ the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
 associations.
 Invoking <em>delete</em> returns a fxmapping with all of the associations of
 <em>fxmap</em>, but without an association for <em>k</em>.
-If <em>k</em> has no association in <em>fxmap</em>, then an fxmapping
+If <em>k</em> has no association in <em>fxmap</em>, then a fxmapping
 with the same associations as <em>fxmap</em>
 is returned.</p>
 
@@ -697,7 +697,7 @@ following is valid:</p>
 <p><code>(fxmapping-delete-min</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code><br>
 <code>(fxmapping-delete-max</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an fxmapping with the same associations as <em>fxmap</em>, except
+<p>Returns a fxmapping with the same associations as <em>fxmap</em>, except
 for the association with the least/greatest key.  If <em>fxmap</em> is empty,
 an error is signalled.</p>
 
@@ -763,7 +763,7 @@ defaults to a procedure which signals an error.</p>
 
 <p>Returns three values, <em>k</em>, <em>v</em>, and <em>fxmap′</em>,
 where (<em>k</em>, <em>v</em>) is the association of
-<em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is an
+<em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is a
 fxmapping containing all of the associations of <em>fxmap</em> except for
 (<em>k</em>, <em>v</em>).  If <em>fxmap</em> is empty, then
 <em>failure</em> is tail-called on no arguments.</p>
@@ -869,7 +869,7 @@ numerical order of keys.</p>
 <p>The <em>proc</em> argument of <code>fxmapping-map</code> is of type
 <code>exact-integer * → *</code>.</p>
 
-<p>Returns an fxmapping with the same keys as <em>fxmap</em> whose values
+<p>Returns a fxmapping with the same keys as <em>fxmap</em> whose values
 are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
 For each association
 <code>(</code><em>k, v</em><code>)</code> in <em>fxmap</em>, the association
@@ -961,7 +961,7 @@ but may be implemented more efficiently.</p>
 <p><em>proc</em> is a
 procedure of type <code>exact-integer * → *-or-#f</code>.</p>
 
-<p>Returns an fxmapping with the same keys as <em>fxmap</em> whose values
+<p>Returns a fxmapping with the same keys as <em>fxmap</em> whose values
 are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
 For each association (<em>k</em>, <em>v</em>)
 in fxmapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
@@ -985,7 +985,7 @@ is added for <em>k</em>.  The dynamic order of the applications of
 <p><em>proc</em> must be a procedure of type
 <code>exact-integer * → [fixnum, *]</code>.</p>
 
-<p>Returns an fxmapping whose associations are the results of
+<p>Returns a fxmapping whose associations are the results of
 transforming both the keys and the values of <em>fxmap</em> with
 <em>proc</em>.  For each association (<em>k</em>,
 <em>v</em>) in <em>fxmap</em>, (<em>proc k v</em>) is evaluated to
@@ -1017,7 +1017,7 @@ while being sufficiently general for most purposes.</p>
 
 <p><code>(fxmapping-filter</code>&nbsp;<em>pred fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an fxmapping containing all of the associations of <em>fxmap</em>
+<p>Returns a fxmapping containing all of the associations of <em>fxmap</em>
 that satisfy <em>pred</em> (in the sense of <code>fxmapping-find</code>).</p>
 
 <p>Example:</p>
@@ -1030,7 +1030,7 @@ that satisfy <em>pred</em> (in the sense of <code>fxmapping-find</code>).</p>
 
 <p><code>(fxmapping-remove</code>&nbsp;<em>pred fxmap</em><code>) → fxmapping</code></p>
 
-<p>Returns an fxmapping containing all of the associations of
+<p>Returns a fxmapping containing all of the associations of
 <em>fxmap</em> that do not satisfy <em>pred</em> (in the sense of
 <code>fxmapping-find</code>).</p>
 
@@ -1212,7 +1212,7 @@ compared using the equality predicate of <em>comp</em>.</p>
 <code>(fxmapping-difference</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
 <code>(fxmapping-xor</code>&nbsp;<em>fxmap</em>₁ <em>fxmap</em>₂<code>) → fxmapping</code></p>
 
-<p>Return an fxmapping whose set of associations is the
+<p>Return a fxmapping whose set of associations is the
 union, intersection, asymmetric difference, or symmetric difference of
 the sets of associations of the <em>fxmaps</em>.  Asymmetric difference is
 extended to more than two fxmappings by taking the difference between
@@ -1245,7 +1245,7 @@ appear.</p>
 
 <p><em>proc</em> is a procedure of type <code>exact-integer * * → *</code>.</p>
 
-<p>Return an fxmapping whose set of keys is the union/intersection of
+<p>Return a fxmapping whose set of keys is the union/intersection of
 the sets of keys of the <em>fxmaps</em>.  The values associated with duplicate
 keys are combined left-associatively with <em>proc</em>, which is also passed
 the duplicated key as its first argument; that is, if an integer <em>k</em> is associated
@@ -1307,7 +1307,7 @@ above and closed below.</p>
 <code>(fxsubmapping&gt;</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code><br>
 <code>(fxsubmapping&gt;=</code>&nbsp;<em>fxmap k</em><code>) → fxmapping</code></p>
 
-<p>Procedures that return an fxmapping containing the associations of
+<p>Procedures that return a fxmapping containing the associations of
 <em>fxmap</em> whose keys are equal to/less than/less than or equal
 to/greater than/greater than or equal to <em>k</em>.  Note that the result of
 <code>fxsubmapping=</code> contains at most one element.</p>
