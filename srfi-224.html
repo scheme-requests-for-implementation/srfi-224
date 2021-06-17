@@ -77,7 +77,7 @@ Okasaki-Gill radix tree model used in this SRFI&rsquo;s sample implementation,
 are unsuitable for representing general mappings.</p>
 
 <p>The integer mappings we describe restrict the type of keys to
-fixnums, an implementation-dependent subrange of the exact integers provided
+fixnums, a subrange of the exact integers provided
 by most Schemes (See the R⁶RS § 3.3 and
 <a href="https://srfi.schemers.org/srfi-143/">SRFI 143</a>).
 The fixnum subset is broadly useful as a key-type for mappings; its use
@@ -104,6 +104,13 @@ The sample implementation has further dependencies; see the
 created by <code>define-record-type</code> (see R7RS § 5.5).  The
 effects of using record-type inspection or inheritance for the
 fxmapping type are unspecified.</p>
+
+<p>Fxmappings represent finite sets of associations whose keys are
+fixnums, an implementation-defined subset of the exact integers.
+This is a closed interval,</p>
+<pre>[-(2 ^ (<em>w</em> - 1)), (2 ^ (<em>w</em> - 1)) - 1],</pre>
+<p>where <em>w</em> is an integer greater than or equal to 24.
+Portable code should not assume that <em>w</em> is greater than 24.</p>
 
 <p>Fxmappings are immutable in the sense that all of the procedures
 defined in this SRFI are &ldquo;pure&rdquo;, that is, they must not
