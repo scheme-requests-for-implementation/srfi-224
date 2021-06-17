@@ -5,7 +5,7 @@ See the SRFI document (`srfi-224.html`) for more details.
 
 # Dependencies
 
-SRFIs 1, 128, 143, 158, 189, and 217 are required.  SRFI 145 is an
+SRFIs 1, 128, 143, 158, and 217 are required.  SRFI 145 is an
 optional dependency.
 
 # Tests
@@ -30,10 +30,6 @@ From the top directory, execute
 The CHICKEN test shim uses the popular `test` egg.  To run the
 implementation on CHICKEN, the `r7rs` egg must also be loaded.
 
-First, cd to the `srfi/` directory and execute
+In the `srfi/` directory, execute
 
-    csi -R r7rs 224.sld
-
-then evaluate
-
-    ,l ../test-chicken.scm
+    csi -R r7rs 224.sld ../test-chicken.scm
