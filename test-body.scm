@@ -121,6 +121,15 @@
                                  (lambda (i) (values i i))
                                  (lambda (i) (- i 1))
                                  -1)))
+  ;; Multiple seeds.
+  (test-equal '((1 . 2) (2 . 8) (3 . 18) (4 . 32))
+              (fxmapping->alist
+               (fxmapping-unfold
+                (lambda (a _) (> a 4))
+                (lambda (a b) (values a (* a b)))
+                (lambda (a b) (values (+ a 1) (+ b 2)))
+                1
+                2)))
 
   (test-eqv #t (null? (fxmapping->alist (fxmapping-accumulate
                                          (lambda (abort b)
@@ -137,6 +146,25 @@
                 (lambda (abort i)
                   (if (< i -3) (abort) (values i i (- i 1))))
                 -1)))
+  ;; Multiple seeds.
+  (test-equal '((1 . 2) (2 . 8) (3 . 18) (4 . 32))
+              (fxmapping->alist
+               (fxmapping-accumulate
+                (lambda (abort a b)
+                  (if (> a 4)
+                      (abort)
+                      (values a (* a b) (+ a 1) (+ b 2))))
+                1
+                2)))
+  ;; Return additional values via the abort continuation.
+  (test-equal '(((-3 . -3) (-2 . -2) (-1 . -1)) x y)
+              (let-values
+               (((fxm u v)
+                 (fxmapping-accumulate
+                   (lambda (abort i)
+                     (if (< i -3) (abort 'x 'y) (values i i (- i 1))))
+                  -1)))
+                (list (fxmapping->alist fxm) u v)))
 
   ;;; alist->fxmapping
 
