@@ -238,8 +238,6 @@
   (assume (procedure? success))
   (trie-alter (fxmapping-trie fxmap) key failure success raw-fxmapping))
 
-;; Delete the element with the least key, or return an empty
-;; mapping if `fxmap' is empty.
 (define (fxmapping-delete-min fxmap)
   (fxmapping-update-min fxmap
                         (lambda (_k _v _rep delete)
@@ -275,8 +273,6 @@
          (let-values (((k v trie) (trie-pop-min (fxmapping-trie fxmap))))
            (values k v (raw-fxmapping trie)))))))
 
-;; Delete the element with the greatest key, or return an empty
-;; mapping if `fxmap' is empty.
 (define (fxmapping-delete-max fxmap)
   (fxmapping-update-max fxmap
                         (lambda (_k _v _rep delete)
