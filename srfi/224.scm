@@ -46,8 +46,7 @@
 
 (define (fxmapping . args)
   (raw-fxmapping
-    (plist-fold (lambda (k v trie)
-                  (trie-insert/combine trie k v second-arg))
+    (plist-fold (lambda (k v trie) (trie-adjoin trie k v))
                 the-empty-trie
                 args)))
 
@@ -185,11 +184,10 @@
   (case-lambda
     ((fxmap key value)              ; one-assoc fast path
      (raw-fxmapping
-      (trie-insert/combine (fxmapping-trie fxmap) key value second-arg)))
+      (trie-adjoin (fxmapping-trie fxmap) key value)))
     ((fxmap . ps)
      (raw-fxmapping
-      (plist-fold (lambda (k v t)
-                    (trie-insert/combine t k v second-arg))
+      (plist-fold (lambda (k v t) (trie-adjoin t k v))
                   (fxmapping-trie fxmap)
                   ps)))))
 
