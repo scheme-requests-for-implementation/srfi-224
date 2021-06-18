@@ -358,14 +358,14 @@
   (test-eqv #t (fxmapping=? default-comp
                             (fxmapping 0 'a)
                             (fxmapping-alter (fxmapping 0 'a)
-                                            1
+                                             1
                                              (lambda (_ins ignore) (ignore))
                                              (lambda (_k v replace _del)
                                                (replace v)))))
   (test-eqv #t (fxmapping=? default-comp
                             (fxmapping 0 'a 1 'b)
                             (fxmapping-alter (fxmapping 0 'a)
-                                            1
+                                             1
                                              (lambda (insert _ig) (insert 'b))
                                              (lambda (_k v replace _del)
                                                (replace 'b)))))
@@ -608,7 +608,7 @@
   (test-eqv #t (fxmapping=? default-comp
                             (fxmapping 0 "" 1 "b" 2 "cc")
                             (fxmapping-map make-string
-                                          (fxmapping 0 #\a 1 #\b 2 #\c))))
+                                           (fxmapping 0 #\a 1 #\b 2 #\c))))
 
   ;;; for-each
 
@@ -638,8 +638,8 @@
                               letter-fxmap))
   (test-equal (reverse (iota 9 -100 25))
               (fxmapping-fold (lambda (_ v vs) (cons v vs))
-                             '()
-                             mixed-fxmap))
+                              '()
+                              mixed-fxmap))
   (test-eqv (fold + 0 (iota 9 -100 25))
             (fxmapping-fold (lambda (_ v sum) (+ v sum))
                             0
@@ -911,10 +911,10 @@
     ;;; /combinator variants
 
     (test-eqv #t (fxmapping=? default-comp
-                             sparse-fxmap
-                             (fxmapping-union/combinator second-arg
-                                                         sparse-fxmap
-                                                         empty-fxmap)))
+                              sparse-fxmap
+                              (fxmapping-union/combinator second-arg
+                                                          sparse-fxmap
+                                                          empty-fxmap)))
     (test-eqv #t (fxmapping=?
                   default-comp
                   (fxmapping -2 'b 3 'd 5 'g 7 'f)
@@ -933,10 +933,10 @@
                                               (fxmapping 0 "c"))))
 
     (test-eqv #t (fxmapping=? default-comp
-                             empty-fxmap
-                             (fxmapping-intersection/combinator second-arg
-                                                                sparse-fxmap
-                                                                empty-fxmap)))
+                              empty-fxmap
+                              (fxmapping-intersection/combinator second-arg
+                                                                 sparse-fxmap
+                                                                 empty-fxmap)))
     (test-eqv #t (fxmapping=?
                   default-comp
                   (fxmapping 3 'd 5 'g)
@@ -1041,13 +1041,13 @@
                 (map fxmapping->alist fxmaps)))
   (test-equal (list '() sparse-seq)
               (let*-values (((min-key _) (fxmapping-min sparse-fxmap))
-                            (fxmaps (fxmapping-split sparse-fxmap
-                                                     (- min-key 1))))
+                             (fxmaps (fxmapping-split sparse-fxmap
+                                                      (- min-key 1))))
                 (map fxmapping->alist fxmaps)))
   (test-equal (list sparse-seq '())
               (let*-values (((max-key _) (fxmapping-max sparse-fxmap))
-                            (fxmaps (fxmapping-split sparse-fxmap
-                                                     (+ max-key 1))))
+                             (fxmaps (fxmapping-split sparse-fxmap
+                                                      (+ max-key 1))))
                 (map fxmapping->alist fxmaps)))
   )
 
