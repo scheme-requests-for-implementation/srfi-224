@@ -312,11 +312,7 @@
 
 (define (fxmapping-size fxmap)
   (assume (fxmapping? fxmap))
-  (let lp ((acc 0) (t (fxmapping-trie fxmap)))
-    (cond ((not t) acc)
-          ((leaf? t) (+ acc 1))
-          (else
-           (lp (lp acc (branch-left t)) (branch-right t))))))
+  (trie-size (fxmapping-trie fxmap)))
 
 (define (fxmapping-find pred fxmap failure)
   (assume (procedure? pred))
