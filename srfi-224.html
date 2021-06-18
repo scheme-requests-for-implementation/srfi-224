@@ -583,7 +583,7 @@ those for keys equal to an element of <em>list</em>.</p>
 <code>exact-integer * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association for <em>k</em> in <em>fxmap</em> as follows.
-<em>proc</em> is
+If <em>k</em> has an association in <em>fxmap</em>, then <em>proc</em> is
 invoked in tail context on <em>k</em>, its associated value, and two procedure arguments,
 <em>replace</em> and <em>delete</em>, and its values are returned.
 Invoking <em>replace</em> on a value <em>v</em> returns a fxmapping with
@@ -591,7 +591,8 @@ the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
 associations.
 Invoking <em>delete</em> returns a fxmapping with all of the associations of
 <em>fxmap</em>, but without an association for <em>k</em>.
-If <em>k</em> has no association in <em>fxmap</em>, then a fxmapping
+If <em>k</em> has no association in <em>fxmap</em>, then <em>proc</em>
+is not invoked and a fxmapping
 with the same associations as <em>fxmap</em>
 is returned.</p>
 
