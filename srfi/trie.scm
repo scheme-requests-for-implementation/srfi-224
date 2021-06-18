@@ -325,24 +325,26 @@
     (tmap trie)))
 
 (define (trie-fold-left proc nil trie)
-  (letrec
-   ((cata
-     (lambda (b t)
-       (tmatch t
-         (empty b)
-         ((leaf ,k ,v) (proc k v b))
-         ((branch ? ? ,l ,r) (cata (cata b l) r))))))
-    (cata nil trie)))
+  (if (trie-empty? trie)
+      nil
+      (let lp ((t trie) (b nil) (kont values))
+        (if (leaf? t)
+            (kont (proc (leaf-key t) (leaf-value t) b))
+            (lp (branch-left t)
+                b
+                (lambda (c)
+                  (lp (branch-right t) c kont)))))))
 
 (define (trie-fold-right proc nil trie)
-  (letrec
-   ((cata
-     (lambda (b t)
-       (tmatch t
-         (empty b)
-         ((leaf ,k ,v) (proc k v b))
-         ((branch ? ? ,l ,r) (cata (cata b r) l))))))
-    (cata nil trie)))
+  (if (trie-empty? trie)
+      nil
+      (let lp ((t trie) (b nil) (kont values))
+        (if (leaf? t)
+            (kont (proc (leaf-key t) (leaf-value t) b))
+            (lp (branch-right t)
+                b
+                (lambda (c)
+                  (lp (branch-left t) c kont)))))))
 
 (define (trie-filter pred trie)
   (letrec ((filter
