@@ -464,6 +464,11 @@
                                   (lambda (k v replace _del)
                                     (list (fxmapping->alist (replace 'z))
                                           #t))))
+  (test-eqv 'empty-fxmapping
+            (fxmapping-update-min empty-fxmap
+                                  (lambda (_k _v _rep delete)
+                                    (delete))
+                                  (lambda () 'empty-fxmapping)))
 
   ;;; max updaters
 
@@ -491,6 +496,11 @@
                                   (lambda (k v replace _del)
                                     (list (fxmapping->alist (replace 'z))
                                           #t))))
+  (test-eqv 'empty-fxmapping
+            (fxmapping-update-max empty-fxmap
+                                  (lambda (_k _v _rep delete)
+                                    (delete))
+                                  (lambda () 'empty-fxmapping)))
 
   ;;; pop-min
 
