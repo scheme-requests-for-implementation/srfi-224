@@ -270,7 +270,9 @@ value when applied to the current seeds.  The resulting fxmapping is
 newly allocated.</p>
 
 <p>It is an error for the number of seeds to vary between steps of
-the unfolding process.</p>
+the unfolding process.  If different steps of this process produce
+associations with the same key, then the first such association
+takes precedence.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(fxmapping-&gt;alist
@@ -303,7 +305,9 @@ are delivered as multiple values to the continuation that was in effect when
 <code>fxmapping-accumulate</code> was called.</p>
 
 <p>It is an error for the number of seeds to vary between steps of
-the unfolding process.</p>
+the unfolding process.  If different steps of this process produce
+associations with the same key, then the first such association
+takes precedence.</p>
 
 <p>Example:</p>
 <pre class="example"><code>(fxmapping-&gt;alist

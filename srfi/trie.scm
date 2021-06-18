@@ -70,6 +70,11 @@
 (define (trie-insert trie key value)
   (trie-insert/combine trie key value (lambda (_k new _) new)))
 
+;; Insert the association (key, value) into trie, preserving any old
+;; association.
+(define (trie-adjoin trie key value)
+  (trie-insert/combine trie key value (lambda (_k _new old) old)))
+
 ;; Insert (key, value) into trie if key doesn't already have an
 ;; association.  If it does, add a new association for key and
 ;; the result of calling combine on the key, new, and old values.

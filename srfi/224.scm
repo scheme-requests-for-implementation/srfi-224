@@ -78,7 +78,7 @@
            (raw-fxmapping trie)
            (let-values (((k v) (mapper seed)))
              (assume (valid-integer? k))
-             (lp (trie-insert trie k v) (successor seed))))))
+             (lp (trie-adjoin trie k v) (successor seed))))))
     ((stop? mapper successor . seeds)             ; variadic path
      (assume (procedure? stop?))
      (assume (procedure? mapper))
@@ -90,7 +90,7 @@
            (let-values (((k v) (apply mapper seeds))
                         (seeds* (apply successor seeds)))
              (assume (valid-integer? k))
-             (lp (trie-insert trie k v) seeds*)))))))
+             (lp (trie-adjoin trie k v) seeds*)))))))
 
 (define fxmapping-accumulate
   (case-lambda
@@ -102,7 +102,7 @@
           (let-values (((k v seed*)
                         (proc (lambda xs (apply k (raw-fxmapping trie) xs))
                               seed)))
-            (lp (trie-insert trie k v) seed*))))))
+            (lp (trie-adjoin trie k v) seed*))))))
     ((proc . seeds)                             ; variadic path
      (assume (procedure? proc))
      (assume (pair? seeds))
@@ -113,7 +113,7 @@
                         (apply proc
                                (lambda xs (apply k (raw-fxmapping trie) xs))
                                seeds)))
-            (lp (trie-insert trie k v) seeds*))))))))
+            (lp (trie-adjoin trie k v) seeds*))))))))
 
 ;;;; Predicates
 
