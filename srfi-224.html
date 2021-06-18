@@ -245,7 +245,7 @@ the arguments, earlier associations take priority.</p>
 
 The arguments have the following types:
 <ul>
-<li><em>stop?</em> : <code>* *</code> … <code>→ *-or-#f</code></li>
+<li><em>stop?</em> : <code>* *</code> … <code>→ *-or-false</code></li>
 <li><em>mapper</em> : <code>* *</code> … <code>→ [fixnum, *]</code></li>
 <li><em>successor</em> : <code>* *</code> … <code> → * *</code> …</li>
 <li><em>seed</em>₁, <em>seed</em>₂, … : <code>*</code></li>
@@ -969,7 +969,7 @@ but may be implemented more efficiently.</p>
 <p><code>(fxmapping-filter-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
 <p><em>proc</em> is a
-procedure of type <code>exact-integer * → *-or-#f</code>.</p>
+procedure of type <code>exact-integer * → *-or-false</code>.</p>
 
 <p>Returns a fxmapping with the same keys as <em>fxmap</em> whose values
 are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
