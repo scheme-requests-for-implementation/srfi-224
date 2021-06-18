@@ -206,11 +206,14 @@
 
 ;; Return the number of associations in trie.
 (define (trie-size trie)
-  (let lp ((n 0) (t trie))
-    (cond ((trie-empty? t) n)
-          ((leaf? t) (+ n 1))
-          (else
-           (lp (lp n (branch-left t)) (branch-right t))))))
+  (if (trie-empty? trie)
+      0
+      (let lp ((n 0) (t trie) (kont values))
+        (cond ((leaf? t) (kont (+ n 1)))
+              (else (lp n
+                        (branch-left t)
+                        (lambda (m)
+                          (lp m (branch-right t) kont))))))))
 
 (define (trie-contains? trie key)
   (letrec
