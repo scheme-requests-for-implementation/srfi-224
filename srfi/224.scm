@@ -245,11 +245,20 @@
                         (lambda (_k _v _rep delete)
                           (delete))))
 
-(define (fxmapping-update-min fxmap success)
-  (assume (fxmapping? fxmap))
-  (assume (not (fxmapping-empty? fxmap)))
-  (assume (procedure? success))
-  (trie-update-min (fxmapping-trie fxmap) success raw-fxmapping))
+(define fxmapping-update-min
+  (case-lambda
+    ((fxmap success)
+     (fxmapping-update-min
+      fxmap
+      success
+      (lambda () (error "fxmapping-update-min: empty fxmapping"))))
+    ((fxmap success failure)
+     (assume (fxmapping? fxmap))
+     (assume (procedure? success))
+     (assume (procedure? failure))
+     (if (fxmapping-empty? fxmap)
+         (failure)
+         (trie-update-min (fxmapping-trie fxmap) success raw-fxmapping)))))
 
 (define fxmapping-pop-min
   (case-lambda
@@ -273,11 +282,20 @@
                         (lambda (_k _v _rep delete)
                           (delete))))
 
-(define (fxmapping-update-max fxmap success)
-  (assume (fxmapping? fxmap))
-  (assume (not (fxmapping-empty? fxmap)))
-  (assume (procedure? success))
-  (trie-update-max (fxmapping-trie fxmap) success raw-fxmapping))
+(define fxmapping-update-max
+  (case-lambda
+    ((fxmap success)
+     (fxmapping-update-max
+      fxmap
+      success
+      (lambda () (error "fxmapping-update-max: empty fxmapping"))))
+    ((fxmap success failure)
+     (assume (fxmapping? fxmap))
+     (assume (procedure? success))
+     (assume (procedure? failure))
+     (if (fxmapping-empty? fxmap)
+         (failure)
+         (trie-update-max (fxmapping-trie fxmap) success raw-fxmapping)))))
 
 (define fxmapping-pop-max
   (case-lambda
