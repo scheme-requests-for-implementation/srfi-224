@@ -504,7 +504,14 @@ associations are preserved.</p>
 <p>Similar to <code>fxmapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>exact-integer * * → *</code>.
 <em>proc</em> is called on the new and old values (in that order) associated
-with a duplicated key and is expected to return a value for the key.</p>
+with a duplicated key and is expected to return a value to be
+associated with that key in the resulting fxmapping.  For example, if
+<em>fxmap</em> contains the association (<em>k</em>, <em>v</em>₁), then
+the value of
+<code>(fxmapping-adjoin/combinator</code>&nbsp;<em>fxmap f k v</em>₂<code>)</code>
+will be a fxmapping with the association
+(<em>k</em>, (<em>f k v</em>₁ <em>v</em>₂)).
+</p>
 
 <p>Example:</p>
 
