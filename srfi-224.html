@@ -102,7 +102,10 @@ The sample implementation has further dependencies; see the
 <h2>Specification</h2>
 
 <p>Fxmappings (pronounced "fix-mappings") form a new type, as if
-created by <code>define-record-type</code> (see R7RS § 5.5).  The
+created by <code>define-record-type</code> (see R7RS § 5.5).  In
+systems supporting R6RS record-type semantics, fxmappings are
+instances of a sealed, opaque, nongenerative record type with uid
+<code>fxmapping-7a1f4d5b-a540-462b-82b1-47283c935b85</code>.  The
 effects of using record-type inspection or inheritance for the
 fxmapping type are unspecified.</p>
 
