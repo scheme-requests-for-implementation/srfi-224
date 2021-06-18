@@ -574,7 +574,7 @@ those for keys equal to an element of <em>list</em>.</p>
 
 <p>Updates the association for <em>k</em> in <em>fxmap</em> as follows.
 <em>proc</em> is
-applied to <em>k</em>, its associated value, and two procedure arguments,
+invoked in tail context on <em>k</em>, its associated value, and two procedure arguments,
 <em>replace</em> and <em>delete</em>, and its values are returned.
 Invoking <em>replace</em> on a value <em>v</em> returns a fxmapping with
 the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
@@ -639,7 +639,7 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 
 <p>Updates the association, or lack thereof, for <em>k</em> in <em>fxmap</em> as
 follows.  If the association (<em>k</em>, <em>v</em>) exists in <em>fxmap</em>,
-then <em>success</em> is called on <em>k</em>, <em>v</em>, and two procedure
+then <em>success</em> is invoked in tail context on <em>k</em>, <em>v</em>, and two procedure
 arguments, <em>replace</em> and <em>delete</em>, and its values are
 returned.</p>
 
@@ -653,7 +653,7 @@ returned.</p>
 </ul>
 
 <p>If no association for <em>k</em> exists in <em>fxmap</em>, then
-<em>failure</em> is called on two procedure arguments, <em>insert</em> and
+<em>failure</em> is invoked in tail context on two procedure arguments, <em>insert</em> and
 <em>ignore</em>, and its values are returned.</p>
 
 <ul>
@@ -725,7 +725,7 @@ an error is signalled.</p>
 type <code>exact-integer * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association of <em>fxmap</em> with the least/greatest key
-<em>k</em> as follows.  <em>proc</em> is applied to <em>k</em>, its
+<em>k</em> as follows.  <em>proc</em> is invoked in tail context on <em>k</em>, its
 associated value, and two procedure arguments, <em>replace</em> and
 <em>delete</em>, and its values are returned.  Invoking
 <em>replace</em> on a value <em>v</em> returns a fxmapping with
