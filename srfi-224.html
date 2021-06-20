@@ -123,6 +123,14 @@ mutate their arguments.  If an implementation allows
 fxmappings to be mutated, the effects of combining mutation and the
 procedures of this library are unspecified.</p>
 
+<h3>Non-local control flow</h3>
+
+<p>The procedures in this SRFI must fully support exceptions,
+continuable exceptions, first-class continuations, and other forms of
+non-local control flow.  In particular, if multiple returns occur from
+a higher-order procedure, such as <code>fxmapping-unfold</code>, then
+the values returned by earlier returns must not be mutated.</p>
+
 <h3>Notation</h3>
 
 <p>The words &ldquo;must&rdquo;, &ldquo;may&rdquo;, etc., though not
