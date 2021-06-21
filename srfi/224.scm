@@ -371,17 +371,6 @@
                         '()
                         fxmap))
 
-(define (fxmapping-filter-map proc fxmap)
-  (assume (procedure? proc))
-  (assume (fxmapping? fxmap))
-  (raw-fxmapping
-   (fxmapping-fold (lambda (k v t)
-                     (pmatch (proc k v)
-                       (#f t)
-                       (,v* (trie-insert t k v*))))
-                   the-empty-trie
-                   fxmap)))
-
 (define (fxmapping-filter pred fxmap)
   (assume (procedure? pred))
   (assume (fxmapping? fxmap))

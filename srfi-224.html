@@ -220,7 +220,7 @@ fxmapping-find,
 fxmapping-count, fxmapping-any?, fxmapping-every?</code></p></li>
 <li><p><a href="#traversal">Traversal</a>: <code>fxmapping-fold,
 fxmapping-fold-right, fxmapping-map, fxmapping-map-&gt;list,
-fxmapping-map-&gt;list, fxmapping-for-each, fxmapping-filter-map,
+fxmapping-map-&gt;list, fxmapping-for-each,
 fxmapping-relation-map</code></p></li>
 <li><p><a href="#filter">Filter</a>: <code>fxmapping-filter,
 fxmapping-remove, fxmapping-partition</code></p></li>
@@ -987,30 +987,6 @@ but may be implemented more efficiently.</p>
  (fxmapping-map-&gt;list (lambda (_ v) (string-length v))
                       (fxmapping 0 "picard" 1 "riker" 2 "troi")))
  ⇒ (6 5 4)
-</code></pre>
-
-<p><code>(fxmapping-filter-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
-
-<p><em>proc</em> is a
-procedure of type <code>fixnum * → *-or-false</code>.</p>
-
-<p>Returns a fxmapping with the same keys as <em>fxmap</em> whose values
-are the result of transforming the values of <em>fxmap</em> with <em>proc</em>.
-For each association (<em>k</em>, <em>v</em>)
-in fxmapping, <code>(</code><em>proc k v</em><code>)</code> is evaluated.
-If the result is a true value, then the association
-<code>(</code><em>k</em>, <code>(</code><em>proc k v</em><code>))</code>
-is added to the resulting fxmapping.  If the result is false, then no association
-is added for <em>k</em>.  The dynamic order of the applications of
-<em>proc</em> to the elements of <em>fxmap</em> is unspecified.</p>
-
-<p>Example:</p>
-
-<pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-filter-map (lambda (v)
-                         (and (positive? v) (square v)))
-                       (fxmapping 0 2 1 -4 2 8)))
- ⇒ ((0 . 4) (2 . 64))
 </code></pre>
 
 <p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>

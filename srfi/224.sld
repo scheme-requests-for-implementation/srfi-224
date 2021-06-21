@@ -41,7 +41,7 @@
 
    ;; Traversal
    fxmapping-fold fxmapping-fold-right fxmapping-map fxmapping-map->list
-   fxmapping-for-each fxmapping-filter-map
+   fxmapping-for-each
    fxmapping-relation-map
 
    ;; Filter
