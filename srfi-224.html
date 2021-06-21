@@ -448,13 +448,15 @@ with the value of</p>
 
 <p>The optional <em>failure</em> parameter is a procedure of type
 <code>[] → [*, …]</code>.  The optional <em>success</em> parameter
-is a procedure of type <code>* → [*, …]</code>.  <em>failure</em>
-defaults to a procedure which signals an error; <em>success</em>
+is a procedure of type <code>* → [*, …]</code>.  <em>success</em>
 defaults to <code>values</code>.</p>
 
-<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code> occurs in <em>fxmap</em>,
-tail-calls <em>success</em> on <em>v</em>.  Otherwise, <em>failure</em>
-is tail-called on no arguments.</p>
+<p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code>
+occurs in <em>fxmap</em>, then <em>success</em> is invoked in tail
+context on <em>v</em> and its values are returned.  If <em>k</em> does
+not have an association in <em>fxmap</em> and <em>failure</em> is
+supplied, then it is invoked in tail context on no arguments and
+its values are returned.  Otherwise, it is an error.</p>
 
 <p>Examples:</p>
 
