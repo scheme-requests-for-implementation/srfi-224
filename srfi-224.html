@@ -734,8 +734,8 @@ following is valid:</p>
 <code>(fxmapping-delete-max</code>&nbsp;<em>fxmap</em><code>) → fxmapping</code></p>
 
 <p>Returns a fxmapping with the same associations as <em>fxmap</em>, except
-for the association with the least/greatest key.  If <em>fxmap</em> is empty,
-an error is signaled.</p>
+for the association with the least/greatest key.  It is an error if
+<em>fxmap</em> is empty.</p>
 
 <p>Examples:</p>
 
@@ -757,7 +757,7 @@ associated value, and two procedure arguments, <em>replace</em> and
 the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
 associations.  Invoking <em>delete</em> returns a fxmapping with all of
 the associations of <em>fxmap</em>, but without an association for
-<em>k</em>.  If <em>fxmap</em> is empty, an error is signaled.</p>
+<em>k</em>.  It is an error if <em>fxmap</em> is empty.</p>
 
 <p>Note that, in contrast to similar Scheme forms, <em>proc</em> is
 not required to tail-call one of <em>delete</em> or <em>replace</em>,
@@ -797,8 +797,7 @@ valid:</p>
 where (<em>k</em>, <em>v</em>) is the association of
 <em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is a
 fxmapping containing all of the associations of <em>fxmap</em> except for
-(<em>k</em>, <em>v</em>).  If <em>fxmap</em> is empty, an
-error is signaled.</p>
+(<em>k</em>, <em>v</em>).  It is an error if <em>fxmap</em> is empty.</p>
 
 <p>Example:</p>
 
