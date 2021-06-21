@@ -249,20 +249,12 @@
   (assume (procedure? success))
   (trie-update-min (fxmapping-trie fxmap) success raw-fxmapping))
 
-(define fxmapping-pop-min
-  (case-lambda
-    ((fxmap)
-     (fxmapping-pop-min fxmap
-                        (lambda ()
-                          (error "fxmapping-pop-min: empty fxmapping"
-                                 fxmap))))
-    ((fxmap failure)
-     (assume (fxmapping? fxmap))
-     (assume (procedure? failure))
-     (if (fxmapping-empty? fxmap)
-         (failure)
-         (let-values (((k v trie) (trie-pop-min (fxmapping-trie fxmap))))
-           (values k v (raw-fxmapping trie)))))))
+(define (fxmapping-pop-min fxmap)
+  (assume (fxmapping? fxmap))
+  (if (fxmapping-empty? fxmap)
+      (error "fxmapping-pop-min: empty fxmapping" fxmap)
+      (let-values (((k v trie) (trie-pop-min (fxmapping-trie fxmap))))
+        (values k v (raw-fxmapping trie)))))
 
 (define (fxmapping-delete-max fxmap)
   (fxmapping-update-max fxmap
@@ -275,20 +267,12 @@
   (assume (procedure? success))
   (trie-update-max (fxmapping-trie fxmap) success raw-fxmapping))
 
-(define fxmapping-pop-max
-  (case-lambda
-    ((fxmap)
-     (fxmapping-pop-max fxmap
-                        (lambda ()
-                          (error "fxmapping-pop-max: empty fxmapping"
-                                 fxmap))))
-    ((fxmap failure)
-     (assume (fxmapping? fxmap))
-     (assume (procedure? failure))
-     (if (fxmapping-empty? fxmap)
-         (failure)
-         (let-values (((k v trie) (trie-pop-max (fxmapping-trie fxmap))))
-           (values k v (raw-fxmapping trie)))))))
+(define (fxmapping-pop-max fxmap)
+  (assume (fxmapping? fxmap))
+  (if (fxmapping-empty? fxmap)
+      (error "fxmapping-pop-max: empty fxmapping" fxmap)
+      (let-values (((k v trie) (trie-pop-max (fxmapping-trie fxmap))))
+        (values k v (raw-fxmapping trie)))))
 
 ;;;; The whole fxmapping
 

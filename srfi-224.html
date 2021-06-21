@@ -788,19 +788,15 @@ valid:</p>
  ⇒ ((-5 . "phaser") (-1 . 9))
 </code></pre>
 
-<p><code>(fxmapping-pop-min</code>&nbsp;<em>fxmap</em><code> [ </code><em>failure</em><code> ]) → [fixnum, *, fxmapping]</code> or <code>*</code> …<br>
-<code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code> [ </code><em>failure</em><code> ]) → [fixnum, *, fxmapping]</code> or <code>*</code> …<br>
-
-<p>If the optional <em>failure</em> parameter is supplied, then it
-must be a procedure of type <code>[] → [*, …]</code>; it
-defaults to a procedure which signals an error.</p>
+<p><code>(fxmapping-pop-min</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *, fxmapping]</code> or <code>*</code> …<br>
+<code>(fxmapping-pop-max</code>&nbsp;<em>fxmap</em><code>) → [fixnum, *, fxmapping]</code> or <code>*</code> …<br>
 
 <p>Returns three values, <em>k</em>, <em>v</em>, and <em>fxmap′</em>,
 where (<em>k</em>, <em>v</em>) is the association of
 <em>fxmap</em> with the least/greatest key and <em>fxmap′</em> is a
 fxmapping containing all of the associations of <em>fxmap</em> except for
-(<em>k</em>, <em>v</em>).  If <em>fxmap</em> is empty, then
-<em>failure</em> is tail-called on no arguments.</p>
+(<em>k</em>, <em>v</em>).  If <em>fxmap</em> is empty, an
+error is signaled.</p>
 
 <p>Example:</p>
 
