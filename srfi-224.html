@@ -591,15 +591,15 @@ those for keys equal to an element of <em>list</em>.</p>
  ⇒ ((0 . a))
 </code></pre>
 
-<p><code>(fxmapping-update</code>&nbsp;<em>fxmap k success</em><code> [ </code><em>failure</em><code> ]) → *</code> …</p>
+<p><code>(fxmapping-update</code>&nbsp;<em>fxmap k proc</em><code> [ </code><em>failure</em><code> ]) → *</code> …</p>
 
-<p><em>success</em> is a procedure of type
+<p><em>proc</em> is a procedure of type
 <code>fixnum * (* → fxmapping) ([] → fxmapping) → *</code> ….
 If the optional <em>failure</em> parameter is provided, then it must
 be a procedure of type <code>[] → [*, …]</code>.</p>
 
 <p>Updates the association for <em>k</em> in <em>fxmap</em> as follows.
-If <em>k</em> has an association in <em>fxmap</em>, then <em>success</em> is
+If <em>k</em> has an association in <em>fxmap</em>, then <em>proc</em> is
 invoked in tail context on <em>k</em>, its associated value, and two procedure arguments,
 <em>replace</em> and <em>delete</em>, and its values are returned.
 Invoking <em>replace</em> on a value <em>v</em> returns a fxmapping with
@@ -611,10 +611,10 @@ If <em>k</em> has no association in <em>fxmap</em> and <em>failure</em>
 is provided, then <em>failure</em> is invoked in tail context on no
 arguments and its values are returned.  Otherwise, it is an error.</p>
 
-<p>Note that, in contrast to similar Scheme forms, <em>success</em> is
+<p>Note that, in contrast to similar Scheme forms, <em>proc</em> is
 not required to tail-call one of <em>delete</em> or <em>replace</em>,
 and that <code>fxmapping-update</code> simply returns the results of
-invoking <em>success</em> (assuming <em>k</em> is found).
+invoking <em>proc</em> (assuming <em>k</em> is found).
 Thus, the following is valid:</p>
 
 <pre class="example"><code>(fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
