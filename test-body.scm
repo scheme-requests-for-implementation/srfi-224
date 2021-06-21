@@ -352,6 +352,15 @@
                               (lambda (_k _v replace _d)
                                 (list (fxmapping->alist (replace 'z))
                                       #t))))
+  ;; Return the original fxmapping on failure.
+  (test-eqv #t
+            (fxmapping=? default-comp
+                         mixed-fxmap
+                         (fxmapping-update mixed-fxmap
+                                           5
+                                           (lambda (_k _v replace _d)
+                                             (replace 'z))
+                                           (lambda () mixed-fxmap))))
 
   ;;; alter
 
