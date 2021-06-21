@@ -225,25 +225,18 @@
        (else #f))))
     (search trie)))
 
-(define (trie-find pred trie)
+(define (trie-find pred trie failure success)
   (letrec
    ((search
-     (lambda (t)
-       (call-with-current-continuation
-        (lambda (return)
-          (let lp ((t t))
-            (tmatch t
-              (empty (return #f #f))
-              ((leaf ,k ,v) (guard (pred k v))
-               (return k v))
-              ((branch ? ? ,l ,r) (lp l) (lp r))
-              (else #f)))  ; ignored
-          (values #f #f))))))
+     (lambda (t kont)
+       (tmatch t
+         ((leaf ,k ,v) (guard (pred k v)) (success k v))
+         ((branch ? ? ,l ,r) (search l (lambda () (search r kont))))
+         (else (kont))))))
     (tmatch trie
       ((branch ? ,m ,l ,r) (guard (negative? m))
-       (let-values (((k v) (search r)))
-         (if k (values k v) (search l))))
-      (else (search trie)))))
+       (search r (lambda () (search l failure))))
+      (else (search trie failure)))))
 
 (define (branching-bit-higher? mask1 mask2)
   (if (negative? (fxxor mask1 mask2))  ; signs differ

@@ -289,12 +289,16 @@
   (assume (fxmapping? fxmap))
   (trie-size (fxmapping-trie fxmap)))
 
-(define (fxmapping-find pred fxmap failure)
-  (assume (procedure? pred))
-  (assume (fxmapping? fxmap))
-  (assume (procedure? failure))
-  (let-values (((k v) (trie-find pred (fxmapping-trie fxmap))))
-    (if k (values k v) (failure))))
+(define fxmapping-find
+  (case-lambda
+    ((pred fxmap failure)
+     (fxmapping-find pred fxmap failure values))
+    ((pred fxmap failure success)
+     (assume (procedure? pred))
+     (assume (fxmapping? fxmap))
+     (assume (procedure? failure))
+     (assume (procedure? success))
+     (trie-find pred (fxmapping-trie fxmap) failure success))))
 
 (define (fxmapping-count pred fxmap)
   (assume (procedure? pred))

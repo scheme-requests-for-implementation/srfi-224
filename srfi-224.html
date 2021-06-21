@@ -816,14 +816,18 @@ fxmapping containing all of the associations of <em>fxmap</em> except for
 
 <p>Returns the number of associations in <em>fxmap</em>.</p>
 
-<p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code>)</code> → <code>[fixnum, *] or [*, …]</code></p>
+<p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code> [ </code><em>success</em><code> ])</code> → <code>[*, …]</code></p>
 
 <p><em>pred</em> is a predicate of type <code>fixnum * → boolean</code>.
-<code>failure</code> is a procedure of type <code>[] → [*, …]</code>.</p>
+<code>failure</code> is a procedure of type <code>[] → [*, …]</code>.
+If the optional <em>success</em> parameter is supplied, then it must be
+a procedure of type <code>fixnum * → [*, …]</code>.  <em>success</em>
+defaults to <code>values</code>.</p>
 
-<p>Returns two values, <em>k</em> and <em>v</em>, where
-(<em>k</em>, <em>v</em>) is the association of <em>fxmap</em> with the
-least key such that <code>(</code><em>pred k v</em><code>)</code> is true.
+<p>Invokes <em>success</em> in tail context on <em>k</em> and
+<em>v</em> and returns it results, where (<em>k</em>, <em>v</em>)
+is the association of <em>fxmap</em> with the least key such that
+<code>(</code><em>pred k v</em><code>)</code> is true.
 If there is no
 such association, then <em>failure</em> is tail-called with no
 arguments and its results are returned.</p>
@@ -842,8 +846,9 @@ arguments and its results are returned.</p>
 
 (fxmapping-find (lambda (k s) (= k (string-length s)))
                 (fxmapping 2 "worf" 3 "data" 4 "troi")
-                (lambda () (error "not found")))
- ⇒ 4 "troi"
+                (lambda () (error "not found"))
+                list)
+ ⇒ (4 "troi")
 </code></pre>
 
 <p><code>(fxmapping-count</code>&nbsp;<em>pred fxmap</em><code>) → fixnum</code></p>
