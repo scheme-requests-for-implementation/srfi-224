@@ -122,25 +122,25 @@
               t))))))
     (update trie)))
 
-(define (trie-update trie key proc wrapper)
+(define (trie-update trie key proc failure wrapper)
   (letrec
    ((update
      (lambda (t build)
        (tmatch t
-         (empty (wrapper (build the-empty-trie)))
+         (empty (failure))
          ((leaf ,k ,v)
           (if (fx=? key k)
               (proc k
                     v
                     (lambda (v*) (wrapper (build (leaf k v*))))
                     (lambda () (wrapper (build the-empty-trie))))
-              (wrapper (build t))))
+              (failure)))
          ((branch ,p ,m ,l ,r)
           (if (match-prefix? key p m)
               (if (zero-bit? key m)
                   (update l (lambda (l*) (build (branch p m l* r))))
                   (update r (lambda (r*) (build (branch p m l r*)))))
-              (wrapper (build t))))))))
+              (failure)))))))
     (update trie values)))
 
 (define (trie-alter trie key failure success wrapper)

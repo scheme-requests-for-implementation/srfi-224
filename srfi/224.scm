@@ -225,11 +225,20 @@
     (fxmapping-remove (lambda (k _) (iset-contains? key-set k))
                       fxmap)))
 
-(define (fxmapping-update fxmap key success)
-  (assume (fxmapping? fxmap))
-  (assume (valid-integer? key))
-  (assume (procedure? success))
-  (trie-update (fxmapping-trie fxmap) key success raw-fxmapping))
+(define fxmapping-update
+  (case-lambda
+    ((fxmap key success)
+     (fxmapping-update fxmap
+                       key
+                       success
+                       (lambda ()
+                         (error "fxmapping-update: key not found" key fxmap))))
+    ((fxmap key success failure)
+     (assume (fxmapping? fxmap))
+     (assume (valid-integer? key))
+     (assume (procedure? success))
+     (assume (procedure? failure))
+     (trie-update (fxmapping-trie fxmap) key success failure raw-fxmapping))))
 
 (define (fxmapping-alter fxmap key failure success)
   (assume (fxmapping? fxmap))
