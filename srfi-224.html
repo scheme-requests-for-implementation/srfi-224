@@ -741,14 +741,11 @@ an error is signaled.</p>
 (fxmapping-delete-max (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(fxmapping-update-min</code>&nbsp;<em>fxmap proc</em> <code>[</code> <em>failure</em> <code>]) → *</code> …<br>
-<code>(fxmapping-update-max</code>&nbsp;<em>fxmap proc</em> <code>[</code> <em>failure</em> <code>]) → *</code> …<br>
+<p><code>(fxmapping-update-min</code>&nbsp;<em>fxmap proc</em><code>) → *</code> …<br>
+<code>(fxmapping-update-max</code>&nbsp;<em>fxmap proc</em><code>) → *</code> …</p>
 
 <p>The <em>proc</em> argument of <code>fxmapping-update-min</code> and <code>-max</code> is of
-type <code>fixnum * (* → fxmapping) ([] → fxmapping) → *</code> ….
-If the optional <em>failure</em> parameter is provided, then it must
-be a procedure of type <code>[] → [*, …]</code>.  <em>failure</em>
-defaults to a procedure which signals an error.</p>
+type <code>fixnum * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association of <em>fxmap</em> with the least/greatest key
 <em>k</em> as follows.  <em>proc</em> is invoked in tail context on <em>k</em>, its
@@ -758,8 +755,7 @@ associated value, and two procedure arguments, <em>replace</em> and
 the association (<em>k</em>, <em>v</em>) and all of <em>fxmap</em>'s other
 associations.  Invoking <em>delete</em> returns a fxmapping with all of
 the associations of <em>fxmap</em>, but without an association for
-<em>k</em>.  If <em>fxmap</em> is empty, then <em>failure</em> is
-invoked in tail context on no values.</p>
+<em>k</em>.  If <em>fxmap</em> is empty, an error is signaled.</p>
 
 <p>Note that, in contrast to similar Scheme forms, <em>proc</em> is
 not required to tail-call one of <em>delete</em> or <em>replace</em>,
