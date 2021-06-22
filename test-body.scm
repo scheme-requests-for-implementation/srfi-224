@@ -538,34 +538,32 @@
 
   (test-eqv 'z (fxmapping-find even? empty-fxmap (constantly 'z)))
   (test-equal '(0 a)
-              (let-values ((p (fxmapping-find (lambda (_ v) (symbol? v))
-                                              letter-fxmap
-                                              (lambda () (values #f #f)))))
-                p))
+              (fxmapping-find (lambda (_ v) (symbol? v))
+                              letter-fxmap
+                              (lambda () '(#f #f))
+                              list))
   (let ((ss '(f r o b)))
     (test-equal '(1 b)
-                (let-values ((p (fxmapping-find (lambda (_ s) (memv s ss))
-                                                letter-fxmap
-                                                (lambda ()
-                                                  (values #f #f)))))
-                  p)))
+                (fxmapping-find (lambda (_ s) (memv s ss))
+                                letter-fxmap
+                                (lambda () '(#f #f))
+                                list)))
   (test-equal '(4096 4096)
-              (let-values ((p (fxmapping-find (lambda (_ v) (positive? v))
-                                              sparse-fxmap
-                                              (lambda () (values #f #f)))))
-                p))
+              (fxmapping-find (lambda (_ v) (positive? v))
+                              sparse-fxmap
+                              (lambda () '(#f #f))
+                              list))
   ;; Ensure negative-keyed associations are tested first.
   (test-equal '(-65536 -65536)
-              (let-values ((p (fxmapping-find (lambda (_ v) (integer? v))
-                                              sparse-fxmap
-                                              (lambda () (values #f #f)))))
-                p))
+              (fxmapping-find (lambda (_ v) (integer? v))
+                              sparse-fxmap
+                              (lambda () '(#f #f))
+                              list))
   (test-equal '(z z)
-              (let-values
-               ((p (fxmapping-find eqv?
-                                   letter-fxmap
-                                   (lambda () (values 'z 'z)))))
-                p))
+              (fxmapping-find eqv?
+                              letter-fxmap
+                              (lambda () '(z z))
+                              list))
 
   ;;; count
 
@@ -682,42 +680,6 @@
   (test-equal '((0 . "") (1 . "b") (2 . "cc"))
               (fxmapping-map->list (lambda (k c) (cons k (make-string k c)))
                                    (fxmapping 0 #\a 1 #\b 2 #\c)))
-
-  ;;; filter-map
-
-  ;; filter-map is equivalent to map if the mapped procedure
-  ;; always returns a truthy value.  (Ignoring side-effects.)
-  (test-eqv #t (fxmapping=? default-comp
-                            empty-fxmap
-                            (fxmapping-filter-map (constantly #t)
-                                                  empty-fxmap)))
-  (test-eqv #t (fxmapping=? default-comp
-                            mixed-fxmap
-                            (fxmapping-filter-map (nth 1) mixed-fxmap)))
-  (test-eqv #t (fxmapping=? default-comp
-                            (fxmapping 0 "" 1 "b" 2 "cc")
-                            (fxmapping-filter-map
-                             make-string
-                             (fxmapping 0 #\a 1 #\b 2 #\c))))
-  ;; filter-map empties a mapping if the mapped proc always returns #f.
-  (test-eqv #t
-            (every fxmapping-empty?
-                   (map (lambda (m) (fxmapping-filter-map (constantly #f) m))
-                        all-test-fxmaps)))
-  ;; Using filter-map as filter.
-  (test-equal (filter (lambda (p) (even? (cdr p))) mixed-seq)
-              (fxmapping->alist
-               (fxmapping-filter-map (lambda (k v) (and (even? v) v))
-                                     mixed-fxmap)))
-  ;; Filtering and transforming the values of a mapping.
-  (test-equal (filter-map (lambda (p)
-                            (let ((k (car p)) (v (cdr p)))
-                              (and (even? k) (cons k (+ k v)))))
-                          sparse-seq)
-              (fxmapping->alist
-               (fxmapping-filter-map (lambda (k v)
-                                       (and (even? k) (+ k v)))
-                                     sparse-fxmap)))
   )
 
 (test-group "Filters"
