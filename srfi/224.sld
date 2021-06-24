@@ -4,8 +4,7 @@
           (only (srfi 1) fold every)
           (only (srfi 128) comparator? =?)
           (srfi 143)
-          (only (srfi 158) make-coroutine-generator)
-          (only (srfi 217) list->iset iset-contains?))
+          (only (srfi 158) make-coroutine-generator))
 
   (cond-expand
     ((library (srfi 145))
