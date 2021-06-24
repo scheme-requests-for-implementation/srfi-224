@@ -5,8 +5,8 @@ See the SRFI document (`srfi-224.html`) for more details.
 
 # Dependencies
 
-SRFIs 1, 128, 143, and 158 are required.  SRFI 145 is an
-optional dependency.
+SRFIs 1, 128, and 143 are required.  SRFIs 145 and 158 are
+optional dependencies.
 
 # Tests
 

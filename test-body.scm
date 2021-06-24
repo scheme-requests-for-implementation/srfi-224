@@ -20,6 +20,12 @@
      (let-values ((vs producer))
        (list-ref vs i)))))
 
+(define (generator->list g)
+  (let rec ((x (g)))
+    (if (eof-object? x)
+        '()
+        (cons x (rec (g))))))
+
 ;;;; Test fxmappings
 
 (define empty-fxmap (fxmapping))

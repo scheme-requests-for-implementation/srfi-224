@@ -3,8 +3,7 @@
           (scheme case-lambda)
           (only (srfi 1) fold every)
           (only (srfi 128) comparator? =?)
-          (srfi 143)
-          (only (srfi 158) make-coroutine-generator))
+          (srfi 143))
 
   (cond-expand
     ((library (srfi 145))
@@ -15,6 +14,28 @@
         (syntax-rules ()
           ((_ expr . _)
            (or expr (car 0))))))))
+
+  (cond-expand
+    ((library (srfi 158))
+     (import (only (srfi 158) make-coroutine-generator)))
+    (else
+     (begin
+      ;; From the SRFI 158 sample impl. by Kawai, Cowan, & Gilray.
+      ;; (MIT license)
+      (define (make-coroutine-generator proc)
+        (define return #f)
+        (define resume #f)
+        (define (yield v)
+          (call/cc (lambda (r) (set! resume r) (return v))))
+        (lambda ()
+          (call/cc
+           (lambda (cc)
+             (set! return cc)
+             (if resume
+                 (resume (if #f #f))  ; void? or yield again?
+                 (begin (proc yield)
+                        (set! resume (lambda (v) (return (eof-object))))
+                        (return (eof-object)))))))))))
 
   (export
    ;; Constructors
