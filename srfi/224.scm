@@ -156,14 +156,12 @@
   (trie-assoc/default (fxmapping-trie fxmap) key default))
 
 (define (fxmapping-min fxmap)
-  (if (fxmapping-empty? fxmap)
-      (error "fxmapping-min: empty fxmapping" fxmap)
-      (trie-min (fxmapping-trie fxmap))))
+  (assume (not (fxmapping-empty? fxmap)))
+  (trie-min (fxmapping-trie fxmap)))
 
 (define (fxmapping-max fxmap)
-  (if (fxmapping-empty? fxmap)
-      (error "fxmapping-max: empty fxmapping" fxmap)
-      (trie-max (fxmapping-trie fxmap))))
+  (assume (not (fxmapping-empty? fxmap)))
+  (trie-max (fxmapping-trie fxmap)))
 
 ;;;; Updaters
 
