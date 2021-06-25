@@ -821,7 +821,7 @@ fxmapping containing all of the associations of <em>fxmap</em> except for
 <p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code> [ </code><em>success</em><code> ])</code> → <code>[*, …]</code></p>
 
 <p><em>pred</em> is a predicate of type <code>fixnum * → boolean</code>.
-<code>failure</code> is a procedure of type <code>[] → [*, …]</code>.
+<em>failure</em> is a procedure of type <code>[] → [*, …]</code>.
 If the optional <em>success</em> parameter is supplied, then it must be
 a procedure of type <code>fixnum * → [*, …]</code>.  <em>success</em>
 defaults to <code>values</code>.</p>
