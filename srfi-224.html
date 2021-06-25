@@ -516,7 +516,7 @@ associations are preserved.</p>
 <pre class="example"><code>(fxmapping-&gt;alist (fxmapping-adjoin (fxmapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
 </code></pre>
 
-<p><code>(fxmapping-adjoin/combinator</code>&nbsp;<em>fxmap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…)</code></p>
+<p><code>(fxmapping-adjoin/combinator</code>&nbsp;<em>fxmap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
 
 <p>Similar to <code>fxmapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>fixnum * * → *</code>.
