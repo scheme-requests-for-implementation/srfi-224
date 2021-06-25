@@ -261,10 +261,9 @@
 
 (define (fxmapping-pop-min fxmap)
   (assume (fxmapping? fxmap))
-  (if (fxmapping-empty? fxmap)
-      (error "fxmapping-pop-min: empty fxmapping" fxmap)
-      (let-values (((k v trie) (trie-pop-min (fxmapping-trie fxmap))))
-        (values k v (raw-fxmapping trie)))))
+  (assume (not (fxmapping-empty? fxmap)))
+  (let-values (((k v trie) (trie-pop-min (fxmapping-trie fxmap))))
+    (values k v (raw-fxmapping trie))))
 
 (define (fxmapping-delete-max fxmap)
   (fxmapping-update-max fxmap
@@ -279,10 +278,9 @@
 
 (define (fxmapping-pop-max fxmap)
   (assume (fxmapping? fxmap))
-  (if (fxmapping-empty? fxmap)
-      (error "fxmapping-pop-max: empty fxmapping" fxmap)
-      (let-values (((k v trie) (trie-pop-max (fxmapping-trie fxmap))))
-        (values k v (raw-fxmapping trie)))))
+  (assume (not (fxmapping-empty? fxmap)))
+  (let-values (((k v trie) (trie-pop-max (fxmapping-trie fxmap))))
+    (values k v (raw-fxmapping trie))))
 
 ;;;; The whole fxmapping
 
