@@ -325,12 +325,14 @@ associations with the same key, then the first such association
 takes precedence.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-accumulate (lambda (abort-with-result i)
-                         (if (&lt; i -3)
-                             (abort-with-result 'finished)
-                             (values i (square i) (- i 1))))
-                       -1))
+<pre class="example"><code>(let-values (((fxmap s)
+              (fxmapping-accumulate
+               (lambda (abort-with-result i)
+                 (if (&lt; i -3)
+                     (abort-with-result 'finished)
+                     (values i (square i) (- i 1))))
+               -1)))
+  (values (fxmapping->alist fxmap) s))
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
    finished
 </code></pre>
