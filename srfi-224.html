@@ -992,9 +992,8 @@ but may be implemented more efficiently.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-map-&gt;list (lambda (_ v) (string-length v))
-                      (fxmapping 0 "picard" 1 "riker" 2 "troi")))
+<pre class="example"><code>(fxmapping-map-&gt;list (lambda (_ v) (string-length v))
+                     (fxmapping 0 "picard" 1 "riker" 2 "troi"))
  ⇒ (6 5 4)
 </code></pre>
 
