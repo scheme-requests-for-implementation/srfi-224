@@ -332,7 +332,7 @@ takes precedence.</p>
                      (abort-with-result 'finished)
                      (values i (square i) (- i 1))))
                -1)))
-  (values (fxmapping->alist fxmap) s))
+  (values (fxmapping-&gt;alist fxmap) s))
  ⇒ ((-3 . 9) (-2 . 4) (-1 . 1))
    finished
 </code></pre>
@@ -625,7 +625,7 @@ Thus, the following is valid:</p>
 <pre class="example"><code>(fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
                   1
                   (lambda (k v replace _del)
-                    (values k v (fxmapping->alist (replace 'z)))))
+                    (values k v (fxmapping-&gt;alist (replace 'z)))))
  ⇒ 1
    b
    ((0 . a) (1 . z) (2 . c))
@@ -773,7 +773,7 @@ return the results of invoking <em>proc</em>.  Thus, the following is
 valid:</p>
 <pre class="example"><code>(fxmapping-update-min (fxmapping 0 'a 1 'b 2 'c)
                       (lambda (k v _r delete)
-                        (values k v (fxmapping->alist (delete)))))
+                        (values k v (fxmapping-&gt;alist (delete)))))
  ⇒ 0
    a
    ((1 . b) (2 . c))
