@@ -128,9 +128,9 @@ procedures of this library are unspecified.</p>
 
 <h3>Non-local control flow</h3>
 
-<p>The procedures in this SRFI must fully support exceptions,
-continuable exceptions, first-class continuations, and other forms of
-non-local control flow.  In particular, if multiple returns occur from
+<p>The procedures in this SRFI must fully support non-local control
+flow, e.g. as created by exception-handling or invocation of
+continuations.  In particular, if multiple returns occur from
 a higher-order procedure, such as <code>fxmapping-unfold</code>, then
 the values returned by earlier returns must not be mutated.</p>
 
