@@ -278,9 +278,9 @@ expected by <em>mapper</em>; that is, the expression</p>
 <p>must result in a valid procedure application.</p>
 
 <p>Unfold a fxmapping from the initial <em>seed</em>s.
-<em>mapper</em> is applied to the <em>seed</em>s and returns two values, a key
+The <em>mapper</em> is applied to the <em>seed</em>s and returns two values, a key
 and an associated value, which are adjoined to the new fxmapping.
-<em>successor</em> maps the <em>seed</em>s to new seeds.
+The <em>successor</em> maps the <em>seed</em>s to new seeds.
 Unfolding terminates when the predicate <em>stop?</em> returns a true
 value when applied to the current seeds.  The resulting fxmapping is
 newly allocated.</p>
@@ -309,7 +309,7 @@ The arguments have the following types:
 
 <p>Similar to <code>fxmapping-unfold</code>, except that a single
 procedure controls the unfolding of a new fxmapping.  Let <em>n</em>
-be the number of <em>seed</em>s.  <em>proc</em> is applied to a
+be the number of <em>seed</em>s.  The procedure <em>proc</em> is applied to a
 procedure <em>abort-with-result</em> and the <em>seed</em>s, in that order, and is
 expected to return <em>n</em><code> + 2</code> values: a key (fixnum), an
 associated value, and <em>n</em> new seed values.  The key/value
@@ -454,7 +454,7 @@ with the value of</p>
 
 <p>The optional <em>failure</em> parameter is a procedure of type
 <code>[] → [*, …]</code>.  The optional <em>success</em> parameter
-is a procedure of type <code>* → [*, …]</code>.  <em>success</em>
+is a procedure of type <code>* → [*, …]</code>.  The <em>success</em> procedure
 defaults to <code>values</code>.</p>
 
 <p>If an association <code>(</code><em>k</em>, <em>v</em><code>)</code>
@@ -523,8 +523,8 @@ associations are preserved.</p>
 
 <p>Similar to <code>fxmapping-adjoin</code>, except that duplicate associations
 are combined with <em>proc</em>, which is a procedure of type <code>fixnum * * → *</code>.
-<em>proc</em> is called on the new and old values (in that order) associated
-with a duplicated key and is expected to return a value to be
+The <em>proc</em> procedure is called on the new and old values (in that order) associated
+with a duplicated key, and is expected to return a value to be
 associated with that key in the resulting fxmapping.  For example, if
 <em>fxmap</em> contains the association (<em>k</em>, <em>v</em>₁), then
 the value of
@@ -599,7 +599,7 @@ those for keys equal to an element of <em>list</em>.</p>
 
 <p><code>(fxmapping-update</code>&nbsp;<em>fxmap k proc</em><code> [ </code><em>failure</em><code> ]) → *</code> …</p>
 
-<p><em>proc</em> is a procedure of type
+<p>The procedure <em>proc</em> is of type
 <code>fixnum * (* → fxmapping) ([] → fxmapping) → *</code> ….
 If the optional <em>failure</em> parameter is provided, then it must
 be a procedure of type <code>[] → [*, …]</code>.</p>
@@ -665,9 +665,9 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 
 <p><code>(fxmapping-alter</code>&nbsp;<em>fxmap k failure success</em><code>) → *</code> …</p>
 
-<p><em>failure</em> is a procedure of type
+<p>The procedure <em>failure</em> is of type
 <code>(* → fxmapping) ([] → fxmapping) → [*, …]</code>.
-<em>success</em> is a procedure of type
+The procedure <em>success</em> is of type
 <code>fixnum * (* → fxmapping) ([] → fxmapping) →  [*, …]</code>.</p>
 
 <p>Updates the association, or lack thereof, for <em>k</em> in <em>fxmap</em> as
@@ -758,7 +758,7 @@ for the association with the least/greatest key.  It is an error if
 type <code>fixnum * (* → fxmapping) ([] → fxmapping) → *</code> ….</p>
 
 <p>Updates the association of <em>fxmap</em> with the least/greatest key
-<em>k</em> as follows.  <em>proc</em> is invoked in tail context on <em>k</em>, its
+<em>k</em> as follows.  Procedure <em>proc</em> is invoked in tail context on <em>k</em>, its
 associated value, and two procedure arguments, <em>replace</em> and
 <em>delete</em>, and its values are returned.  Invoking
 <em>replace</em> on a value <em>v</em> returns a fxmapping with
@@ -823,10 +823,10 @@ fxmapping containing all of the associations of <em>fxmap</em> except for
 
 <p><code>(fxmapping-find</code>&nbsp;<em>pred fxmap failure</em><code> [ </code><em>success</em><code> ])</code> → <code>[*, …]</code></p>
 
-<p><em>pred</em> is a predicate of type <code>fixnum * → boolean</code>.
-<em>failure</em> is a procedure of type <code>[] → [*, …]</code>.
+<p>Procedure <em>pred</em> is a predicate of type <code>fixnum * → boolean</code>.
+Procedure <em>failure</em> is of type <code>[] → [*, …]</code>.
 If the optional <em>success</em> parameter is supplied, then it must be
-a procedure of type <code>fixnum * → [*, …]</code>.  <em>success</em>
+a procedure of type <code>fixnum * → [*, …]</code>.  Procedure <em>success</em>
 defaults to <code>values</code>.</p>
 
 <p>Invokes <em>success</em> in tail context on <em>k</em> and
@@ -858,7 +858,7 @@ arguments and its results are returned.</p>
 
 <p><code>(fxmapping-count</code>&nbsp;<em>pred fxmap</em><code>) → fixnum</code></p>
 
-<p><em>pred</em> is a predicate of type
+<p>Procedure <em>pred</em> is a predicate of type
 <code>fixnum * → boolean</code>.</p>
 
 <p>Returns the number of associations in <em>fxmap</em> that satisfy
@@ -875,12 +875,12 @@ arguments and its results are returned.</p>
 
 <p><code>(fxmapping-any?</code>&nbsp;<em>pred fxmap</em><code>) → boolean</code></p>
 
-<p><em>pred</em> is a predicate of type
+<p>Procedure <em>pred</em> is a predicate of type
 <code>fixnum * → boolean</code>.</p>
 
 <p>Returns <code>#t</code> if and only if there exists an association
 in <em>fxmap</em> that satisfies <em>pred</em> (in the sense of
-<code>fxmapping-find</code>).  <em>fxmap</em> is traversed in ascending
+<code>fxmapping-find</code>).  The <em>fxmap</em> is traversed in ascending
 numerical order of keys.</p>
 
 <p>Example:</p>
@@ -891,13 +891,13 @@ numerical order of keys.</p>
 
 <p><code>(fxmapping-every?</code>&nbsp;<em>pred fxmap</em><code>) → boolean</code></p>
 
-<p><em>pred</em> is a predicate of type
+<p>Procedure <em>pred</em> is a predicate of type
 <code>fixnum * → boolean</code>.</p>
 
 <p>Returns <code>#t</code> if and only every association in
 <em>fxmap</em> satisfies <em>pred</em> (in the sense of
 <code>fxmapping-find</code>), or if <em>fxmap</em> is empty.
-<em>fxmap</em> is traversed in ascending numerical order of keys.</p>
+The <em>fxmap</em> is traversed in ascending numerical order of keys.</p>
 
 <p>Example:</p>
 
@@ -943,10 +943,10 @@ of <em>fxmap</em>.</p>
 
 <p><code>(fxmapping-for-each</code>&nbsp;<em>proc fxmap</em><code>) → unspecified</code></p>
 
-<p><em>proc</em> is a procedure of type <code>fixnum * → *</code>.
+<p>Procedure <em>proc</em> is of type <code>fixnum * → *</code>.
 
 <p>Calls <em>proc</em> on the key and value of each association in <em>fxmap</em> and returns
-an unspecified value.  <em>fxmap</em> is traversed in ascending numerical
+an unspecified value.  The <em>fxmap</em> is traversed in ascending numerical
 order of keys.</p>
 
 <p>Example:</p>
@@ -963,7 +963,7 @@ order of keys.</p>
 
 <p>The <em>kons</em> argument of <code>fxmapping-fold</code> and <code>fxmapping-fold-right</code> is a
 procedure of type <code>fixnum * * → *</code>.
-<em>knil</em> is an object of any type which can be passed to <em>kons</em>
+The <em>knil</em> argument is an object of any type which can be passed to <em>kons</em>
 as its third argument.</p>
 
 <p>Folds <em>kons</em> over <em>fxmap</em>, using <em>knil</em> as the base value.  At
@@ -1000,7 +1000,7 @@ but may be implemented more efficiently.</p>
 
 <p><code>(fxmapping-relation-map</code>&nbsp;<em>proc fxmap</em><code>) → fxmapping</code></p>
 
-<p><em>proc</em> must be a procedure of type
+<p>Procedure <em>proc</em> must be of type
 <code>fixnum * → [fixnum, *]</code>.</p>
 
 <p>Returns a fxmapping whose associations are the results of
@@ -1062,7 +1062,7 @@ that satisfy <em>pred</em> (in the sense of <code>fxmapping-find</code>).</p>
 
 <p><code>(fxmapping-partition</code>&nbsp;<em>pred fxmap</em><code>) → [fxmapping, fxmapping]</code></p>
 
-<p>Returns two fxmappings: the first contains all associations of
+<p>Returns two fxmappings.  The first contains all associations of
 <em>fxmap</em> that satisfy <em>pred</em> (in the sense of
 <code>fxmapping-find</code>), and the second contains those
 that do not.</p>
@@ -1262,7 +1262,7 @@ appear.</p>
 <p><code>(fxmapping-union/combinator</code>&nbsp;<em>proc fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code><br>
 <code>(fxmapping-intersection/combinator</code>&nbsp;<em>proc fxmap</em>₁ <em>fxmap</em>₂ <em>fxmap</em>₃ …<code>) → fxmapping</code></p>
 
-<p><em>proc</em> is a procedure of type <code>fixnum * * → *</code>.</p>
+<p>Procedure <em>proc</em> is of type <code>fixnum * * → *</code>.</p>
 
 <p>Return a fxmapping whose set of keys is the union/intersection of
 the sets of keys of the <em>fxmaps</em>.  The values associated with duplicate
@@ -1298,7 +1298,7 @@ respectively, then the resulting fxmapping will contain the association
 <code>(fxmapping-open-closed-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code><br>
 <code>(fxmapping-closed-open-interval</code>&nbsp;<em>fxmap low high</em><code>) → fxmapping</code></p>
 
-<p><em>low</em> and <em>high</em> are both fixnums.</p>
+<p>Arguments <em>low</em> and <em>high</em> are both fixnums.</p>
 
 <p>Procedures that return a subset of <em>fxmap</em> containing the associations
 whose keys are contained in the interval from <em>low</em> to <em>high</em>.  The
