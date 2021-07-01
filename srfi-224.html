@@ -253,8 +253,10 @@ The number of arguments must be even.  If duplicate keys occur in
 the arguments, earlier associations take priority.</p>
 
 <p>Examples:</p>
-<pre class="example"><code>(fxmapping-&gt;alist (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b) (2 . c))
-(fxmapping-&gt;alist (fxmapping -10 "worf" -10 "yar")) ⇒ ((-10 . "worf"))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping 0 'a 1 'b 2 'c))
+ ⇒ ((0 . a) (1 . b) (2 . c))
+(fxmapping-&gt;alist (fxmapping -10 "worf" -10 "yar"))
+ ⇒ ((-10 . "worf"))
 </code></pre>
 
 <p><code>(fxmapping-unfold</code>&nbsp;<em>stop? mapper successor seed</em>₁ <em>seed</em>₂ …<code>) → fxmapping</code></p>
@@ -380,10 +382,12 @@ associations in <em>alist</em> (i.e. as the car of multiple pairs),
 then the first association for <em>k</em> is preferred.</p>
 
 <p>Example:</p>
-<pre class="example"><code>(fxmapping-&gt;alist (alist-&gt;fxmapping '((1 . b) (0 . a) (2 . c))))
+<pre class="example"><code>(fxmapping-&gt;alist
+  (alist-&gt;fxmapping '((1 . b) (0 . a) (2 . c))))
  ⇒ ((0 . a) (1 . b) (2 . c))
 
-(fxmapping-&gt;alist (alist-&gt;fxmapping '((-10 . "yar") (-10 . "worf"))))
+(fxmapping-&gt;alist
+  (alist-&gt;fxmapping '((-10 . "yar") (-10 . "worf"))))
  ⇒ ((-10 . "yar))
 </code></pre>
 
@@ -468,7 +472,11 @@ its values are returned.  Otherwise, it is an error.</p>
 
 <pre class="example"><code>(fxmapping-ref (fxmapping 36864 'zap) 36864) ⇒ zap
 (fxmapping-ref (fxmapping 0 'a) 36864) ⇒ ; error
-(fxmapping-ref (fxmapping 0 "worf") 0 (lambda () #f) string-length) ⇒ 4
+(fxmapping-ref (fxmapping 0 "worf")
+               0
+               (lambda () #f)
+               string-length)
+ ⇒ 4
 </code></pre>
 
 <p><code>(fxmapping-ref/default</code>&nbsp;<em>fxmap k obj</em><code>) → *</code></p>
@@ -516,7 +524,8 @@ associations are preserved.</p>
 
 <p>Examples:</p>
 
-<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-adjoin (fxmapping 1 'b) 0 'a)) ⇒ ((0 . a) (1 . b))
+<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-adjoin (fxmapping 1 'b) 0 'a))
+ ⇒ ((0 . a) (1 . b))
 </code></pre>
 
 <p><code>(fxmapping-adjoin/combinator</code>&nbsp;<em>fxmap proc k</em>₁ <em>obj</em>₁ <em>k</em>₂ <code>…) → fxmapping</code></p>
@@ -536,11 +545,12 @@ will be a fxmapping with the association
 <p>Example:</p>
 
 <pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-adjoin/combinator (fxmapping 0 "geordi" 1 "reginald")
-                              (lambda (_ last first)
-                                (string-append first " " last))
-                              0 "laforge"
-                              1 "barclay"))
+ (fxmapping-adjoin/combinator
+   (fxmapping 0 "geordi" 1 "reginald")
+   (lambda (_ last first)
+     (string-append first " " last))
+   0 "laforge"
+   1 "barclay"))
  ⇒ ((0 . "geordi laforge") (1 . "reginald barclay"))
 </code></pre>
 
@@ -553,7 +563,9 @@ replaced.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-set (fxmapping 0 "geordi" 1 "reginald") 1 "tasha"))
+ (fxmapping-set (fxmapping 0 "geordi" 1 "reginald")
+                1
+                "tasha"))
  ⇒ ((0 . "geordi") (1 . "tasha"))
 </code></pre>
 
@@ -572,7 +584,8 @@ then a fxmapping with the same associations as <em>fxmap</em> is returned.</p>
 <pre class="example"><code>(fxmapping-&gt;alist
  (fxmapping-adjust (fxmapping 64 "var")
                    64
-                   (lambda (k s) (string-append s (number-&gt;string k)))))
+                   (lambda (k s)
+                     (string-append s (number-&gt;string k)))))
  ⇒ ((64 . "var64"))
 </code></pre>
 
@@ -583,7 +596,9 @@ those with keys equal to one of <em>k</em>₁, <em>k</em>₂, ….</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-delete (fxmapping 0 -200 1 -100) 0)) ⇒ ((1 . -100))
+<pre class="example"><code>(fxmapping-&gt;alist
+  (fxmapping-delete (fxmapping 0 -200 1 -100) 0))
+ ⇒ ((1 . -100))
 </code></pre>
 
 <p><code>(fxmapping-delete-all</code>&nbsp;<em>fxmap list</em><code>) → fxmapping</code></p>
@@ -593,7 +608,8 @@ those for keys equal to an element of <em>list</em>.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-&gt;alist (fxmapping-delete-all (fxmapping 0 'a 1 'b 2 'c) '(1 2)))
+<pre class="example"><code>(fxmapping-&gt;alist
+  (fxmapping-delete-all (fxmapping 0 'a 1 'b 2 'c) '(1 2)))
  ⇒ ((0 . a))
 </code></pre>
 
@@ -626,7 +642,9 @@ Thus, the following is valid:</p>
 <pre class="example"><code>(fxmapping-update (fxmapping 0 'a 1 'b 2 'c)
                   1
                   (lambda (k v replace _del)
-                    (values k v (fxmapping-&gt;alist (replace 'z)))))
+                    (values k
+                            v
+                            (fxmapping-&gt;alist (replace 'z)))))
  ⇒ 1
    b
    ((0 . a) (1 . z) (2 . c))
@@ -641,7 +659,9 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
 
   (fxmapping-set fxmap k v)
    ≡
-  (fxmapping-update fxmap k (lambda (_k _u replace _d) (replace v)))
+  (fxmapping-update fxmap
+                    k
+                    (lambda (_k _u replace _d) (replace v)))
 </code></pre>
 <p>Examples:</p>
 
@@ -746,8 +766,10 @@ for the association with the least/greatest key.  It is an error if
 
 <p>Examples:</p>
 
-<pre class="example"><code>(fxmapping-delete-min (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((1 . b) (2 . c))
-(fxmapping-delete-max (fxmapping 0 'a 1 'b 2 'c)) ⇒ ((0 . a) (1 . b))
+<pre class="example"><code>(fxmapping-delete-min (fxmapping 0 'a 1 'b 2 'c))
+ ⇒ ((1 . b) (2 . c))
+(fxmapping-delete-max (fxmapping 0 'a 1 'b 2 'c))
+ ⇒ ((0 . a) (1 . b))
 </code></pre>
 
 <p><code>(fxmapping-update-min</code>&nbsp;<em>fxmap proc</em><code>) → *</code> …<br>
@@ -771,9 +793,10 @@ not required to tail-call one of <em>delete</em> or <em>replace</em>,
 and that <code>fxmapping-update-min</code> and <code>-max</code> simply
 return the results of invoking <em>proc</em>.  Thus, the following is
 valid:</p>
-<pre class="example"><code>(fxmapping-update-min (fxmapping 0 'a 1 'b 2 'c)
-                      (lambda (k v _r delete)
-                        (values k v (fxmapping-&gt;alist (delete)))))
+<pre class="example"><code>(fxmapping-update-min
+  (fxmapping 0 'a 1 'b 2 'c)
+  (lambda (k v _r delete)
+    (values k v (fxmapping-&gt;alist (delete)))))
  ⇒ 0
    a
    ((1 . b) (2 . c))
@@ -973,9 +996,10 @@ associated value, and to the result of the last application.
 
 <p>Examples:</p>
 
-<pre class="example"><code>(fxmapping-fold-right (lambda (_ v vs) (cons v vs))
-                      '()
-                      (fxmapping 0 "worf" 1 "data" 2 "crusher"))
+<pre class="example"><code>(fxmapping-fold-right
+  (lambda (_ v vs) (cons v vs))
+  '()
+  (fxmapping 0 "worf" 1 "data" 2 "crusher"))
  ⇒ ("worf" "data" "crusher")
 
 (fxmapping-fold (lambda (k _ ks) (cons k ks))
@@ -992,8 +1016,9 @@ but may be implemented more efficiently.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-map-&gt;list (lambda (_ v) (string-length v))
-                     (fxmapping 0 "picard" 1 "riker" 2 "troi"))
+<pre class="example"><code>(fxmapping-map-&gt;list
+  (lambda (_ v) (string-length v))
+  (fxmapping 0 "picard" 1 "riker" 2 "troi"))
  ⇒ (6 5 4)
 </code></pre>
 
@@ -1069,8 +1094,9 @@ that do not.</p>
 <p>Example:</p>
 
 <pre class="example"><code>(let-values (((pos ~pos)
-              (fxmapping-partition (lambda (_ v) (positive? v))
-                                   (fxmapping 0 2 1 -4 2 8 3 -16))))
+              (fxmapping-partition
+                (lambda (_ v) (positive? v))
+                (fxmapping 0 2 1 -4 2 8 3 -16))))
   (values (fxmapping-&gt;alist pos)
           (fxmapping-&gt;alist ~pos)))
  ⇒ ((0 . 2) (2 . 8))
@@ -1104,7 +1130,8 @@ decreasing numerical order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-&gt;decreasing-alist (fxmapping 1 'a 2 'b)) ⇒ ((2 . b) (1 . a))
+<pre class="example"><code>(fxmapping-&gt;decreasing-alist (fxmapping 1 'a 2 'b))
+ ⇒ ((2 . b) (1 . a))
 </code></pre>
 
 <p><code>(fxmapping-keys</code>&nbsp;<em>fxmap</em><code>) → list[fixnum]</code></p>
@@ -1113,7 +1140,8 @@ decreasing numerical order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(fxmapping-keys (fxmapping 137 'a -24 'b -5072 'c)) ⇒ (-5072 -24 137)
+<pre class="example"><code>(fxmapping-keys (fxmapping 137 'a -24 'b -5072 'c))
+ ⇒ (-5072 -24 137)
 </code></pre>
 
 <p><code>(fxmapping-values</code>&nbsp;<em>fxmap</em><code>) → list[*]</code></p>
@@ -1147,7 +1175,8 @@ produces the pairs <code>(</code><em>k</em>₁ <code>.</code>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator-&gt;list (fxmapping-&gt;generator (fxmapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list
+  (fxmapping-&gt;generator (fxmapping 3 "yar" 2 "troi")))
  ⇒ ((2 . "troi") (3 . "yar"))
 </code></pre>
 
@@ -1158,7 +1187,9 @@ of <em>fxmapping</em> are produced in decreasing order of key.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(generator-&gt;list (fxmapping-&gt;decreasing-generator (fxmapping 3 "yar" 2 "troi")))
+<pre class="example"><code>(generator-&gt;list
+  (fxmapping-&gt;decreasing-generator
+    (fxmapping 3 "yar" 2 "troi")))
  ⇒ ((3 . "yar") (2 . "troi"))
 </code></pre>
 
@@ -1252,9 +1283,10 @@ appear.</p>
                          (fxmapping 2 'c 4 'e)))
  ⇒ ((2 . c))
 
-(fxmapping-&gt;alist (fxmapping-difference (fxmapping 0 'a 1 'b 2 'c)
-                                        (fxmapping 2 "worf")
-                                        (fxmapping 1 "data")))
+(fxmapping-&gt;alist
+  (fxmapping-difference (fxmapping 0 'a 1 'b 2 'c)
+                        (fxmapping 2 "worf")
+                        (fxmapping 1 "data")))
  ⇒ ((0 . a))
 </code></pre>
 
@@ -1307,15 +1339,18 @@ above and closed below.</p>
 <p>Examples:</p>
 
 <pre class="example"><code>(fxmapping-&gt;alist
- (fxmapping-open-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ (fxmapping-open-interval
+   (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((2 . c))
 
 (fxmapping-&gt;alist
- (fxmapping-closed-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ (fxmapping-closed-interval
+   (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((1 . b) (2 . c) (3 . d))
 
 (fxmapping-&gt;alist
- (fxmapping-closed-open-interval (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
+ (fxmapping-closed-open-interval
+   (fxmapping 0 'a 1 'b 2 'c 3 'd) 1 3))
  ⇒ ((1 . b) (2 . c))
 </code></pre>
 
@@ -1359,7 +1394,9 @@ implemented more efficiently.</p>
 
 <p>Example:</p>
 
-<pre class="example"><code>(let-values ((fxmaps (fxmapping-split (fxmapping 0 'a 1 'b 2 'c 3 'd) 2)))
+<pre class="example"><code>(let-values ((fxmaps
+              (fxmapping-split
+                (fxmapping 0 'a 1 'b 2 'c 3 'd) 2)))
   (map fxmapping-&gt;alist fxmaps))
 
  ⇒ (((0 . a) (1 . b) (2 . c))
