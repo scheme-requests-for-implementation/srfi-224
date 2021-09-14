@@ -33,6 +33,10 @@
   <li>Draft #13 published: 2021-06-22</li>
   <li>Draft #14 published: 2021-06-26</li>
   <li>Finalized: 2021-06-30</li>
+  <li>Revised to fix errata:
+    <ul>
+      <li>2021-09-14 (Fixed an omission in the spec. of
+	<a href="#fxmapping-alter"><code>fxmapping-alter</code></a>.)</li></ul></li>
 </ul>
 
 <h2>Abstract</h2>
@@ -680,7 +684,7 @@ in terms of <code>fxmapping-update</code>, e.g.:</p>
  ⇒ ((0 . a) (1 . 1) (2 . c))
 </code></pre>
 
-<p><code>(fxmapping-alter</code>&nbsp;<em>fxmap k failure success</em><code>) → *</code> …</p>
+<p id="fxmapping-alter"><code>(fxmapping-alter</code>&nbsp;<em>fxmap k failure success</em><code>) → *</code> …</p>
 
 <p>The procedure <em>failure</em> is of type
 <code>(* → fxmapping) ([] → fxmapping) → [*, …]</code>.
@@ -696,7 +700,8 @@ returned.</p>
 <ul>
   <li><p>Invoking <code>(</code><em>replace v′</em><code>)</code> returns
          a fxmapping with the association (<em>k</em>, <em>v′</em>)
-         as well as all of <em>fxmap</em>&rsquo;s other associations.</p></li>
+         as well as all of <em>fxmap</em>&rsquo;s other associations<ins>, except
+    for (<em>k</em>, <em>v</em>)</ins>.</p></li>
   <li><p>Invoking <code>(</code><em>delete</em><code>)</code> returns
          a fxmapping with all of <em>fxmap</em>&rsquo;s associations
          except for (<em>k</em>, <em>v</em>).</p></li>
