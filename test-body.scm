@@ -347,17 +347,17 @@
                 -8192))
   ;; Passing out an additional value.
   (test-equal '(() #t)
-            (fxmapping-update (fxmapping 0 'a)
-                              0
-                              (lambda (_k _v _r delete)
-                                (list (fxmapping->alist (delete))
-                                      #t))))
+              (fxmapping-update (fxmapping 0 'a)
+                                0
+                                (lambda (_k _v _r delete)
+                                  (list (fxmapping->alist (delete))
+                                        #t))))
   (test-equal '(((0 . z)) #t)
-            (fxmapping-update (fxmapping 0 'a)
-                              0
-                              (lambda (_k _v replace _d)
-                                (list (fxmapping->alist (replace 'z))
-                                      #t))))
+              (fxmapping-update (fxmapping 0 'a)
+                                0
+                                (lambda (_k _v replace _d)
+                                  (list (fxmapping->alist (replace 'z))
+                                        #t))))
   ;; Return the original fxmapping on failure.
   (test-eqv #t
             (fxmapping=? default-comp
@@ -424,20 +424,20 @@
                 'z))
   ;; Passing out an additional value.
   (test-equal '(() #t)
-            (fxmapping-alter (fxmapping 0 'a)
-                             0
-                             (lambda (_in ignore) (list #f #f))
-                             (lambda (_k _v _r delete)
-                               (list (fxmapping->alist (delete))
-                                     #t))))
+              (fxmapping-alter (fxmapping 0 'a)
+                               0
+                               (lambda (_in ignore) (list #f #f))
+                               (lambda (_k _v _r delete)
+                                 (list (fxmapping->alist (delete))
+                                       #t))))
   (test-equal '(((0 . a) (1 . b)) #t)
-            (fxmapping-alter (fxmapping 0 'a)
-                             1
-                             (lambda (insert _ig)
-                               (list (fxmapping->alist (insert 'b))
-                                     #t))
-                             (lambda (_k _v _r delete)
-                               (list #f #f))))
+              (fxmapping-alter (fxmapping 0 'a)
+                               1
+                               (lambda (insert _ig)
+                                 (list (fxmapping->alist (insert 'b))
+                                       #t))
+                               (lambda (_k _v _r delete)
+                                 (list #f #f))))
 
   ;;; delete-min/-max
 
@@ -470,15 +470,15 @@
                #f))
   ;; Passing out an additional value.
   (test-equal '(((0 . a)) #t)
-            (fxmapping-update-min (fxmapping -3 'q 0 'a)
-                                  (lambda (k v _rep delete)
-                                    (list (fxmapping->alist (delete))
-                                          #t))))
+              (fxmapping-update-min (fxmapping -3 'q 0 'a)
+                                    (lambda (k v _rep delete)
+                                      (list (fxmapping->alist (delete))
+                                            #t))))
   (test-equal '(((-3 . z) (0 . a)) #t)
-            (fxmapping-update-min (fxmapping -3 'q 0 'a)
-                                  (lambda (k v replace _del)
-                                    (list (fxmapping->alist (replace 'z))
-                                          #t))))
+              (fxmapping-update-min (fxmapping -3 'q 0 'a)
+                                    (lambda (k v replace _del)
+                                      (list (fxmapping->alist (replace 'z))
+                                            #t))))
 
   ;;; max updaters
 
@@ -497,15 +497,15 @@
                #f))
   ;; Passing out an additional value.
   (test-equal '(((0 . a)) #t)
-            (fxmapping-update-max (fxmapping 3 'd 0 'a)
-                                  (lambda (k v _rep delete)
-                                    (list (fxmapping->alist (delete))
-                                          #t))))
+              (fxmapping-update-max (fxmapping 3 'd 0 'a)
+                                    (lambda (k v _rep delete)
+                                      (list (fxmapping->alist (delete))
+                                            #t))))
   (test-equal '(((0 . a) (3 . z)) #t)
-            (fxmapping-update-max (fxmapping 3 'd 0 'a)
-                                  (lambda (k v replace _del)
-                                    (list (fxmapping->alist (replace 'z))
-                                          #t))))
+              (fxmapping-update-max (fxmapping 3 'd 0 'a)
+                                    (lambda (k v replace _del)
+                                      (list (fxmapping->alist (replace 'z))
+                                            #t))))
 
   ;;; pop-min
 
