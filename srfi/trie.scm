@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2021 Wolfgang Corcoran-Mathe <wcm@sigwinch.xyz>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;; This file implements integer maps as big-endian binary radix
 ;;; trees (AKA Patricia tries), as described by Chris Okasaki and
 ;;; Andrew Gill in "Fast Mergeable Integer Maps" (1998).  Integers

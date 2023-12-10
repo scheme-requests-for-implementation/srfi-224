@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2021 Wolfgang Corcoran-Mathe <wcm@sigwinch.xyz>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;; Test framework for chibi-scheme.
 
 (import (scheme base)

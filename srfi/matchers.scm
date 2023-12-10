@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2021 Wolfgang Corcoran-Mathe <wcm@sigwinch.xyz>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;; Pattern-matching macro for trie values.
 ;;;
 ;;; Based on William Byrd's pmatch modification of Oleg Kiselyov's

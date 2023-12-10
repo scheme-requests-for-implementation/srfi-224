@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2021 Wolfgang Corcoran-Mathe <wcm@sigwinch.xyz>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 ;;; Test framework using CHICKEN's test egg.
 (import (srfi 1)
         (srfi 128)

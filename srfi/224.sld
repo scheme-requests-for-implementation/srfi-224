@@ -1,3 +1,7 @@
+;;; SPDX-FileCopyrightText: 2021 Wolfgang Corcoran-Mathe <wcm@sigwinch.xyz>
+;;;
+;;; SPDX-License-Identifier: MIT
+
 (define-library (srfi 224)
   (import (scheme base)
           (scheme case-lambda)
